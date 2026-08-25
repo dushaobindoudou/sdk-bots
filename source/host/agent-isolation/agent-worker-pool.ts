@@ -3,12 +3,14 @@ import type { Readable } from "node:stream";
 import { fileURLToPath } from "node:url";
 import { Worker } from "node:worker_threads";
 
+import { resolveHostWorkerEntry } from "../worker-entry.js";
+
 export function defaultWorkerEntryPath(): string {
-  const here =
-    typeof __dirname === "string"
-      ? __dirname
-      : dirname(fileURLToPath(import.meta.url));
-  return join(here, "agent-isolation", "agent-store-worker.cjs");
+  return resolveHostWorkerEntry(
+    import.meta.url,
+    "agent-isolation",
+    "agent-store-worker.cjs",
+  );
 }
 
 interface WorkerResponse {

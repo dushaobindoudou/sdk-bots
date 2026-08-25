@@ -134,7 +134,7 @@ export function createProductionHostMainDependencies(
     ),
     acquireHostLock,
     ...(useExistingBoxExecDaemon ? {} : { startBoxExecDaemon: () => startBoxExecDaemonProcess({
-        entryPath: resolveBoxExecDaemonEntry(),
+        entryPath: process.env.SAND_BOX_EXEC_DAEMON_ENTRY ?? resolveBoxExecDaemonEntry(),
         generated: ports.extensionHost.boxGenerated,
         workspaceRoot: path.join(getSandRootDir(), "box-workspace"),
         terminalsDirectory: path.join(getSandRootDir(), "box-terminals"),

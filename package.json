@@ -2,31 +2,51 @@
   "name": "sdk-bots",
   "version": "0.1.0",
   "description": "Headless multi-bot orchestration SDK extracted from Grok Bot 0.18 — no Electron UI, local gateway + multi-agent group chat orchestration, third-party inference providers.",
-  "private": true,
+  "license": "UNLICENSED",
+  "keywords": [
+    "bot",
+    "multi-agent",
+    "agent-orchestration",
+    "group-chat",
+    "headless",
+    "sdk",
+    "gateway",
+    "sse"
+  ],
   "type": "module",
   "engines": {
     "node": ">=22.0.0"
   },
-  "main": "dist/sdk/index.js",
-  "types": "dist/sdk/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "dist/src/sdk/index.js",
+  "types": "dist/src/sdk/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/sdk/index.js",
-      "types": "./dist/sdk/index.d.ts"
+      "import": "./dist/src/sdk/index.js",
+      "types": "./dist/src/sdk/index.d.ts"
     },
     "./host": {
-      "import": "./dist/host/index.js",
-      "types": "./dist/host/index.d.ts"
+      "import": "./dist/src/host/index.js",
+      "types": "./dist/src/host/index.d.ts"
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.sdk.json",
+    "build": "npm run build:daemon && npm run build:workers && tsc -p tsconfig.sdk.json; node scripts/copy-build-assets.mjs",
+    "typecheck": "tsc -p tsconfig.sdk.json",
+    "build:daemon": "node scripts/build-box-exec-daemon.mjs",
+    "build:workers": "node scripts/build-host-workers.mjs",
     "dev": "tsx src/host/index.ts",
-    "start": "node dist/host/index.js",
+    "start": "node dist/src/host/index.js",
     "test": "npm run test:unit && npm run test:smoke",
-    "test:unit": "node --import tsx --test test/unit/sdk-client.test.ts test/unit/entry.test.ts",
+    "test:unit": "node --import tsx --test \"test/unit/*.test.ts\"",
+    "pretest:smoke": "node scripts/build-host-workers.mjs && node scripts/build-box-exec-daemon.mjs",
     "test:smoke": "tsx test/smoke.mjs",
     "test:e2e": "tsx test/e2e-mock.mjs",
+    "pretest:e2e": "node scripts/build-host-workers.mjs && node scripts/build-box-exec-daemon.mjs",
+    "pretest:integration": "node scripts/build-host-workers.mjs && node scripts/build-box-exec-daemon.mjs",
+    "test:integration": "node test/integration/run.mjs",
     "cleanup:smoke": "tsx scripts/cleanup-smoke-agents.mjs",
     "prepublishOnly": "npm run build"
   },
@@ -84,7 +104,7 @@
   },
   "files": [
     "dist",
-    "source",
-    "README.md"
+    "README.md",
+    "NOTICE.md"
   ]
 }

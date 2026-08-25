@@ -4,6 +4,7 @@ import { Worker } from "node:worker_threads";
 import { errorLogTag } from "../../shared/errors.js";
 import { invariant } from "../../shared/invariant.js";
 import { reportHostDiagnostic } from "../host-diagnostics.js";
+import { resolveHostWorkerEntry } from "../worker-entry.js";
 import {
   LegacyFileTranscriptMirror,
   type LegacyTranscriptBlobStore,
@@ -14,12 +15,8 @@ import { WorkerBlobStore } from "./worker-blob-store.js";
 export const DEFAULT_MIRROR_WORKERS = 2;
 
 export function defaultMirrorWorkerEntryPath(): string {
-  const hostBundleDirectory =
-    typeof __dirname === "string"
-      ? __dirname
-      : dirname(fileURLToPath(import.meta.url));
-  return join(
-    hostBundleDirectory,
+  return resolveHostWorkerEntry(
+    import.meta.url,
     "agent-isolation",
     "transcript-mirror-worker.cjs",
   );

@@ -13,8 +13,6 @@
  *   for await (const ev of sdk.events()) console.log(ev.channel, ev.payload);
  */
 
-import { EventEmitter } from "node:events";
-
 export interface SdkBotsClientOptions {
   baseUrl: string;
   token?: string;

@@ -14,9 +14,11 @@
  */
 
 import { randomUUID } from "node:crypto";
+import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { homedir } from "node:os";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { SdkBotsClient } from "./index.js";
 
@@ -53,6 +55,25 @@ export interface StartedHost {
 /** Default SDK data root — never ~/.cursor. */
 export function defaultDataDir(): string {
   return join(homedir(), ".sdk-bots");
+}
+
+/**
+ * Locates the bundled loopback box exec-daemon (single-file CJS bundle built
+ * by `npm run build:daemon`). Dev layout: src/box-exec-daemon/main.cjs;
+ * packaged layout: dist/box-exec-daemon/main.cjs. Returns null when absent —
+ * the host then runs without the daemon (shell/file tools degraded).
+ */
+export function resolveBoxExecDaemonEntry(): string | null {
+  const here = dirname(fileURLToPath(import.meta.url));
+  const candidates = [
+    join(here, "..", "box-exec-daemon", "main.cjs"), // src/sdk -> src/box-exec-daemon (dev)
+    join(here, "..", "..", "box-exec-daemon", "main.cjs"), // dist/src/sdk -> dist/box-exec-daemon (packaged)
+    join(here, "..", "..", "..", "src", "box-exec-daemon", "main.cjs"), // dist/src/sdk -> repo src
+  ];
+  for (const candidate of candidates) {
+    if (existsSync(candidate)) return candidate;
+  }
+  return null;
 }
 
 export interface GatewayDiscovery {
@@ -110,11 +131,17 @@ export async function startHost(options: StartHostOptions = {}): Promise<Started
   const envToSet: Record<string, string> = {
     // Isolate the SDK data root from any real Cursor/Grok Bot installation.
     SAND_DATA_ROOT: dataDir,
-    // SDK mode: the box-exec-daemon sidecar bundle is not shipped in source
-    // form; the host runs its loopback box backend without it. Local shell-exec
-    // tooling is degraded; gateway / agents / transcripts are unaffected.
-    SAND_USE_EXISTING_BOX_EXEC_DAEMON: "1",
   };
+  // Point the host at the bundled box exec-daemon (shell/file tool sandbox).
+  // Without it, turns block forever on box readiness; when the bundle is
+  // missing we degrade to the no-daemon mode instead of failing to boot.
+  const daemonEntry = resolveBoxExecDaemonEntry();
+  if (daemonEntry != null) {
+    envToSet.SAND_BOX_EXEC_DAEMON_ENTRY = daemonEntry;
+    delete process.env.SAND_USE_EXISTING_BOX_EXEC_DAEMON;
+  } else {
+    envToSet.SAND_USE_EXISTING_BOX_EXEC_DAEMON = "1";
+  }
   if (options.port != null) envToSet.SAND_HOST_PORT = String(options.port);
   if (options.token != null) envToSet.SAND_GATEWAY_TOKEN = options.token;
 
@@ -131,6 +158,7 @@ export async function startHost(options: StartHostOptions = {}): Promise<Started
     const { createProductionRunnerContext } = await import("../../source/host/runner-context-production-provider.js");
     const { createDefaultProductionTranscriptMirrorProvider } = await import("../../source/host/transcript-mirror/production-provider.js");
     const { executeBoxCopyInFromEnv } = await import("../../source/host/extensions/box-store-sync/box-copy-in.js");
+    const { productionLocalExecCodec } = await import("../../source/host/extensions/local-exec/production.js");
 
     const ports = {
       executeBoxCopyInFromEnv,
@@ -144,7 +172,9 @@ export async function startHost(options: StartHostOptions = {}): Promise<Started
     };
     const extensionBindings = {
       stateBackstop: createProductionStateBackstop(),
-      localExecCodec: undefined,
+      // Concrete artifact-backed codec; without it every turn's resource
+      // accessor creation throws and the turn retry loop spins forever.
+      localExecCodec: productionLocalExecCodec,
       secretsContext: productionSecretsContext,
     };
 

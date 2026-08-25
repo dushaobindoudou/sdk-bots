@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { Worker } from "node:worker_threads";
 import type { DatabaseSync } from "node:sqlite";
 import { errorLogTag } from "../../../shared/errors.js";
+import { resolveHostWorkerEntry } from "../../worker-entry.js";
 import { SQLITE_DB_SIDECAR_SUFFIXES } from "../../storage/store-db.js";
 import { isSqliteCorruptError } from "../../storage/sqlite-busy.js";
 import {
@@ -38,14 +39,9 @@ export interface SearchIndexJobPort {
 }
 
 export function defaultWorkerEntryPath(): string {
-  const hostBundleDirectory =
-    typeof __dirname === "string"
-      ? __dirname
-      : dirname(fileURLToPath(import.meta.url));
-  return join(
-    hostBundleDirectory,
-    "extensions",
-    "content-search",
+  return resolveHostWorkerEntry(
+    import.meta.url,
+    join("extensions", "content-search"),
     "search-index-worker.cjs",
   );
 }

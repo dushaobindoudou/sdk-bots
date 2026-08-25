@@ -7,6 +7,7 @@ import { errorMessage } from "../../../shared/errors.js";
 import { findSystemErrno } from "../../../shared/system-errno.js";
 import { DB_BUSY_TIMEOUT_MS } from "../../storage/store-db.js";
 import { sha256Hex } from "../../sha256.js";
+import { resolveHostWorkerEntry } from "../../worker-entry.js";
 import {
   BOX_STORE_BLOBS_PREFIX,
   isBoxStoreManifestFileEntry,
@@ -185,13 +186,10 @@ export class StoreDbSnapshotUpload {
 }
 
 function defaultVacuumWorkerEntryPath(): string {
-  const hostBundleDirectory =
-    typeof __dirname === "string"
-      ? __dirname
-      : dirname(fileURLToPath(import.meta.url));
-  return join(
-    hostBundleDirectory,
-    "extensions/box-store-sync/box-store-vacuum-worker.cjs",
+  return resolveHostWorkerEntry(
+    import.meta.url,
+    join("extensions", "box-store-sync"),
+    "box-store-vacuum-worker.cjs",
   );
 }
 
