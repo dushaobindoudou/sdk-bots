@@ -84,10 +84,12 @@ async function main() {
   console.log("[smoke] SSE stream opened ok (events seen:", sawEvent + ")");
 
   console.log("[smoke] PASS — all gateway calls succeeded");
-  console.log("[smoke] (host process still running; send SIGINT to stop)");
-  // keep alive briefly so logs flush, then exit
-  await sleep(500);
-  process.exit(0);
+  // SIGTERM (not process.exit) so the host's shutdown handler clears
+  // gateway.json and releases the host lock before the process dies.
+  await sleep(300);
+  process.kill(process.pid, "SIGTERM");
+  // Safety net only; the host's own shutdown path exits the process.
+  setTimeout(() => process.exit(0), 8_000);
 }
 
 main().catch((e) => { console.error("[smoke] uncaught:", e); process.exit(1); });
