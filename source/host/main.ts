@@ -21,6 +21,16 @@ export const BOX_COPY_IN_ARG = "--box-copy-in";
 export const BOX_COPY_IN_EXIT_FAILED = 1;
 export const SHUTDOWN_WATCHDOG_MS = 5_000;
 
+/** Keep a test/embedder-assigned process.exitCode through SIGTERM shutdown. */
+export function preservedExitCode(exitCode: string | number | null | undefined): number {
+  if (typeof exitCode === "number" && Number.isInteger(exitCode)) return exitCode;
+  if (typeof exitCode === "string" && exitCode.length > 0) {
+    const parsed = Number(exitCode);
+    if (Number.isInteger(parsed)) return parsed;
+  }
+  return 0;
+}
+
 export interface HostProcessControl {
   readonly argv: readonly string[];
   readonly pid: number;
@@ -337,7 +347,7 @@ export function installShutdownHandlers(
       } finally {
         clearTimeout(watchdog);
         hostLock.release();
-        processControl.exit(0);
+        processControl.exit(preservedExitCode(process.exitCode));
       }
     })();
   };

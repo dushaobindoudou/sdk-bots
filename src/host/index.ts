@@ -29,6 +29,11 @@ import { productionLocalExecCodec } from "../../source/host/extensions/local-exe
 // (host-paths would otherwise fall back to ~/.cursor/<variant>).
 process.env.SAND_DATA_ROOT ??= join(homedir(), ".sdk-bots");
 
+// Local OpenAI-compatible freeroute: model `auto`, no API key. Override with
+// SAND_OPENROUTER_BASE_URL / SAND_OPENROUTER_MODEL / OPENROUTER_API_KEY.
+process.env.SAND_OPENROUTER_BASE_URL ??= "http://127.0.0.1:3080/freeroute/v1";
+process.env.SAND_OPENROUTER_MODEL ??= "auto";
+
 // Point the host at the bundled loopback box exec-daemon when present; without
 // it turns block on box readiness forever (fall back to degraded no-daemon
 // mode only when the bundle is missing).

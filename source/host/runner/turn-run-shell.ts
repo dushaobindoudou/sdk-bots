@@ -28,7 +28,7 @@ import type {
   PromptSnapshotStore,
 } from "./system-prompt-assembly.js";
 import type { SummarizationPromptSession } from "../../packages/agent-summarization/summarization-handler.js";
-import { createProviderPromptSession } from "../extensions/inference/provider-session.js";
+import { createProviderPromptSession, OPENROUTER_CLOUD_BASE_URL, resolveOpenRouterEndpoint } from "../extensions/inference/provider-session.js";
 import { getSandRootDir } from "../host-paths.js";
 import { SandSettingsStore } from "../../shared/node/settings/sand-settings-store.js";
 import type { AgentProfilePromptSnapshot } from "./sand-agent-profile-prompt.js";
@@ -183,17 +183,19 @@ export async function createTurnAgentRunContext<ContextValue>(
     ...(input.lineage === undefined ? {} : { lineage: input.lineage }),
   };
   const inferenceProvider = new SandSettingsStore(join(getSandRootDir(), "settings.json")).getInferenceProvider();
-  const agent = inferenceProvider === "cursor"
+  const agent = process.env.SAND_AGENT_MOCK_RESPONSE != null || inferenceProvider === "cursor"
     ? input.inference.createSession(input.onRequestId, sessionOptions)
     : createProviderPromptSession(inferenceProvider) as unknown as TurnAgentPromptSession;
-  const summarizationSession = inferenceProvider === "cursor" ? input.inference.createSummarizationSession?.(
-    input.onRequestId,
-    {
-      modelId: SAND_SUMMARIZATION_MODEL_ID,
-      isSummarizationSession: true,
-      ...(input.lineage === undefined ? {} : { lineage: input.lineage }),
-    },
-  ) : createProviderPromptSession(inferenceProvider) as unknown as SummarizationPromptSession;
+  const summarizationSession = process.env.SAND_AGENT_MOCK_RESPONSE != null || inferenceProvider === "cursor"
+    ? input.inference.createSummarizationSession?.(
+      input.onRequestId,
+      {
+        modelId: SAND_SUMMARIZATION_MODEL_ID,
+        isSummarizationSession: true,
+        ...(input.lineage === undefined ? {} : { lineage: input.lineage }),
+      },
+    )
+    : createProviderPromptSession(inferenceProvider) as unknown as SummarizationPromptSession;
   const summarization = summarizationSession ?? input.inference.createSession(
     input.onRequestId,
     {
@@ -217,10 +219,11 @@ export async function createTurnAgentRunContext<ContextValue>(
         : createDiskPressureReminderMiddleware(
           diskPressureReminderEpisodeId,
         )(baseExecutor());
+      const isLocalRouter = resolveOpenRouterEndpoint().baseURL !== OPENROUTER_CLOUD_BASE_URL;
       const withSendMessage = input.isSubagentRunner || input.isSilenceAllowed
         ? withDiskPressure
         : createSendMessageReminderMiddleware()(withDiskPressure);
-      const executor = input.isSubagentRunner || input.isSilenceAllowed
+      const executor = input.isSubagentRunner || input.isSilenceAllowed || isLocalRouter
         ? withSendMessage
         : createStartOfTurnAckReminderMiddleware()(withSendMessage);
       const toolExecutor = new SimplePromptToolExecutor(executor);

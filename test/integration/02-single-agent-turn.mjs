@@ -20,7 +20,7 @@ async function main() {
   const a1 = await sdk.createAgent({ name: "it02-solo", description: "solo bot" });
   const id1 = agentId(a1);
 
-  const replyPromise = waitTranscript(sdk, MARKER);
+  const replyPromise = waitTranscript(sdk, MARKER, 90_000, id1);
 
   const sent = await sdk.sendPrompt({ agentId: id1, prompt: "reply now" });
   assert(sent?.accepted === true || sent != null, `sendPrompt accepted: ${JSON.stringify(sent).slice(0, 120)}`);

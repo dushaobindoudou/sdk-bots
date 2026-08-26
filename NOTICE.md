@@ -1,6 +1,6 @@
 # NOTICE
 
-This package (`sdk-bots`) is a headless software-development-kit reconstruction
+This package (`multibot-sdk`, git repository `sdk-bots`) is a headless software-development-kit reconstruction
 derived from an unofficial, clean-room-style reverse-engineering study of
 **Grok Bot 0.18**, a commercial product of Anysphere, Inc. (Cursor).
 

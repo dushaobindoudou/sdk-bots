@@ -7,6 +7,7 @@ import {
   createCursorInferencePromptSession,
   createSandAttachedMediaUrlProvider,
   resolveSandRunPrivacyMode,
+  SAND_RUN_PRIVACY_MODE_FALLBACK,
   type RequestLineage,
 } from "../../../shared/node/cursor-backend/cursor-inference.js";
 import { createSandLabelingClient, recordSandPostTurnLabeling, wrapPromptSessionWithSandFollowupLabeling, type LabelMessage, type LabelingClient, type PromptExecutor } from "./sand-labeling.js";
@@ -61,6 +62,17 @@ export function parseSandMockScript(raw: string): SandMockScript | null {
   return { toolCalls };
 }
 
+/**
+ * Plain-string mock replies must be a SendMessage tool call. Assistant text
+ * is internal thinking in this runtime and never reaches the transcript SSE
+ * channel that SDK clients subscribe to.
+ */
+export function mockScriptFromEnv(raw: string): SandMockScript {
+  return parseSandMockScript(raw) ?? {
+    toolCalls: [{ toolName: "SendMessage", args: { type: "text", content: raw } }],
+  };
+}
+
 export function createScriptedMockSession(script: SandMockScript, modelId: string): { getExecutor(): PromptExecutor; getModelId(): string } {
   let callIndex = 0;
   const executor = createMockPromptExecutor(() => {
@@ -68,7 +80,7 @@ export function createScriptedMockSession(script: SandMockScript, modelId: strin
     callIndex += 1;
     return call === undefined
       ? { response: "", toolCalls: [] }
-      : { response: "", toolCalls: [{ toolCallId: call.toolCallId ?? `mock-tool-${callIndex}`, toolName: call.toolName, args: call.args }] };
+      : { response: "", toolCalls: [{ toolCallId: call.toolCallId ?? `mock-tool-${callIndex}-${Date.now()}`, toolName: call.toolName, args: call.args }] };
   });
   return {
     getExecutor: () => executor,
@@ -102,14 +114,18 @@ export function createCursorSandInference(options: CursorSandInferenceOptions): 
   const attachedMedia = createSandAttachedMediaUrlProvider(auth);
   const getLabelingClient = (): LabelingClient => labelingClient ??= createSandLabelingClient(auth);
   return {
-    resolvePrivacyMode: () => resolveSandRunPrivacyMode(auth),
+    resolvePrivacyMode: () => {
+      if (process.env.SAND_AGENT_MOCK_RESPONSE != null) return SAND_RUN_PRIVACY_MODE_FALLBACK;
+      const provider = new SandSettingsStore(join(getSandRootDir(), "settings.json")).getInferenceProvider();
+      if (provider !== "cursor") return SAND_RUN_PRIVACY_MODE_FALLBACK;
+      return resolveSandRunPrivacyMode(auth);
+    },
     getGeminiVideoAttachedMediaUrlProvider: () => options.isGeminiVideoDeveloperApiEnabled?.() === true ? attachedMedia : undefined,
     createSession(onRequestId, sessionOptions) {
       const mockResponse = process.env.SAND_AGENT_MOCK_RESPONSE;
       if (mockResponse != null) {
-        const modelId = sessionOptions?.modelId ?? "sand-mock", script = parseSandMockScript(mockResponse);
-        if (script != null) return createScriptedMockSession(script, modelId);
-        return { getExecutor: () => createMockPromptExecutor(() => ({ response: mockResponse, chunkSize: 8 })), getModelId: () => modelId };
+        const modelId = sessionOptions?.modelId ?? "sand-mock";
+        return createScriptedMockSession(mockScriptFromEnv(mockResponse), modelId);
       }
       const routedProvider = new SandSettingsStore(join(getSandRootDir(), "settings.json")).getInferenceProvider();
       if (routedProvider !== "cursor") return createProviderPromptSession(routedProvider) as unknown as CursorPromptSession;

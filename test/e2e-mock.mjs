@@ -31,17 +31,22 @@ async function main() {
   const sdk = host.client;
 
   try {
-    // Subscribe to transcript events BEFORE sending, so the reply cannot race us.
+    let resolveReply;
+    let rejectReply;
     const replySeen = new Promise((resolve, reject) => {
-      const timer = setTimeout(() => reject(new Error("timed out waiting for mock reply on SSE transcript channel")), 90_000);
-      const dispose = sdk.subscribe(ev => {
-        const text = JSON.stringify(ev?.payload ?? {});
-        if (ev?.channel === "transcript" && text.includes(MOCK_REPLY)) {
-          clearTimeout(timer);
-          dispose();
-          resolve(text.slice(0, 300));
-        }
-      });
+      resolveReply = resolve;
+      rejectReply = reject;
+    });
+    const timer = setTimeout(
+      () => rejectReply(new Error("timed out waiting for mock reply on SSE transcript channel")),
+      90_000,
+    );
+    await sdk.subscribeWhenReady(ev => {
+      const text = JSON.stringify(ev?.payload ?? {});
+      if (ev?.channel === "transcript" && text.includes(MOCK_REPLY)) {
+        clearTimeout(timer);
+        resolveReply(text.slice(0, 300));
+      }
     });
 
     const a1 = await sdk.createAgent({ name: "e2e-researcher", description: "researches" });

@@ -22,8 +22,8 @@ import { fileURLToPath } from "node:url";
 
 import { SdkBotsClient } from "./index.js";
 
-export { SdkBotsClient } from "./index.js";
-export type { SdkBotsClientOptions } from "./index.js";
+export { SdkBotsClient, normalizeAgentList } from "./index.js";
+export type { SdkBotsClientOptions, AgentList } from "./index.js";
 
 export interface StartHostOptions {
   /**

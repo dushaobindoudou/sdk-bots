@@ -21,11 +21,14 @@ async function main() {
   const id1 = agentId(a1);
 
   for (let i = 1; i <= 3; i += 1) {
-    const replyPromise = waitTranscript(sdk, MARKER, 90_000);
+    const replyPromise = waitTranscript(sdk, MARKER, 90_000, id1);
     const sent = await sdk.sendPrompt({ agentId: id1, prompt: `turn ${i}: reply now` });
     assert(sent != null, `sendPrompt turn ${i} returned`);
     await replyPromise;
-    console.log(`[${TAG}] turn ${i} reply observed`);
+    const mid = await sdk.getAgentTranscriptTail({ id: id1 });
+    const { count } = countTranscriptMatches(mid, MARKER);
+    assert(count >= i, `after turn ${i} transcript has >= ${i} mock replies (count=${count})`);
+    console.log(`[${TAG}] turn ${i} reply observed (count=${count})`);
   }
 
   const tail = await sdk.getAgentTranscriptTail({ id: id1 });

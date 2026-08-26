@@ -31,7 +31,7 @@ export function refineSendMessage(value: SendMessageInput): SendMessageIssue[] {
   return issues;
 }
 const objectSchema = z.object({
-  type: z.enum(SEND_MESSAGE_TYPES).describe(SEND_MESSAGE_TYPE_DESCRIPTION),
+  type: z.enum(SEND_MESSAGE_TYPES).default("text").describe(SEND_MESSAGE_TYPE_DESCRIPTION),
   content: z.string().trim().optional().describe("Required when type is text. The message to show to the user."),
   url: z.string().trim().optional().describe("Required when type is attachment. Use file:// for local files or https:// for remote files and standalone media."),
   images: z.array(z.object({

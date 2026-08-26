@@ -1,145 +1,124 @@
 # sdk-bots
 
-Headless multi-bot orchestration SDK, extracted from the Grok Bot 0.18 reverse-engineering reconstruction. **No Electron UI** — just the local gateway + multi-agent group-chat orchestration core, with third-party inference providers (Claude Code / Codex / OpenRouter).
+Headless multi-bot host: a local HTTP gateway, group-chat orchestration, and directory-scoped tools. **No Electron UI.** Models come from you (OpenRouter / local OpenAI-compatible / Claude Code / Codex).
 
-> **License / provenance:** this code derives from an unofficial reverse-engineered reconstruction
-> of a commercial product (Grok Bot / Cursor by Anysphere). It is published as **UNLICENSED**
-> (all rights reserved) pending a formal legal review — see [`NOTICE.md`](NOTICE.md).
-> Treat it as source-available for evaluation, not open-source-licensed software.
+npm package: **[`multibot-sdk`](https://www.npmjs.com/package/multibot-sdk)** (`sdk-bots` was already taken on the registry).
 
-## What you get
-
-- `source/host` — pure-Node `node:http` gateway (JSON-RPC `POST /api/<method>` + SSE `GET /events` + `/health`)
-- `source/node-agent-coordinator` — inference router, transcript routing, MCP bridge
-- `source/shared`, `source/packages`, `source/internal` — protocol / inference / execution libs
-- `src/host` — headless bootstrap (replaces electron-main)
-- `src/sdk` — `SdkBotsClient` + `startHost()` programmatic API
-- Bundled runtime artifacts (built by `npm run build`): loopback box exec-daemon + 4 `worker_threads` bundles
-
-Zero `import "electron"` in the core (verified).
+> **License / provenance:** derived from an unofficial reconstruction of a commercial product (Grok Bot / Cursor by Anysphere). Published as **UNLICENSED** (source-available for evaluation) — see [`NOTICE.md`](NOTICE.md) and [`LICENSE`](LICENSE). Not affiliated with Anysphere.
 
 ## Install
 
 ```bash
-npm install sdk-bots
+pnpm add multibot-sdk
+# npm install multibot-sdk
 ```
 
-Requires **Node >= 22** (uses `node:sqlite`). Two native modules (`tree-sitter`, `tree-sitter-bash`)
-are installed from npm — prebuilt binaries cover macOS/arm64 and common Linux; from source otherwise.
+Requires **Node >= 22** (`node:sqlite`). Native modules `tree-sitter` / `tree-sitter-bash` ship prebuilds for macOS arm64 and common Linux.
 
 ```ts
-import { startHost, SdkBotsClient } from "sdk-bots";
+import { startHost, SdkBotsClient } from "multibot-sdk";
 
 const host = await startHost();          // data at ~/.sdk-bots (never ~/.cursor)
-const sdk = host.client;                 // pre-wired SdkBotsClient
-// or connect to an already-running host:
-// const sdk = new SdkBotsClient({ baseUrl: "http://127.0.0.1:7331", token });
+const sdk = host.client;
 
 const a1 = await sdk.createAgent({ name: "researcher", description: "research" });
 const a2 = await sdk.createAgent({ name: "writer", description: "writes" });
 const group = await sdk.createGroup({ name: "war room", memberIds: [a1.agent.id, a2.agent.id] });
 
-// sendPrompt needs a configured third-party provider (set inferenceProvider in host settings),
-// or the mock provider for tests (SAND_AGENT_MOCK_RESPONSE, see below)
-await sdk.sendPrompt({ agentId: group.agent.id, prompt: "discuss the topic" });
+await sdk.setHostSettings({ inferenceProvider: "openrouter" });
+await sdk.sendPrompt({ agentId: group.agent.id, prompt: "@researcher pick a plan" });
 
-// stream events (SSE): transcript updates, agent lifecycle, outline, ...
 const dispose = sdk.subscribe(ev => console.log(ev.channel, ev.payload));
 ```
 
-`startHost()` options: `{ dataDir?, port?, token?, startupTimeoutMs? }` — resolves once the
-gateway is listening (the host reports its actual port/token via `<dataDir>/gateway.json`,
-atomically written and pid-stamped; stale discovery files are rejected).
+Console (when the host is running): [http://127.0.0.1:7331/](http://127.0.0.1:7331/) if you set `SAND_HOST_PORT=7331`.
 
-### Zero-credential testing with the mock provider
+Demo:
 
-Set `SAND_AGENT_MOCK_RESPONSE` before `startHost()` to run full turn loops with no
-provider credentials — ideal for CI and integration tests:
+```bash
+NODE_OPTIONS="--use-system-ca" pnpm example:group-chat
+NODE_OPTIONS="--use-system-ca" pnpm example:group-chat -- 帮我想一个周末徒步计划
+```
+
+See [`examples/README.md`](examples/README.md).
+
+`startHost()` options: `{ dataDir?, port?, token?, startupTimeoutMs? }`. Discovery is `<dataDir>/gateway.json` (pid-stamped; stale files are ignored).
+
+### Sandbox
+
+There is a local **box exec-daemon** (loopback, default port `1337`). File tools map `/workspace` → `~/.sdk-bots/box-workspace`. Paths that escape that directory are rejected. That is the intended sandbox: **restrict to a directory**, not a VM.
+
+`Shell` starts with `cwd` inside that folder. It is still a normal shell, so treat the host as a trusted local process and keep the gateway on loopback.
+
+### Tools and third-party models
+
+Turns use **this host's tool loop**, not a plug-in of some other agent runtime (LangGraph, CrewAI, …). You swap the **model**:
+
+| `inferenceProvider` | transport | tools |
+|---|---|---|
+| `openrouter` | OpenAI-compatible `/chat/completions` (local freeroute or OpenRouter cloud) | `SendMessage`, `SendToAgent`, `Shell`, `Read`, `Write`, `Grep`, … |
+| `claude-code` | Claude Agent SDK / CLI | Claude's tools + optional MCP |
+| `codex` | Codex Responses API | Codex tool surface |
+| mock (`SAND_AGENT_MOCK_RESPONSE`) | no network | scripted `SendMessage` / tool calls |
+
+Set `localToolPermission: "always"` in host `settings.json` (or `setHostSettings`) so file/shell tools do not wait on a UI prompt. The user-visible reply is still `SendMessage`.
+
+Group chat: `@name` addresses one member; omit `@` or use `@所有人` for everyone.
+
+### Zero-credential mock
 
 ```ts
 process.env.SAND_AGENT_MOCK_RESPONSE = "MOCK-REPLY: hello from the mock model";
 ```
 
-Accepts a plain string (assistant reply), or `{"sendMessage": "..."}` / `{"toolCalls": [...]}`
-script shapes (see `parseSandMockScript`).
+Plain string, or `{"sendMessage": "..."}` / `{"toolCalls": [...]}` (see `parseSandMockScript`).
 
 ## Tests
 
 ```bash
-npm run test:unit        # 40 unit tests (no host needed): client transport, header wiring,
-                         #   gateway parameter mapping (memberIds -> memberAgentIds),
-                         #   SSE parsing incl. cross-chunk framing, discovery polling,
-                         #   inference-router transcript store, Codex direct Responses
-                         #   transport, routed MCP JSON -> protobuf Struct
-npm run test:smoke       # e2e smoke: boot + health + createAgent x2 + createGroup
-                         #   + setGroupMembers + updateAgent + deleteAgent x3 + SSE
-npm run test:e2e         # credential-free group-chat loop with the mock inference provider
-npm run test:integration # full integration matrix (each case isolated: own process + dataDir)
+pnpm test:unit         # no host
+pnpm test:smoke        # boot + CRUD + SSE
+pnpm test:e2e          # mock group-chat loop
+pnpm test:integration  # isolated host per case
 ```
 
-- Unit tests live in `test/unit/*.test.ts`, run with `node --import tsx --test` (no framework dependency).
-- `SdkBotsClient` tests inject a fake `fetch`, so they never touch the network or disk state.
-- `entry.test.ts` covers `waitForDiscovery` (stale-pid rejection, port validation, late-write polling, timeout).
-- `inference-router-transcript` / `codex-direct-responses` / `backend-mcp-exec-json` are migrated
-  from the original project's recovery tests. The fourth recovery test (`router-settings`) targets
-  the desktop frontend's router overlay, which is out of scope for this headless SDK.
-- Integration cases live in `test/integration/` — see that directory's README for the matrix.
-  Host-requiring scripts auto-build the daemon/worker bundles first (npm `pre` hooks).
+Host-requiring scripts build the daemon/worker bundles first (`pre` hooks).
 
-> If your environment injects a `NODE_OPTIONS` preload (e.g. sandboxed agent shells), run tests with
-> `NODE_OPTIONS="--use-system-ca" npm test` so recursive `fs.rm` in agent cleanup is not intercepted.
+If a parent shell injects a `NODE_OPTIONS` preload, run tests with `NODE_OPTIONS="--use-system-ca"` so recursive `fs.rm` is not intercepted.
 
-## Build artifacts
+## Build
 
 ```bash
-npm run build         # bundles box-exec-daemon + 4 host workers, tsc-emits dist/, copies assets
-npm run typecheck     # full-tree tsc (known pre-existing errors in generated proto code)
+pnpm build             # daemon + workers + tsc + assets
+pnpm typecheck
 ```
 
-- `src/host-workers/*.cjs` — `agent-store-worker`, `transcript-mirror-worker`,
-  `search-index-worker`, `box-store-vacuum-worker`: standalone CJS bundles loaded via
-  `worker_threads`. The original resolvers assumed a single-bundle dist layout; the shared
-  resolver in `source/host/worker-entry.ts` probes `src/host-workers/`, `dist/host-workers/`
-  and the packaged layout automatically.
-- `src/box-exec-daemon/main.cjs` — loopback box exec-daemon (shell/file tool sandbox).
-  `startHost()` points the host at it when present; packaged copies land in
-  `dist/box-exec-daemon/`.
-
-## Inference providers (third-party, your credentials)
-
-Configured via host settings `inferenceProvider`:
-
-| provider | how | auth |
-|---|---|---|
-| `claude-code` | `@anthropic-ai/claude-agent-sdk` (CLI) | Claude login or `ANTHROPIC_API_KEY` |
-| `codex` | HTTP → `chatgpt.com/backend-api/codex/responses` | `~/.codex/auth.json` |
-| `openrouter` | `@ai-sdk/openai` → `openrouter.ai/api/v1` | `OPENROUTER_API_KEY` env or box-secrets |
-
-Only the default `cursor` provider depends on a Cursor account — not used in headless mode.
+Generated (gitignored): `src/box-exec-daemon/main.cjs`, `src/host-workers/*.cjs`. Packaged copies land in `dist/`.
 
 ## Environment
 
 | var | purpose |
 |---|---|
-| `SAND_DATA_ROOT` | host data root (default `~/.sdk-bots`; isolated from any Cursor install) |
+| `SAND_DATA_ROOT` | host data root (default `~/.sdk-bots`) |
 | `SAND_GATEWAY_TOKEN` | gateway auth token |
-| `SAND_HOST_PORT` | gateway port (default: host picks a free port, reports it in `gateway.json`) |
-| `SAND_GATEWAY_BIND_HOST` | bind host (default 127.0.0.1) |
-| `SAND_AGENT_MOCK_RESPONSE` | mock inference script for credential-free turn execution |
-| `SAND_BOX_EXEC_DAEMON_ENTRY` | override path for the loopbox box exec-daemon bundle |
-| `SAND_USE_EXISTING_BOX_EXEC_DAEMON` | `1` = skip spawning the daemon (shell/file tools degraded) |
+| `SAND_HOST_PORT` | gateway port |
+| `SAND_GATEWAY_BIND_HOST` | bind host (default `127.0.0.1`) |
+| `SAND_OPENROUTER_BASE_URL` | default `http://127.0.0.1:3080/freeroute/v1` |
+| `SAND_OPENROUTER_MODEL` | default `auto` locally |
+| `OPENROUTER_API_KEY` | required only for official OpenRouter cloud |
+| `SAND_AGENT_MOCK_RESPONSE` | mock inference script |
+| `SAND_BOX_EXEC_DAEMON_ENTRY` | daemon bundle path |
+| `SAND_USE_EXISTING_BOX_EXEC_DAEMON` | `1` = do not spawn the daemon |
+
+## Layout
+
+- `src/sdk` — `SdkBotsClient` + `startHost()`
+- `src/host` — headless bootstrap
+- `source/host` — gateway, group chat, box daemon, inference
+- `test/unit` — no host; `test/integration` — isolated host per case
 
 ## Status
 
-Tested end-to-end (2026-08): headless boot, all 37 host extensions start in graph order,
-gateway serves `/health`, `POST /api/*` (createAgent / createGroup / setGroupMembers /
-updateAgent / deleteAgent / listAgents / countAgents), SSE `GET /events` delivers live
-events, and **full turn execution works credential-free** with the mock provider — including
-multi-turn state persistence across a host restart and token-authenticated access (covered
-by the integration suite).
+Headless boot, 37 host extensions, gateway `/health` + `POST /api/*` + SSE, mock turns, and live OpenRouter/freeroute turns are exercised in-tree. See [`CHANGELOG.md`](CHANGELOG.md).
 
-Notes:
-- Real-provider `sendPrompt` requires a configured credential (see table above).
-- State lives under the SDK data root: `~/.sdk-bots` by default, or the `dataDir` you pass to
-  `startHost()` / `SAND_DATA_ROOT` (agents, transcripts, gateway discovery at
-  `<dataDir>/gateway.json`). The SDK never writes to `~/.cursor`.
+This is **not** MIT/Apache. Evaluate locally; do not assume you may ship it as a dependency in a commercial product until provenance is reviewed.

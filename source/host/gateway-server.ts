@@ -1,6 +1,9 @@
 import { timingSafeEqual } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { createServer as createHttpServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { createServer as createHttpsServer } from "node:https";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { constants as zlibConstants, createGzip, gzip } from "node:zlib";
 import { errorMessage } from "../shared/errors.js";
 import { GATEWAY_API_PREFIX, GATEWAY_AUTH_SCHEME, GATEWAY_AVATARS_PATH, GATEWAY_EVENTS_PATH, GATEWAY_HEALTH_PATH, GATEWAY_MINT_DEDUPE_HEADER, GATEWAY_SLIM_AVATARS_HEADER, GATEWAY_TRACEPARENT_HEADER } from "../shared/gateway-wire.js";
@@ -20,7 +23,35 @@ export function respondJson(res: ServerResponse, value: unknown, req?: IncomingM
 export function respondError(res: ServerResponse, status: number, message: string): void { const body = JSON.stringify({ error: message }); res.writeHead(status, { "content-type": "application/json", "content-length": Buffer.byteLength(body) }); res.end(body); }
 export function isAuthorized(req: IncomingMessage, expectedToken: string): boolean { const header = req.headers.authorization; if (typeof header !== "string") return false; const prefix = `${GATEWAY_AUTH_SCHEME} `; if (!header.startsWith(prefix)) return false; const provided = Buffer.from(header.slice(prefix.length)); const expected = Buffer.from(expectedToken); return provided.length === expected.length && timingSafeEqual(provided, expected); }
 export function hostHeaderHostname(req: IncomingMessage): string | null { const header = req.headers.host; if (typeof header !== "string" || header.length === 0) return null; try { return new URL(`http://${header}`).hostname; } catch { return null; } }
-export function rejectUntrustedBrowserRequest(deps: { authToken?: string }, req: IncomingMessage, res: ServerResponse): boolean { if (req.headers.origin !== undefined) { respondError(res, 403, "browser-origin gateway requests are not allowed"); return true; } if (deps.authToken == null) { const hostname = hostHeaderHostname(req); if (hostname == null || !isLoopbackHost(hostname)) { respondError(res, 403, "untrusted gateway host"); return true; } } return false; }
+export function originHostname(origin: string): string | null { try { return new URL(origin).hostname; } catch { return null; } }
+export function rejectUntrustedBrowserRequest(deps: { authToken?: string }, req: IncomingMessage, res: ServerResponse): boolean {
+  const origin = req.headers.origin;
+  if (origin !== undefined) {
+    const hostname = originHostname(Array.isArray(origin) ? origin[0] : origin);
+    if (hostname == null || !isLoopbackHost(hostname)) {
+      respondError(res, 403, "browser-origin gateway requests are not allowed");
+      return true;
+    }
+  }
+  if (deps.authToken == null) {
+    const hostname = hostHeaderHostname(req);
+    if (hostname == null || !isLoopbackHost(hostname)) {
+      respondError(res, 403, "untrusted gateway host");
+      return true;
+    }
+  }
+  return false;
+}
+const CONSOLE_HTML_PATH = join(dirname(fileURLToPath(import.meta.url)), "gateway-console.html");
+export function serveGatewayConsole(deps: { authToken?: string }, res: ServerResponse): void {
+  const html = readFileSync(CONSOLE_HTML_PATH, "utf8").replace(
+    "/*__BOOT__*/",
+    `window.SDK_BOTS_TOKEN = ${JSON.stringify(deps.authToken ?? "")}; window.SDK_BOTS_MODEL = ${JSON.stringify(process.env.SAND_OPENROUTER_MODEL?.trim() || "auto")};`,
+  );
+  const body = Buffer.from(html, "utf8");
+  res.writeHead(200, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "content-length": body.byteLength });
+  res.end(body);
+}
 function headerValue(req: IncomingMessage, name: string): string | undefined { const raw = req.headers[name]; const value = Array.isArray(raw) ? raw[0] : raw; return typeof value === "string" && value.length > 0 ? value : undefined; }
 function commandTrace(req: IncomingMessage) { const traceparent = headerValue(req, GATEWAY_TRACEPARENT_HEADER); const parsed = parseTraceparent(traceparent); return parsed == null ? {} : { traceparent, traceId: parsed.traceId, spanId: parsed.spanId }; }
 
@@ -45,6 +76,8 @@ function handleBridgeResponses(bridge: GatewayServerDeps["localExec"] | GatewayS
 
 export async function handleRequest(deps: GatewayServerDeps, req: IncomingMessage, res: ServerResponse): Promise<void> {
   const url = new URL(req.url ?? "/", "http://127.0.0.1"); if (rejectUntrustedBrowserRequest(deps, req, res)) return;
+  if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/index.html" || url.pathname === "/console")) return serveGatewayConsole(deps, res);
+  if (req.method === "GET" && url.pathname === "/favicon.ico") { res.writeHead(204); res.end(); return; }
   if (req.method === "GET" && url.pathname === GATEWAY_HEALTH_PATH) { const health = deps.getHealth(); return respondJson(res, { ok: true, pid: process.pid, isBusy: health.isBusy, ...(health.busyOnlyAwaitingApproval === undefined ? {} : { busyOnlyAwaitingApproval: health.busyOnlyAwaitingApproval }), activeAgentId: health.activeAgentId, startedAt: deps.startedAt, lastBusyAtMs: health.lastBusyAtMs }); }
   const events = req.method === "GET" && url.pathname === GATEWAY_EVENTS_PATH; const prepare = req.method === "POST" && url.pathname === GATEWAY_PREPARE_UPGRADE_PATH; const avatar = req.method === "GET" && url.pathname.startsWith(`${GATEWAY_AVATARS_PATH}/`); const localRequests = req.method === "GET" && url.pathname === GATEWAY_LOCAL_EXEC_REQUESTS_PATH; const localResponses = req.method === "POST" && url.pathname === GATEWAY_LOCAL_EXEC_RESPONSES_PATH; const webRequests = req.method === "GET" && url.pathname === GATEWAY_WEBAUTHN_REQUESTS_PATH; const webResponses = req.method === "POST" && url.pathname === GATEWAY_WEBAUTHN_RESPONSES_PATH; const command = req.method === "POST" && url.pathname.startsWith(`${GATEWAY_API_PREFIX}/`);
   if (!(events || prepare || avatar || localRequests || localResponses || webRequests || webResponses || command)) return respondError(res, 404, `not found: ${req.method} ${url.pathname}`);

@@ -1,8 +1,17 @@
 {
-  "name": "sdk-bots",
-  "version": "0.1.0",
-  "description": "Headless multi-bot orchestration SDK extracted from Grok Bot 0.18 — no Electron UI, local gateway + multi-agent group chat orchestration, third-party inference providers.",
+  "name": "multibot-sdk",
+  "version": "0.1.1",
+  "description": "Headless multi-bot host: local HTTP gateway, group chat, third-party LLMs, directory-scoped tools.",
   "license": "UNLICENSED",
+  "author": "dushaobindoudou",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0xrushmoon/sdk-bots.git"
+  },
+  "bugs": {
+    "url": "https://github.com/0xrushmoon/sdk-bots/issues"
+  },
+  "homepage": "https://github.com/0xrushmoon/sdk-bots#readme",
   "keywords": [
     "bot",
     "multi-agent",
@@ -11,7 +20,8 @@
     "headless",
     "sdk",
     "gateway",
-    "sse"
+    "sse",
+    "sandbox"
   ],
   "type": "module",
   "engines": {
@@ -20,12 +30,12 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "dist/src/sdk/index.js",
-  "types": "dist/src/sdk/index.d.ts",
+  "main": "dist/src/sdk/entry.js",
+  "types": "dist/src/sdk/entry.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/src/sdk/index.js",
-      "types": "./dist/src/sdk/index.d.ts"
+      "import": "./dist/src/sdk/entry.js",
+      "types": "./dist/src/sdk/entry.d.ts"
     },
     "./host": {
       "import": "./dist/src/host/index.js",
@@ -45,8 +55,12 @@
     "test:smoke": "tsx test/smoke.mjs",
     "test:e2e": "tsx test/e2e-mock.mjs",
     "pretest:e2e": "node scripts/build-host-workers.mjs && node scripts/build-box-exec-daemon.mjs",
+    "test:e2e:openrouter": "tsx test/e2e-openrouter.mjs",
+    "pretest:e2e:openrouter": "node scripts/build-host-workers.mjs && node scripts/build-box-exec-daemon.mjs",
     "pretest:integration": "node scripts/build-host-workers.mjs && node scripts/build-box-exec-daemon.mjs",
     "test:integration": "node test/integration/run.mjs",
+    "example:group-chat": "tsx examples/group-chat.mjs",
+    "preexample:group-chat": "node scripts/build-host-workers.mjs && node scripts/build-box-exec-daemon.mjs",
     "cleanup:smoke": "tsx scripts/cleanup-smoke-agents.mjs",
     "prepublishOnly": "npm run build"
   },
@@ -105,6 +119,8 @@
   "files": [
     "dist",
     "README.md",
-    "NOTICE.md"
+    "NOTICE.md",
+    "LICENSE",
+    "CHANGELOG.md"
   ]
 }

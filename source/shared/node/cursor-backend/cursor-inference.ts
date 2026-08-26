@@ -71,6 +71,11 @@ export async function fetchSandPrivacyMode(options: PrivacyLookupOptions, client
 let cachedPrivacyMode: { backendUrl: string; accountScope: string; value: Promise<PrivacyMode | undefined>; expiresAt?: number } | undefined;
 
 export async function settlePrivacyMode(fetchPrivacyMode: PrivacyModeFetcher, options: PrivacyLookupOptions, log: (message: string) => void = console.info): Promise<PrivacyMode | undefined> {
+  if (process.env.SAND_AGENT_MOCK_RESPONSE != null) return SAND_RUN_PRIVACY_MODE_FALLBACK;
+  try {
+    const provider = new SandSettingsStore(join(getSandRootDir(), "settings.json")).getInferenceProvider();
+    if (provider !== "cursor") return SAND_RUN_PRIVACY_MODE_FALLBACK;
+  } catch { /* settings not ready yet */ }
   try { return await fetchPrivacyMode(options); }
   catch (error) { const label = error instanceof Error ? error.name : typeof error; log(`[sand:privacy] privacy-mode lookup failed, using privacy-safe fallback backend=${options.backendUrl} error=${label}`); return undefined; }
 }

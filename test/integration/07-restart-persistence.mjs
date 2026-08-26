@@ -25,7 +25,7 @@ async function phase1() {
   const a1 = await sdk.createAgent({ name: AGENT_NAME, description: "survives restarts" });
   const id1 = agentId(a1);
 
-  const replyPromise = waitTranscript(sdk, MARKER);
+  const replyPromise = waitTranscript(sdk, MARKER, 90_000, id1);
   const sent = await sdk.sendPrompt({ agentId: id1, prompt: "reply before restart" });
   assert(sent != null, "phase1 sendPrompt returned");
   await replyPromise;
@@ -48,7 +48,7 @@ async function phase2() {
   assert(count >= 1, `persisted transcript still contains the pre-restart reply (count=${count})`);
 
   // The restarted host also accepts new work on the restored agent.
-  const reply2 = waitTranscript(sdk, "IT07-MOCK-REPLY should not fire again");
+  const reply2 = waitTranscript(sdk, "IT07-MOCK-REPLY should not fire again", 90_000, found.id);
   await sdk.sendPrompt({ agentId: found.id, prompt: "post-restart turn" });
   await reply2;
   console.log(`[${TAG}] post-restart turn executed`);

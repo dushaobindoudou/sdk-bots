@@ -56,11 +56,17 @@ export function createHostInference(options: HostInferenceOptions) {
   return {
     ...cursor,
     createSession(onRequestId: (requestId: string) => void, sessionOptions?: Parameters<typeof cursor.createSession>[1]) {
+      if (process.env.SAND_AGENT_MOCK_RESPONSE != null) {
+        return routedSession(cursor.createSession(onRequestId, sessionOptions), "cursor");
+      }
       const provider = routerSettings.getInferenceProvider();
       if (provider === "cursor") return routedSession(cursor.createSession(onRequestId, sessionOptions), provider);
       return createProviderPromptSession(provider) as ReturnType<typeof cursor.createSession>;
     },
     createSummarizationSession(onRequestId: (requestId: string) => void, sessionOptions?: Parameters<NonNullable<typeof cursor.createSummarizationSession>>[1]) {
+      if (process.env.SAND_AGENT_MOCK_RESPONSE != null) {
+        return routedSession(cursor.createSession(onRequestId, { ...(sessionOptions ?? {}), isSummarizationSession: true }), "cursor") as ReturnType<NonNullable<typeof cursor.createSummarizationSession>>;
+      }
       const provider = routerSettings.getInferenceProvider();
       if (provider === "cursor") return routedSession(cursor.createSession(onRequestId, { ...(sessionOptions ?? {}), isSummarizationSession: true }), provider) as ReturnType<NonNullable<typeof cursor.createSummarizationSession>>;
       return createProviderPromptSession(provider) as ReturnType<NonNullable<typeof cursor.createSummarizationSession>>;

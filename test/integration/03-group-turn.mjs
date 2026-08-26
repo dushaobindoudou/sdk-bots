@@ -24,7 +24,7 @@ async function main() {
   const group = await sdk.createGroup({ name: "it03-group", description: "it03", memberIds: [id1, id2] });
   const groupId = agentId(group);
 
-  const replyPromise = waitTranscript(sdk, MARKER);
+  const replyPromise = waitTranscript(sdk, MARKER, 90_000, groupId);
 
   const sent = await sdk.sendPrompt({ agentId: groupId, prompt: "discuss the topic" });
   assert(sent != null, "sendPrompt to group returned");

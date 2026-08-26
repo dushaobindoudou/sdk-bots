@@ -4,9 +4,44 @@ export function orderRoundSpeakers<T>(memberIds: readonly T[], round: number): T
 export function isSameMemberSet(a: readonly string[], b: readonly string[]): boolean { if (a.length !== b.length) return false; const set = new Set(a); return b.every((id) => set.has(id)); }
 export class SandGroupNestingError extends Error { readonly nestedGroupIds: string[]; constructor(ids: readonly string[]) { super(`A group chat can only contain individual agents, not other group chats. Remove the group chat${ids.length === 1 ? "" : "s"} from the member list.`); this.name = "SandGroupNestingError"; this.nestedGroupIds = [...ids]; } }
 export function assertMembersAreNotGroups(ids: readonly string[], isGroupId: (id: string) => boolean): void { const nested = [...new Set(ids)].filter(isGroupId); if (nested.length > 0) throw new SandGroupNestingError(nested); }
+export const GROUP_EVERYONE_HANDLES = ["everyone", "all", "所有人", "全员", "大家"] as const;
+export function normalizeMentionText(text: string): string { return text.replaceAll("＠", "@").toLowerCase(); }
 export function memberMentionHandles(name: string): string[] { const lower = name.trim().toLowerCase(); if (!lower) return []; const handles = new Set([lower, lower.replace(/\s+/g, "")]); const first = lower.split(/\s+/)[0]; if (first) handles.add(first); return [...handles]; }
-function isWordChar(char: string | undefined): boolean { return char !== undefined && /[a-z0-9]/.test(char); } function hasMentionAt(lower: string, handle: string): boolean { const needle = `@${handle}`; for (let index = lower.indexOf(needle); index >= 0; index = lower.indexOf(needle, index + 1)) if (!isWordChar(lower[index - 1]) && !isWordChar(lower[index + needle.length])) return true; return false; }
-export function parseGroupMentions(text: string, members: readonly Pick<GroupMember, "id" | "name">[]): { isEveryone: boolean; memberIds: string[] } { const lower = text.toLowerCase(), memberIds: string[] = [], seen = new Set<string>(); for (const member of members) { if (!seen.has(member.id) && memberMentionHandles(member.name).some((handle) => hasMentionAt(lower, handle))) { memberIds.push(member.id); seen.add(member.id); } } return { isEveryone: /(?:^|[^a-z0-9])@(everyone|all)\b/.test(lower), memberIds }; }
+function isLatinHandle(handle: string): boolean { return /^[a-z0-9]/.test(handle); }
+function isHandleBoundary(char: string | undefined): boolean { return char === undefined || !/[a-z0-9_]/i.test(char); }
+function handleFits(rest: string, handle: string): boolean {
+  if (!rest.startsWith(handle)) return false;
+  return isLatinHandle(handle) ? isHandleBoundary(rest[handle.length]) : true;
+}
+export function parseGroupMentions(text: string, members: readonly Pick<GroupMember, "id" | "name">[]): { isEveryone: boolean; memberIds: string[] } {
+  const normalized = normalizeMentionText(text);
+  const memberIds: string[] = [];
+  const seen = new Set<string>();
+  let isEveryone = false;
+  for (let index = normalized.indexOf("@"); index >= 0; index = normalized.indexOf("@", index + 1)) {
+    let cursor = index + 1;
+    while (normalized[cursor] === " " || normalized[cursor] === "\t") cursor += 1;
+    const rest = normalized.slice(cursor);
+    if (GROUP_EVERYONE_HANDLES.some((handle) => handleFits(rest, handle))) {
+      isEveryone = true;
+      continue;
+    }
+    let best: { id: string; length: number } | null = null;
+    for (const member of members) {
+      const handles = memberMentionHandles(member.name);
+      if (member.id) handles.push(member.id.toLowerCase());
+      for (const handle of handles) {
+        if (!handleFits(rest, handle)) continue;
+        if (best == null || handle.length > best.length) best = { id: member.id, length: handle.length };
+      }
+    }
+    if (best != null && !seen.has(best.id)) {
+      seen.add(best.id);
+      memberIds.push(best.id);
+    }
+  }
+  return { isEveryone, memberIds };
+}
 export function resolveResponders<T extends Pick<GroupMember, "id" | "name">>(members: readonly T[], history: readonly GroupMessage[]): T[] { let start = 0; for (let index = history.length - 1; index >= 0; index -= 1) if (history[index]?.speaker.kind === "user") { start = index; break; } let everyone = false; const mentioned = new Set<string>(); for (const message of history.slice(start)) { const targets = parseGroupMentions(message.content, members); everyone ||= targets.isEveryone; for (const id of targets.memberIds) mentioned.add(id); } return everyone || mentioned.size === 0 ? [...members] : members.filter((member) => mentioned.has(member.id)); }
 export function isPassContent(content: string): boolean { const trimmed = content.trim(); return !trimmed || /^\(?\s*pass\s*\)?\.?$/i.test(trimmed); } export function isPotentialPassPrefix(text: string): boolean { const trimmed = text.trim(); return !trimmed || isPassContent(trimmed) || /^\(?\s*(?:p(?:a(?:s(?:s\s*\)?\.?)?)?)?)?$/i.test(trimmed); }
 export function buildGroupRedriveNote(): string { return "\n(Redelivery: your previous attempt at this turn was interrupted by a direct message to you. The room has NOT seen any reply from you for the messages above — anything you said or did while handling that direct message stayed in that private chat. If you already did the work, send the result to this room with SendMessage now; otherwise take the turn normally.)"; }
@@ -14,4 +49,4 @@ export function formatGroupLine(message: GroupMessage, viewerId: string): string
 export function isGroupTurnPromptText(text: string): boolean { const body = text.startsWith(SAND_HIDDEN_PROMPT_MARKER) ? text.slice(SAND_HIDDEN_PROMPT_MARKER.length) : text; return body.startsWith(GROUP_CHAT_TAG_PREFIX); } export function groupDisplayName(group: GroupDescription): string { return group.name.trim() || "the group"; } export function describeGroup(group: GroupDescription): string { const name = groupDisplayName(group), description = group.description.trim(); return description ? `"${name}" — ${description}` : `"${name}"`; } export function formatGroupChatTag(group: GroupDescription, peers: readonly Pick<GroupMember, "name">[]): string { return `${GROUP_CHAT_TAG_PREFIX}"${groupDisplayName(group)}"${peers.length > 0 ? ` - with ${peers.map((peer) => peer.name).join(", ")}` : ""}]`; }
 export function buildGroupMemberSystemPrompt(member: GroupMember, group: GroupDescription, peers: readonly GroupMember[], options: { isSharedRoom?: boolean } = {}): string { const lines = [`You are ${member.name}, one participant in a group chat (${describeGroup(group)}).`]; if (member.description.trim()) lines.push(`Your persona: ${member.description.trim()}`); if (peers.length > 0) lines.push("", "Other participants in the room:", ...peers.map((peer) => `- ${peer.name}${peer.description.trim() ? ` (${peer.description.trim()})` : ""}`)); lines.push("", peers.length > 0 ? `Right now you are speaking in this group chat, with ${peers.map((peer) => peer.name).join(", ")}.` : "Right now you are speaking in this group chat.", options.isSharedRoom ? "This is a cross-user room turn. Tool calls and plain text are private scratch space; only SendMessage plain text is delivered to the room." : "You have your full toolkit in this room. Do the work first, then deliver the result with SendMessage.", "", `Stay fully in character as ${member.name}. The ONLY way to say something the room can see is the SendMessage tool. Keep each message short and conversational. If you have nothing new worth adding, send exactly \"(pass)\". Never reveal private one-on-one context.`); return lines.join("\n"); }
 export function messagesSinceMemberLastSpoke(history: readonly GroupMessage[], memberId: string): readonly GroupMessage[] { for (let index = history.length - 1; index >= 0; index -= 1) { const speaker = history[index]?.speaker; if (speaker?.kind === "member" && speaker.id === memberId) return history.slice(index + 1); } return history; }
-export function buildGroupTurnPrompt(args: { member: GroupMember; group: GroupDescription; peers: readonly GroupMember[]; newMessages: readonly GroupMessage[] }): string { const lines = [formatGroupChatTag(args.group, args.peers), args.newMessages.length === 0 ? "No new messages in the room since your last turn." : `New messages in the room (oldest first):\n${formatGroupHistory(args.newMessages, args.member.id)}`, "", `It's your turn, ${args.member.name}. Reply in character with a single SendMessage if you have something worth adding, or send \"(pass)\" if you don't.`]; return lines.join("\n"); }
+export function buildGroupTurnPrompt(args: { member: GroupMember; group: GroupDescription; peers: readonly GroupMember[]; newMessages: readonly GroupMessage[]; addressed?: boolean }): string { const close = args.addressed === true ? `It's your turn, ${args.member.name}. The user @mentioned you. Reply in character with a single SendMessage — do not pass.` : `It's your turn, ${args.member.name}. Reply in character with a single SendMessage if you have something worth adding, or send \"(pass)\" if you don't.`; const lines = [formatGroupChatTag(args.group, args.peers), args.newMessages.length === 0 ? "No new messages in the room since your last turn." : `New messages in the room (oldest first):\n${formatGroupHistory(args.newMessages, args.member.id)}`, "", close]; return lines.join("\n"); }

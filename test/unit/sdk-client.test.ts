@@ -14,7 +14,7 @@
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 
-import { SdkBotsClient } from "../../src/sdk/index.ts";
+import { SdkBotsClient, normalizeAgentList } from "../../src/sdk/index.ts";
 
 const BASE = "http://127.0.0.1:7331";
 
@@ -394,5 +394,63 @@ describe("subscribe()", () => {
     dispose();
     await new Promise(r => setTimeout(r, 10));
     assert.ok(h.calls.length >= 1);
+  });
+});
+
+describe("listAgents() — response envelope", () => {
+  test("normalizeAgentList wraps a raw gateway array", () => {
+    assert.deepEqual(normalizeAgentList([{ id: "a" }]), { agents: [{ id: "a" }] });
+  });
+
+  test("normalizeAgentList passes through { agents }", () => {
+    assert.deepEqual(normalizeAgentList({ agents: [{ id: "b" }] }), { agents: [{ id: "b" }] });
+  });
+
+  test("normalizeAgentList returns an empty list for junk", () => {
+    assert.deepEqual(normalizeAgentList(null), { agents: [] });
+    assert.deepEqual(normalizeAgentList({}), { agents: [] });
+  });
+
+  test("listAgents wraps a raw JSON array from the gateway", async () => {
+    const h = mockFetch();
+    h.route("*", () => json([{ id: "a1", name: "one" }, { id: "a2", name: "two" }]));
+    const sdk = new SdkBotsClient({ baseUrl: BASE, fetch: h.fetch });
+    const listed = await sdk.listAgents();
+    assert.deepEqual(listed, { agents: [{ id: "a1", name: "one" }, { id: "a2", name: "two" }] });
+  });
+
+  test("listAgents keeps an already-wrapped envelope", async () => {
+    const h = mockFetch();
+    h.route("*", () => json({ result: { agents: [{ id: "x" }] } }));
+    const sdk = new SdkBotsClient({ baseUrl: BASE, fetch: h.fetch });
+    const listed = await sdk.listAgents();
+    assert.deepEqual(listed, { agents: [{ id: "x" }] });
+  });
+});
+
+describe("subscribeWhenReady()", () => {
+  test("resolves only after the events endpoint accepts the connection", async () => {
+    let release!: (res: Response) => void;
+    const gate = new Promise<Response>((resolve) => { release = resolve; });
+    const h = mockFetch();
+    h.route("GET *", () => gate as unknown as Response);
+    const origFetch = h.fetch;
+    const wrapped = (async (input: any, init?: any) => {
+      const rec = { method: "GET", url: String(input), headers: {}, body: undefined };
+      h.calls.push(rec);
+      return gate;
+    }) as typeof fetch;
+
+    const sdk = new SdkBotsClient({ baseUrl: BASE, fetch: wrapped });
+    let opened = false;
+    const pending = sdk.subscribeWhenReady(() => {}).then((dispose) => {
+      opened = true;
+      dispose();
+    });
+    await new Promise((r) => setTimeout(r, 20));
+    assert.equal(opened, false);
+    release(sseResponse([`data: ${JSON.stringify({ channel: "t" })}\n\n`]));
+    await pending;
+    assert.equal(opened, true);
   });
 });

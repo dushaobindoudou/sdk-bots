@@ -12,6 +12,7 @@ import { resolveClaudeCodeCliPath } from "../../../shared/node/inference-router-
 import { getSandRootDir } from "../../host-paths.js";
 import { SandSettingsStore } from "../../../shared/node/settings/sand-settings-store.js";
 import { getBoxSecretsStorePath } from "../secrets/secrets-service.js";
+import { GROUP_CHAT_TAG_PREFIX, SAND_HIDDEN_PROMPT_MARKER } from "../../groups/group-chat.js";
 import { streamCodexDirectResponses, type CodexDirectTool } from "./codex-direct-responses.js";
 import type { LabelMessage, PromptExecutor } from "./sand-labeling.js";
 
@@ -42,10 +43,25 @@ function persistedSecrets(): Record<string, string> {
   } catch { return {}; }
 }
 
-function openRouterCredential(): string {
-  const value = process.env.OPENROUTER_API_KEY?.trim() || persistedSecrets().OPENROUTER_API_KEY?.trim();
-  if (value == null || value.length === 0) throw new Error("OpenRouter needs OPENROUTER_API_KEY. Add it in Settings → Router.");
-  return value;
+export const OPENROUTER_CLOUD_BASE_URL = "https://openrouter.ai/api/v1";
+export const OPENROUTER_DEFAULT_BASE_URL = "http://127.0.0.1:3080/freeroute/v1";
+export const OPENROUTER_LOCAL_PLACEHOLDER_KEY = "local";
+
+export function resolveOpenRouterEndpoint(
+  env: NodeJS.ProcessEnv = process.env,
+  secrets: Record<string, string> = persistedSecrets(),
+): { baseURL: string; apiKey: string; modelId: string } {
+  const baseURL = env.SAND_OPENROUTER_BASE_URL?.trim().replace(/\/+$/, "") || OPENROUTER_DEFAULT_BASE_URL;
+  const isOfficial = baseURL === OPENROUTER_CLOUD_BASE_URL;
+  const modelId = env.SAND_OPENROUTER_MODEL?.trim() || (isOfficial ? "deepseek/deepseek-chat" : "auto");
+  const envKey = env.OPENROUTER_API_KEY?.trim();
+  const apiKey = envKey
+    || (isOfficial ? secrets.OPENROUTER_API_KEY?.trim() : undefined)
+    || (isOfficial ? undefined : OPENROUTER_LOCAL_PLACEHOLDER_KEY);
+  if (apiKey == null || apiKey.length === 0) {
+    throw new Error("OpenRouter needs OPENROUTER_API_KEY. Add it in Settings → Router.");
+  }
+  return { baseURL, apiKey, modelId };
 }
 
 function providerPrompt(messages: readonly ProviderMessage[]): string {
@@ -244,14 +260,303 @@ function toToolSet(definitions: readonly Loose[] | undefined, executeTool?: Rout
   return Object.keys(tools).length === 0 ? undefined : tools;
 }
 
+const OPENROUTER_CHAT_PROMPT = [
+  "You are a helpful assistant in a local multi-bot console.",
+  "You have a local sandbox: Shell/Read/Write and related tools run in /workspace.",
+  "Use tools when they help (run commands, read or write files, search). Then tell the user via SendMessage.",
+  "The user only sees SendMessage tool calls (type \"text\", content string). Plain assistant text is invisible.",
+  "Keep replies concise.",
+].join("\n");
+
+const OPENROUTER_SANDBOX_TOOLS = new Set([
+  "SendMessage",
+  "SendToAgent",
+  "Shell",
+  "Read",
+  "Write",
+  "Delete",
+  "Glob",
+  "Grep",
+  "StrReplace",
+  "AwaitShell",
+  "WebSearch",
+  "WebFetch",
+  "LS",
+  "ListDir",
+  "ReadFile",
+  "WriteFile",
+  "DeleteFile",
+  "ApplyPatch",
+  "EditNotebook",
+]);
+
+export function openRouterChatTools(definitions?: readonly Loose[]): readonly Loose[] | undefined {
+  if (definitions == null || definitions.length === 0) return definitions;
+  const filtered = definitions.filter((definition) => typeof definition.name === "string" && OPENROUTER_SANDBOX_TOOLS.has(definition.name));
+  return filtered.length > 0 ? filtered : definitions;
+}
+
+async function* rethrowProviderStreamErrors<T extends { type?: string; error?: unknown }>(stream: AsyncIterable<T>): AsyncGenerator<T> {
+  for await (const event of stream) {
+    if (event?.type === "error") {
+      const error = event.error;
+      throw error instanceof Error ? error : new Error(String(error ?? "provider stream error"));
+    }
+    yield event;
+  }
+}
+
+function openRouterRequest(messages: readonly ProviderMessage[], definitions?: readonly Loose[], executeTool?: RoutedToolExecutor) {
+  const endpoint = resolveOpenRouterEndpoint();
+  const model: LanguageModelV1 = createOpenAI({ apiKey: endpoint.apiKey, baseURL: endpoint.baseURL, compatibility: "compatible", name: "openrouter", headers: { "HTTP-Referer": "https://github.com/grok-bot-reconstructed", "X-Title": "Grok Bot Reconstructed" } }).chat(endpoint.modelId as any);
+  const tools = toToolSet(openRouterChatTools(definitions), executeTool);
+  return {
+    endpoint,
+    model,
+    tools,
+    input: {
+      model,
+      system: OPENROUTER_CHAT_PROMPT,
+      messages: messages as CoreMessage[],
+      ...(tools === undefined ? {} : { tools, toolChoice: "auto" }),
+      maxSteps: 8 as const,
+      maxRetries: 1 as const,
+    },
+  };
+}
+
+const LOCAL_CHAT_TOOLS: readonly Loose[] = [{
+  name: "SendMessage",
+  description: "Send a text message to the user. This is the only way they can see your reply.",
+  inputSchema: {
+    type: "object",
+    properties: {
+      type: { type: "string", enum: ["text"] },
+      content: { type: "string" },
+    },
+    required: ["type", "content"],
+  },
+}];
+
+type LocalChatMessage = {
+  role: string;
+  content?: string | null;
+  tool_calls?: { id: string; type: "function"; function: { name: string; arguments: string } }[];
+  tool_call_id?: string;
+};
+
+function stringifyContent(content: unknown, limit = 6_000): string {
+  const raw = typeof content === "string" ? content : JSON.stringify(content);
+  return raw.length > limit ? `${raw.slice(0, limit)}…` : raw;
+}
+
+function serializeLocalMessages(messages: readonly ProviderMessage[]): LocalChatMessage[] {
+  const out: LocalChatMessage[] = [];
+  for (const message of messages) {
+    if (message.role === "system") continue;
+    if (message.role === "tool") {
+      const parts = Array.isArray(message.content) ? message.content as Loose[] : [];
+      const result = parts.find((part) => part?.type === "tool-result");
+      out.push({
+        role: "tool",
+        tool_call_id: String((message as Loose).id ?? result?.toolCallId ?? ""),
+        content: stringifyContent(result?.result ?? message.content),
+      });
+      continue;
+    }
+    if (message.role === "assistant" && Array.isArray(message.content)) {
+      const parts = message.content as Loose[];
+      const toolCalls = parts.filter((part) => part?.type === "tool-call");
+      if (toolCalls.length > 0) {
+        const text = parts.filter((part) => part?.type === "text").map((part) => String(part.text ?? "")).join("");
+        out.push({
+          role: "assistant",
+          content: text.length > 0 ? stringifyContent(text, 4_000) : null,
+          tool_calls: toolCalls.map((call) => ({
+            id: String(call.toolCallId ?? crypto.randomUUID()),
+            type: "function" as const,
+            function: {
+              name: String(call.toolName ?? "unknown"),
+              arguments: typeof call.args === "string" ? call.args : JSON.stringify(call.args ?? {}),
+            },
+          })),
+        });
+        continue;
+      }
+    }
+    const raw = typeof message.content === "string" ? message.content : JSON.stringify(message.content);
+    out.push({
+      role: message.role === "assistant" ? "assistant" : "user",
+      content: stringifyContent(raw, 4_000),
+    });
+  }
+  return out;
+}
+
+function isGroupTurnUserText(text: string): boolean {
+  return text.includes(GROUP_CHAT_TAG_PREFIX) || text.includes(SAND_HIDDEN_PROMPT_MARKER);
+}
+
+export function compactLocalMessages(messages: readonly ProviderMessage[]): LocalChatMessage[] {
+  const chat = serializeLocalMessages(messages);
+  let lastUserIndex = -1;
+  for (let index = chat.length - 1; index >= 0; index -= 1) {
+    if (chat[index]?.role === "user") {
+      lastUserIndex = index;
+      break;
+    }
+  }
+  if (lastUserIndex >= 0 && typeof chat[lastUserIndex]?.content === "string" && isGroupTurnUserText(String(chat[lastUserIndex].content))) {
+    return chat.slice(lastUserIndex);
+  }
+  if (lastUserIndex < 0) return chat.slice(-8);
+  return chat.slice(Math.max(0, lastUserIndex - 6));
+}
+
+function localSystemPrompt(messages: readonly ProviderMessage[]): string {
+  const lastUser = [...serializeLocalMessages(messages)].reverse().find((message) => message.role === "user");
+  if (lastUser != null && typeof lastUser.content === "string" && isGroupTurnUserText(lastUser.content)) {
+    return [
+      OPENROUTER_CHAT_PROMPT,
+      "This turn is a group-chat member turn. Stay in character as named in the user message.",
+      "You may use sandbox tools if they help, then speak to the room with SendMessage. If you have nothing to add, send exactly \"(pass)\".",
+    ].join("\n");
+  }
+  return OPENROUTER_CHAT_PROMPT;
+}
+
+function toOpenAITools(definitions?: readonly Loose[]): { type: "function"; function: { name: string; description: string; parameters: unknown } }[] | undefined {
+  const filtered = openRouterChatTools(definitions) ?? (definitions == null || definitions.length === 0 ? LOCAL_CHAT_TOOLS : undefined);
+  if (filtered == null || filtered.length === 0) return undefined;
+  const tools = [];
+  for (const definition of filtered) {
+    if (typeof definition.name !== "string" || definition.name.length === 0) continue;
+    const parameters = definition.inputSchema ?? definition.parameters ?? { type: "object", properties: {} };
+    const encoded = JSON.stringify(parameters);
+    tools.push({
+      type: "function" as const,
+      function: {
+        name: definition.name,
+        description: String(definition.description ?? "").slice(0, 800),
+        parameters: encoded.length > 8_000 ? { type: "object", additionalProperties: true } : parameters,
+      },
+    });
+    if (tools.length >= 16) break;
+  }
+  return tools.length > 0 ? tools : undefined;
+}
+
+async function localChatCompletion(endpoint: { baseURL: string; apiKey: string; modelId: string }, messages: readonly ProviderMessage[], definitions?: readonly Loose[]): Promise<{
+  text: string;
+  finishReason: string;
+  toolCalls: { toolCallId: string; toolName: string; args: unknown }[];
+  usage: { promptTokens: number; completionTokens: number };
+}> {
+  const headers: Record<string, string> = { "content-type": "application/json" };
+  if (endpoint.apiKey !== OPENROUTER_LOCAL_PLACEHOLDER_KEY) headers.authorization = `Bearer ${endpoint.apiKey}`;
+  const tools = toOpenAITools(definitions);
+  const res = await fetch(`${endpoint.baseURL}/chat/completions`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      model: endpoint.modelId,
+      messages: [{ role: "system", content: localSystemPrompt(messages) }, ...compactLocalMessages(messages)],
+      ...(tools == null ? {} : { tools, tool_choice: "auto" }),
+    }),
+  });
+  const raw = await res.text();
+  if (!res.ok) throw new Error(`local chat ${res.status}: ${raw.slice(0, 400)}`);
+  const data = JSON.parse(raw) as Loose;
+  const choice = (data.choices as Loose[] | undefined)?.[0] ?? {};
+  const message = (choice.message ?? {}) as Loose;
+  const toolCalls = Array.isArray(message.tool_calls) ? message.tool_calls.flatMap((call: Loose) => {
+    const fn = call?.function ?? {};
+    if (typeof fn.name !== "string" || fn.name.length === 0) return [];
+    let args: unknown = {};
+    try { args = typeof fn.arguments === "string" ? JSON.parse(fn.arguments) : fn.arguments ?? {}; } catch { args = { content: String(fn.arguments ?? "") }; }
+    return [{ toolCallId: typeof call.id === "string" ? call.id : crypto.randomUUID(), toolName: fn.name, args }];
+  }) : [];
+  const usage = data.usage ?? {};
+  const text = typeof message.content === "string" ? message.content : "";
+  if (toolCalls.length === 0 && text.trim().length > 0) {
+    toolCalls.push({
+      toolCallId: crypto.randomUUID(),
+      toolName: "SendMessage",
+      args: { type: "text", content: text.trim() },
+    });
+  }
+  return {
+    text,
+    finishReason: typeof choice.finish_reason === "string" ? choice.finish_reason : "stop",
+    toolCalls,
+    usage: {
+      promptTokens: Number(usage.prompt_tokens) || 0,
+      completionTokens: Number(usage.completion_tokens) || 0,
+    },
+  };
+}
+
+function openRouterFromLocalChat(
+  pending: Promise<Awaited<ReturnType<typeof localChatCompletion>>>,
+  invocationId: string,
+  modelId: string,
+  onUsage?: (usage: UsageRecord) => void,
+) {
+  const usage = deferred<{ promptTokens: number; completionTokens: number; totalTokens: number }>();
+  const extendedUsage = deferred<{ inputTokens: number; outputTokens: number; cacheReadTokens: number; cacheWriteTokens: number; maxTokens: number }>();
+  const resultResponse = deferred<ReturnType<typeof response>>();
+  const metadata = deferred<Record<string, unknown>>();
+  const fullStream = (async function* () {
+    try {
+      const result = await pending;
+      console.info(`[sdk-bots] local chat finish=${result.finishReason} tools=${result.toolCalls.map((call) => call.toolName).join(",") || "-"}`);
+      const basic = { promptTokens: result.usage.promptTokens, completionTokens: result.usage.completionTokens, totalTokens: result.usage.promptTokens + result.usage.completionTokens };
+      const extended = { inputTokens: result.usage.promptTokens, outputTokens: result.usage.completionTokens, cacheReadTokens: 0, cacheWriteTokens: 0, maxTokens: 0 };
+      onUsage?.(extended);
+      usage.resolve(basic);
+      extendedUsage.resolve(extended);
+      metadata.resolve({});
+      const content: Loose[] = [];
+      if (result.text) {
+        content.push({ type: "text", text: result.text });
+        yield { type: "text-delta" as const, textDelta: result.text };
+      }
+      for (const call of result.toolCalls) {
+        yield { type: "tool-call-streaming-start" as const, toolCallId: call.toolCallId, toolName: call.toolName };
+        yield { type: "tool-call-delta" as const, toolCallId: call.toolCallId, toolName: call.toolName, argsTextDelta: JSON.stringify(call.args) };
+        yield { type: "tool-call" as const, toolCallId: call.toolCallId, toolName: call.toolName, args: call.args };
+        content.push({ type: "tool-call", toolCallId: call.toolCallId, toolName: call.toolName, args: call.args });
+      }
+      resultResponse.resolve({
+        id: invocationId,
+        modelId,
+        timestamp: new Date(),
+        headers: {},
+        messages: [{ role: "assistant", content: content.length > 0 ? content : [{ type: "text", text: "" }] }],
+      });
+      yield { type: "finish" as const, finishReason: result.finishReason, usage: basic };
+    } catch (error) {
+      console.error(`[sdk-bots] local chat failed: ${error instanceof Error ? error.message : String(error)}`);
+      usage.reject(error);
+      extendedUsage.reject(error);
+      metadata.reject(error);
+      resultResponse.reject(error);
+      throw error;
+    }
+  })();
+  return { fullStream, response: resultResponse.promise, usage: usage.promise, extendedUsage: extendedUsage.promise, providerMetadata: metadata.promise, invocationId: Promise.resolve(invocationId) };
+}
+
 function openRouterExecutor(messages: readonly ProviderMessage[], invocationId: string, definitions?: readonly Loose[], executeTool?: RoutedToolExecutor, onUsage?: (usage: UsageRecord) => void) {
-  const id = process.env.SAND_OPENROUTER_MODEL?.trim() || "openai/gpt-5.2";
-  const model: LanguageModelV1 = createOpenAI({ apiKey: openRouterCredential(), baseURL: "https://openrouter.ai/api/v1", compatibility: "compatible", name: "openrouter", headers: { "HTTP-Referer": "https://github.com/grok-bot-reconstructed", "X-Title": "Grok Bot Reconstructed" } }).chat(id as any);
-  const tools = toToolSet(definitions, executeTool);
-  const result = streamText({ model, system: GROK_ROUTER_SYSTEM_PROMPT, messages: messages as CoreMessage[], ...(tools === undefined ? {} : { tools }), toolCallStreaming: true, maxSteps: tools === undefined ? 1 : 8 });
+  const { endpoint, input } = openRouterRequest(messages, definitions, executeTool);
+  if (endpoint.baseURL !== OPENROUTER_CLOUD_BASE_URL) {
+    console.info(`[sdk-bots] inference ${endpoint.baseURL} model=${endpoint.modelId}`);
+    return openRouterFromLocalChat(localChatCompletion(endpoint, messages, definitions), invocationId, endpoint.modelId, onUsage);
+  }
+  const result = streamText({ ...input, toolCallStreaming: true });
   const extendedUsage = result.usage.then(value => ({ inputTokens: value.promptTokens, outputTokens: value.completionTokens, cacheReadTokens: 0, cacheWriteTokens: 0, maxTokens: 0 }));
   if (onUsage != null) void extendedUsage.then(onUsage);
-  return { fullStream: result.fullStream, response: result.response, usage: result.usage, extendedUsage, providerMetadata: result.providerMetadata, invocationId: Promise.resolve(invocationId) };
+  return { fullStream: rethrowProviderStreamErrors(result.fullStream), response: result.response, usage: result.usage, extendedUsage, providerMetadata: result.providerMetadata, invocationId: Promise.resolve(invocationId) };
 }
 
 class ProviderPromptExecutor extends BasePromptExecutor<ProviderMessage> {
@@ -264,7 +569,7 @@ class ProviderPromptExecutor extends BasePromptExecutor<ProviderMessage> {
 }
 
 export function createProviderPromptSession(provider: RoutedProvider): { getModelId(): string; getExecutor(state?: unknown): PromptExecutor } {
-  const modelId = provider === "codex" ? configuredCodexModel() : provider === "claude-code" ? "claude-code" : process.env.SAND_OPENROUTER_MODEL?.trim() || "openai/gpt-5.2";
+  const modelId = provider === "codex" ? configuredCodexModel() : provider === "claude-code" ? "claude-code" : resolveOpenRouterEndpoint().modelId;
   return { getModelId: () => modelId, getExecutor: state => new ProviderPromptExecutor(provider, Array.isArray(state) ? state as ProviderMessage[] : undefined, usage => recordRoutedUsage(provider, usage)) };
 }
 

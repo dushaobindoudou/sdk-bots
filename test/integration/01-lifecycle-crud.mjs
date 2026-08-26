@@ -20,14 +20,20 @@ async function main() {
   assert(health && typeof health === "object", "health returned an object");
 
   let agents = await sdk.listAgents();
-  const before = (agents?.agents ?? []).length;
+  const beforeIds = new Set((agents.agents ?? []).map((a) => a.id));
 
   const a1 = await sdk.createAgent({ name: "it01-researcher", description: "researches" });
   const a2 = await sdk.createAgent({ name: "it01-writer", description: "writes" });
   const id1 = agentId(a1), id2 = agentId(a2);
 
   agents = await sdk.listAgents();
-  assertEqual((agents?.agents ?? []).length, before + 2, "listAgents grows by 2");
+  const listedIds = (agents.agents ?? []).map((a) => a.id);
+  // listAgents() itself may mint a fallback "Grok" session, so do not assert
+  // a raw length delta. The CRUD contract is that both created ids are listed.
+  assert(
+    listedIds.includes(id1) && listedIds.includes(id2),
+    `listAgents contains both created agents (listed=${listedIds.join(",") || "(none)"}, before=${[...beforeIds].join(",") || "(none)"})`,
+  );
 
   const group = await sdk.createGroup({ name: "it01-war-room", description: "it01", memberIds: [id1, id2] });
   const groupId = agentId(group);
@@ -40,7 +46,10 @@ async function main() {
 
   const tail = await sdk.getAgentTranscriptTail({ id: id1 });
   assert(tail != null, "getAgentTranscriptTail returned");
-  assertEqual((tail?.entries ?? []).length, 0, "fresh agent transcript is empty");
+  // createAgent may seed a hidden onboarding/kickstart user message; the
+  // contract is that a brand-new agent has not sent a visible reply yet.
+  const sent = (tail.entries ?? []).filter((e) => e.kind === "send-message");
+  assertEqual(sent.length, 0, "fresh agent has no SendMessage yet");
 
   await sdk.deleteAgent({ id: id2 });
   await sdk.deleteAgent({ id: groupId });

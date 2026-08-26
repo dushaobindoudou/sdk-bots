@@ -8,6 +8,7 @@ import {
   isPassContent,
   messagesSinceMemberLastSpoke,
   orderRoundSpeakers,
+  parseGroupMentions,
   resolveResponders,
   type GroupDescription,
   type GroupMember,
@@ -86,12 +87,19 @@ export class GroupChatOrchestrator {
       this.deps.isSharedRoom === true
         ? history.slice(-SHARED_ROOM_HISTORY_LIMIT)
         : messagesSinceMemberLastSpoke(history, member.id);
+    let addressed = false;
+    for (let index = history.length - 1; index >= 0; index -= 1) {
+      if (history[index]?.speaker.kind !== "user") continue;
+      const mentions = parseGroupMentions(history[index]!.content, members);
+      addressed = mentions.isEveryone || mentions.memberIds.includes(member.id);
+      break;
+    }
     const sent = await this.deps.runMemberTurn({
       member,
       systemPrompt: buildGroupMemberSystemPrompt(member, group, peers, {
         isSharedRoom: this.deps.isSharedRoom === true,
       }),
-      prompt: buildGroupTurnPrompt({ member, group, peers, newMessages }),
+      prompt: buildGroupTurnPrompt({ member, group, peers, newMessages, addressed }),
     });
 
     const spoken: string[] = [];

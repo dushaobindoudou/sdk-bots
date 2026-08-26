@@ -19,6 +19,19 @@ export interface SdkBotsClientOptions {
   fetch?: typeof fetch;
 }
 
+export interface AgentList {
+  agents: any[];
+}
+
+/** Gateway may return a raw array or `{ agents }`. SDK always exposes the envelope. */
+export function normalizeAgentList(raw: unknown): AgentList {
+  if (Array.isArray(raw)) return { agents: raw };
+  if (raw && typeof raw === "object" && Array.isArray((raw as { agents?: unknown }).agents)) {
+    return { agents: (raw as { agents: any[] }).agents };
+  }
+  return { agents: [] };
+}
+
 export class SdkBotsClient {
   private readonly baseUrl: string;
   private readonly token?: string;
@@ -62,7 +75,9 @@ export class SdkBotsClient {
   createAgent(args: { name: string; description?: string; title?: string; clientNonce?: string }) {
     return this.call("createAgent", args);
   }
-  listAgents() { return this.call("listAgents"); }
+  listAgents(): Promise<AgentList> {
+    return this.call("listAgents").then(normalizeAgentList);
+  }
   countAgents() { return this.call("countAgents"); }
   searchAgents(args: { query: string }) { return this.call("searchAgents", args); }
   updateAgent(args: { id: string; profile: Record<string, unknown> }) { return this.call("updateAgent", args); }
@@ -90,12 +105,22 @@ export class SdkBotsClient {
 
   /** Subscribe to the SSE event stream. Returns an async iterator of {channel, payload}. */
   async *events(signal?: AbortSignal): AsyncGenerator<{ channel: string; payload: any }> {
+    const reader = await this.openEventStream(signal);
+    yield* this.readSseEvents(reader);
+  }
+
+  private async openEventStream(signal?: AbortSignal): Promise<ReadableStreamDefaultReader<Uint8Array>> {
     const res = await this.fetchFn(`${this.baseUrl}/events`, {
       headers: this.headers({ accept: "text/event-stream" }),
       signal,
     });
     if (!res.ok || !res.body) throw new Error(`events failed: ${res.status}`);
-    const reader = res.body.getReader();
+    return res.body.getReader();
+  }
+
+  private async *readSseEvents(
+    reader: ReadableStreamDefaultReader<Uint8Array>,
+  ): AsyncGenerator<{ channel: string; payload: any }> {
     const decoder = new TextDecoder();
     let buffer = "";
     let dataBuffer = "";
@@ -113,6 +138,24 @@ export class SdkBotsClient {
         }
       }
     }
+  }
+
+  /**
+   * Opens the SSE stream and resolves once the gateway has accepted the
+   * connection — callers that send work immediately after must use this so
+   * transcript events cannot race the handshake.
+   */
+  async subscribeWhenReady(
+    handler: (event: { channel: string; payload: any }) => void,
+  ): Promise<() => void> {
+    const ctrl = new AbortController();
+    const reader = await this.openEventStream(ctrl.signal);
+    (async () => {
+      try {
+        for await (const ev of this.readSseEvents(reader)) handler(ev);
+      } catch { /* stream closed */ }
+    })();
+    return () => ctrl.abort();
   }
 
   /** Event-emitter style subscription. Returns a disposer. */

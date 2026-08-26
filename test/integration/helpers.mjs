@@ -27,23 +27,78 @@ export async function boot({ name, reply, dataDir, token, port }) {
   return host;
 }
 
-/** Resolves with the first transcript-channel event matching the marker. */
-export function waitTranscript(sdk, marker, timeoutMs = 90_000) {
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => {
-      dispose();
-      reject(new Error(`timed out waiting for "${marker}" on the transcript channel`));
-    }, timeoutMs);
-    const dispose = sdk.subscribe((ev) => {
-      if (ev?.channel !== "transcript") return;
-      const text = JSON.stringify(ev?.payload ?? {});
-      if (text.includes(marker)) {
-        clearTimeout(timer);
-        dispose();
-        resolve(ev.payload);
-      }
-    });
+/**
+ * Resolves when `marker` appears as a *new* transcript hit after this wait
+ * starts. Does not block the caller — start this, then sendPrompt, then await
+ * the returned promise.
+ *
+ * Matching against the current tail is not enough: a previous turn's mock
+ * reply stays in the transcript, so the next wait would resolve immediately
+ * without seeing a new SendMessage.
+ */
+export function waitTranscript(sdk, marker, timeoutMs = 90_000, agentId) {
+  let settled = false;
+  let resolve;
+  let reject;
+  const seen = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
   });
+  let dispose = () => {};
+  let poll;
+  const finishOk = (payload) => {
+    if (settled) return;
+    settled = true;
+    clearTimeout(timer);
+    if (poll != null) clearInterval(poll);
+    dispose();
+    resolve(payload);
+  };
+  const timer = setTimeout(() => {
+    if (settled) return;
+    settled = true;
+    if (poll != null) clearInterval(poll);
+    dispose();
+    reject(new Error(`timed out waiting for "${marker}" on the transcript channel`));
+  }, timeoutMs);
+
+  const hitAfterBaseline = (tail, baseline) =>
+    countTranscriptMatches(tail, marker).count > baseline;
+
+  void (async () => {
+    let baseline = 0;
+    if (agentId != null) {
+      try {
+        const tail = await sdk.getAgentTranscriptTail({ id: agentId });
+        if (settled) return;
+        baseline = countTranscriptMatches(tail, marker).count;
+      } catch {
+        /* empty agent or not yet open */
+      }
+    }
+    try {
+      dispose = await sdk.subscribeWhenReady((ev) => {
+        if (!JSON.stringify(ev ?? {}).includes(marker)) return;
+        if (agentId == null) {
+          finishOk(ev?.payload ?? ev);
+          return;
+        }
+        void sdk.getAgentTranscriptTail({ id: agentId }).then((tail) => {
+          if (hitAfterBaseline(tail, baseline)) finishOk(tail);
+        }).catch(() => {});
+      });
+    } catch {
+      /* SSE failed; tail polling still runs */
+    }
+    if (agentId == null || settled) return;
+    poll = setInterval(() => {
+      void sdk.getAgentTranscriptTail({ id: agentId }).then((tail) => {
+        if (hitAfterBaseline(tail, baseline)) finishOk(tail);
+      }).catch(() => {});
+    }, 250);
+  })();
+
+  return seen;
 }
 
 export function assert(cond, message) {
@@ -79,13 +134,15 @@ export function agentId(result) {
   return id;
 }
 
-/** Counts transcript-tail entries whose message content includes marker. */
+/** Counts assistant/send-message entries whose content includes marker. User prompts are skipped so a marker mentioned in the prompt cannot false-green a wait. */
 export function countTranscriptMatches(tail, marker) {
   const entries = tail?.entries ?? tail?.transcript?.entries ?? [];
   let count = 0;
   for (const entry of entries) {
-    const content = entry?.message?.content;
-    if (typeof content === "string" && content.includes(marker)) count += 1;
+    if (entry?.kind === "message" && entry?.role === "user") continue;
+    const content = entry?.message?.content ?? entry?.content;
+    const blob = typeof content === "string" ? content : JSON.stringify(entry ?? {});
+    if (blob.includes(marker)) count += 1;
   }
   return { count, total: entries.length };
 }
