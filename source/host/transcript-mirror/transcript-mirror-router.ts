@@ -97,7 +97,26 @@ export class RoutedTranscriptMirror<Checkpoint, Store> {
     finalizeCheckpoint = false,
     writeLegacyCheckpoint = finalizeCheckpoint
   ): Promise<void> {
-    if (await this.route(conversationId) === "journal") {
+    // A conversation's first journal-routed interaction must seed the
+    // in-memory journal state (replay any pending WAL, initialize the
+    // canonical file cursor) before preparing — the journal's prepare
+    // otherwise rejects with "must recover before preparing".
+    // skipCheckpoint already recovers on newly-owned routes; prepare needs
+    // the identical treatment.
+    const cachedRoute = this.routes.get(conversationId);
+    const selected = cachedRoute ?? this.selectRoute(conversationId);
+    if (cachedRoute == null) {
+      this.routes.set(conversationId, selected);
+    }
+    if (await selected === "journal") {
+      if (cachedRoute == null) {
+        await this.journal.recover(
+          ctx,
+          conversationId,
+          checkpoint,
+          blobStore
+        );
+      }
       await this.journal.prepareCheckpoint(
         ctx,
         conversationId,
