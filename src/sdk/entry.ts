@@ -138,7 +138,12 @@ export async function startHost(options: StartHostOptions = {}): Promise<Started
   const daemonEntry = resolveBoxExecDaemonEntry();
   if (daemonEntry != null) {
     envToSet.SAND_BOX_EXEC_DAEMON_ENTRY = daemonEntry;
-    delete process.env.SAND_USE_EXISTING_BOX_EXEC_DAEMON;
+    // An explicit embedder opt-in (e.g. a second host on one machine reusing
+    // the already-running daemon) wins over bundling our own; only clear the
+    // flag when the embedder did not set it.
+    if (process.env.SAND_USE_EXISTING_BOX_EXEC_DAEMON !== "1") {
+      delete process.env.SAND_USE_EXISTING_BOX_EXEC_DAEMON;
+    }
   } else {
     envToSet.SAND_USE_EXISTING_BOX_EXEC_DAEMON = "1";
   }
