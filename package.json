@@ -9,9 +9,9 @@
     "url": "git+https://github.com/dushaobindoudou/sdk-bots.git"
   },
   "bugs": {
-    "url": "https://github.com/0xrushmoon/sdk-bots/issues"
+    "url": "https://github.com/dushaobindoudou/sdk-bots/issues"
   },
-  "homepage": "https://github.com/0xrushmoon/sdk-bots#readme",
+  "homepage": "https://github.com/dushaobindoudou/sdk-bots#readme",
   "keywords": [
     "bot",
     "multi-agent",
