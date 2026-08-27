@@ -1,11 +1,11 @@
 import { readdirSync, rmSync } from "node:fs";
 import { join, resolve, sep } from "node:path";
-import { getPluginInstallCachePath } from "../../../packages/cursor-plugins/cursor-marketplace.js";
-import { DefaultPluginCacheManager } from "../../../packages/cursor-plugins/cursor-marketplace.js";
-import { createBackendMarketplaceClient, normalizeEffectiveUserPluginsResponse } from "../../../packages/cursor-plugins/backend-marketplace-client.js";
-import { classifyCloneError } from "../../../packages/cursor-plugins/marketplace-cache.js";
-import { buildOriginTokenGitConfig } from "../../../packages/cursor-plugins/origin-git-auth.js";
-import { loadFromMarketplaceSource } from "../../../packages/cursor-plugins/loader.js";
+import { getPluginInstallCachePath } from "../../../lib/cursor-plugins/cursor-marketplace.js";
+import { DefaultPluginCacheManager } from "../../../lib/cursor-plugins/cursor-marketplace.js";
+import { createBackendMarketplaceClient, normalizeEffectiveUserPluginsResponse } from "../../../lib/cursor-plugins/backend-marketplace-client.js";
+import { classifyCloneError } from "../../../lib/cursor-plugins/marketplace-cache.js";
+import { buildOriginTokenGitConfig } from "../../../lib/cursor-plugins/origin-git-auth.js";
+import { loadFromMarketplaceSource } from "../../../lib/cursor-plugins/loader.js";
 import { DashboardService } from "../../../proto/generated/aiserver/v1/dashboard_connect.js";
 import { GetEffectiveUserPluginsRequest, GetMeRequest } from "../../../proto/generated/aiserver/v1/dashboard_pb.js";
 import { createSandCursorBackendClient, getSandInferenceBackendUrl } from "../../../shared/node/cursor-backend/cursor-inference.js";

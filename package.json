@@ -1,6 +1,6 @@
 {
   "name": "multibot-sdk",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Headless multi-bot host: local HTTP gateway, group chat, third-party LLMs, directory-scoped tools.",
   "license": "UNLICENSED",
   "author": "dushaobindoudou",
@@ -37,6 +37,9 @@
       "import": "./dist/sdk/entry.js",
       "types": "./dist/sdk/entry.d.ts"
     }
+  },
+  "bin": {
+    "multibot-host": "dist/bootstrap/index.js"
   },
   "scripts": {
     "build": "node scripts/clean-dist.mjs && npm run build:daemon && npm run build:workers && tsc -p tsconfig.build.json && tsc -p tsconfig.types.json",

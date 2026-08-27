@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.0
+
+Architecture pass over the recovered runtime; breaking for anyone importing internals.
+
+- Deleted `node-agent-coordinator` (desktop coordinator remnant, unreachable from every entry) and 192 dead files (34 local-exec, 32 shell-exec, 32 shared strays, …)
+- Strict layering restored: `sdk → bootstrap → host → {lib, proto, shared}`; the `shared → host` reverse edges are gone (`host-paths` sank into `shared/sand-paths`, provider-routing glue moved into the host inference extension)
+- `internal/` (2 contract files, 118 imports) merged into `shared/` — one honest base layer
+- Generated protobuf closures split out to `src/proto/` (`generated/` + `redacted/`) — machine-owned code is no longer shelved beside authored libraries
+- `packages/` renamed to `lib/` (it is the recovered library shelf, not a package collection)
+- New `multibot-host` bin (the headless CLI entry)
+
 ## 0.2.0
 
 Project restructure; layout changes are breaking for anyone importing internals.

@@ -1,4 +1,4 @@
-import type { Context } from "../../packages/context/core.js";
+import type { Context } from "../../lib/context/core.js";
 
 export interface BoxEnvironmentUpdate { env: Readonly<Record<string, string>>; replace: boolean }
 export interface BoxEnvironmentControlClient { updateEnvironmentVariables(ctx: Context, request: { env: Record<string, string>; replace: boolean }): Promise<unknown> }

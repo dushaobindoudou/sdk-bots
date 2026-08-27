@@ -1,6 +1,6 @@
 import { DEFAULT_MAX_LOCAL_EXEC_FILE_BYTES, SAND_NO_LOCAL_MACHINE_MESSAGE, localExecFileTooLargeMessage } from "../../../shared/local-exec-gateway.js";
 import { SAND_LOCAL_TOOLS_UNDESCRIBABLE_MESSAGE, SandLocalToolPermissionDeniedError, authorizeLocalToolAction, describeLocalExec, sandLocalToolScopeKey, type LocalExecMessage, type SandLocalToolGate, type SandLocalToolScope } from "../../../shared/local-tool-permission-machinery.js";
-import type { Context } from "../../../packages/context/core.js";
+import type { Context } from "../../../lib/context/core.js";
 import { classifyLocalExecFailure, type LocalExecFailureClassification } from "./local-exec-failure-classifier.js";
 import { SandLocalExecError } from "./local-exec-error.js";
 import { SandLocalExecBridge } from "./local-exec-bridge.js";

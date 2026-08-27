@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { EditArgs, EditError, EditFileNotFound, EditReadPermissionDenied, EditRejected, EditResult, EditSuccess, EditToolCall, EditToolCallDelta, EditWritePermissionDenied } from "../../../../proto/generated/agent/v1/edit_tool_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 
 function toRedactedEditArgs(msg, privacyMode) {
   return {

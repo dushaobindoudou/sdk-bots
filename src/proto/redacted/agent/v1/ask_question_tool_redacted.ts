@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { AskQuestionArgs, AskQuestionArgs_Option, AskQuestionArgs_Question, AskQuestionAsync, AskQuestionError, AskQuestionRejected, AskQuestionResult, AskQuestionSuccess, AskQuestionSuccess_Answer, AskQuestionToolCall } from "../../../../proto/generated/agent/v1/ask_question_tool_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 
 function toRedactedAskQuestionToolCall(msg, privacyMode) {
   return {

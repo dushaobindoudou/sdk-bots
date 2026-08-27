@@ -1,10 +1,10 @@
 import { randomUUID } from "node:crypto";
-import type { Context } from "../../packages/context/core.js";
+import type { Context } from "../../lib/context/core.js";
 import {
   shellExecutorResource,
   type ShellExecResponse,
   type ShellExecutor
-} from "../../packages/agent-exec/shell.js";
+} from "../../lib/agent-exec/shell.js";
 import { SAND_BOX_PRIMARY_WINDOW_INDEX, SandBoxNoMonitorAvailableError, isPrimaryWindowIndex } from "../ports/box.js";
 import { buildHostShellArgs } from "./box-shell-command.js";
 

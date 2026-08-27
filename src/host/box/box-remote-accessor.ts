@@ -1,6 +1,6 @@
 import { findSystemErrno } from "../../shared/system-errno.js";
-import type { Context } from "../../packages/context/core.js";
-import type { RemoteExecManager } from "../../packages/agent-exec/remote.js";
+import type { Context } from "../../lib/context/core.js";
+import type { RemoteExecManager } from "../../lib/agent-exec/remote.js";
 import type {
   ExecClientMessage,
   ExecServerMessage

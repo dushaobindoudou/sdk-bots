@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
-import { NoopInteractionListener } from "../../packages/agent-core/interaction-listener.js";
-import { getRootParentRequestId } from "../../packages/agent/utils/request-id.js";
-import { requestIdKey } from "../../packages/chat-inference-proto/client.js";
-import type { Context } from "../../packages/context/core.js";
+import { NoopInteractionListener } from "../../lib/agent-core/interaction-listener.js";
+import { getRootParentRequestId } from "../../lib/agent/utils/request-id.js";
+import { requestIdKey } from "../../lib/chat-inference-proto/client.js";
+import type { Context } from "../../lib/context/core.js";
 import { SubagentBackgroundReason } from "../../proto/generated/agent/v1/agent_pb.js";
 import type { AgentSkill } from "../../proto/generated/agent/v1/agent_skills_pb.js";
 import type { CursorRule } from "../../proto/generated/agent/v1/cursor_rules_pb.js";

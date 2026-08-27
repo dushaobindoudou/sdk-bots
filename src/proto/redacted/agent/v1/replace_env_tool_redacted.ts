@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { ReplaceEnvArgs, ReplaceEnvConfig, ReplaceEnvFailure, ReplaceEnvResult, ReplaceEnvSuccess, ReplaceEnvToolCall, ReplaceEnvToolCallDelta, RepoCheckoutRefOverride } from "../../../../proto/generated/agent/v1/replace_env_tool_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 
 function toRedactedRepoCheckoutRefOverride(msg, privacyMode) {
   return {

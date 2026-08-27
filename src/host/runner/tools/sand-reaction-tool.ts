@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { isMessageAddress } from "../../../shared/message-reference.js";
 import { defineCommunicateTool } from "./communicate-tool.js";
-import type { Context } from "../../../packages/context/core.js";
+import type { Context } from "../../../lib/context/core.js";
 
 export const SAND_REACT_TO_MESSAGE_TOOL_NAME = "ReactToMessage";
 

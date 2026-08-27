@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { CreateGoalArgs, CreateGoalResult, CreateGoalSuccess, CreateGoalToolCall, GoalError, UpdateGoalArgs, UpdateGoalResult, UpdateGoalSuccess, UpdateGoalToolCall } from "../../../../proto/generated/agent/v1/goal_tool_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 
 function toRedactedCreateGoalArgs(msg, privacyMode) {
   return {

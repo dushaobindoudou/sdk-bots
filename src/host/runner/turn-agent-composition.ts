@@ -11,14 +11,14 @@ import {
   createTurnToolsetFactoriesForTurn,
   resolveTurnShellAutoReviewInputs,
 } from "./tools/turn-toolset.js";
-import type { Context } from "../../packages/context/core.js";
-import { requestIdKey } from "../../packages/chat-inference-proto/client.js";
-import { AnysphereAgent } from "../../packages/agent/index.js";
-import { SimplePromptToolExecutor } from "../../packages/agent/tool-stream-executor.js";
-import { NoopConversationActionReceiver } from "../../packages/agent-core/conversation-actions/remote.js";
-import { toRedactedInteractionListener } from "../../packages/agent-core/redacted-interaction-listener.js";
-import type { PrivacyMode } from "../../packages/redaction/privacy-mode.js";
-import type { RedactedString } from "../../packages/redaction/types.js";
+import type { Context } from "../../lib/context/core.js";
+import { requestIdKey } from "../../lib/chat-inference-proto/client.js";
+import { AnysphereAgent } from "../../lib/agent/index.js";
+import { SimplePromptToolExecutor } from "../../lib/agent/tool-stream-executor.js";
+import { NoopConversationActionReceiver } from "../../lib/agent-core/conversation-actions/remote.js";
+import { toRedactedInteractionListener } from "../../lib/agent-core/redacted-interaction-listener.js";
+import type { PrivacyMode } from "../../lib/redaction/privacy-mode.js";
+import type { RedactedString } from "../../lib/redaction/types.js";
 import {
   toRedactedConversationAction,
   toRedactedConversationStateStructure,
@@ -32,44 +32,44 @@ import {
   SAND_BOX_SHELL_TOOL_NAME,
   SAND_EXTERNAL_SHELL_TOOL_NAME,
 } from "../sand-activity.js";
-import type { SummarizationPromptSession } from "../../packages/agent-summarization/summarization-handler.js";
+import type { SummarizationPromptSession } from "../../lib/agent-summarization/summarization-handler.js";
 import type {
   CloudAgentToolDeps,
 } from "../cloud-agents/cloud-agent-tool.js";
 import type { BackgroundWatchesHost } from "./background-work.js";
-import type { BlobStore } from "../../packages/agent-kv/blob-store.js";
+import type { BlobStore } from "../../lib/agent-kv/blob-store.js";
 import {
   CombinedResourceAccessor,
   resourceEntry,
   type RemoteResource,
   type ResourceAccessor,
-} from "../../packages/agent-exec/resource-provider.js";
+} from "../../lib/agent-exec/resource-provider.js";
 import type {
   Executor,
   ExecutorOptions,
   RemoteExecManager,
   StreamExecutor,
-} from "../../packages/agent-exec/remote.js";
+} from "../../lib/agent-exec/remote.js";
 import {
   createSubagentExecutor,
   subagentExecutorResource,
-} from "../../packages/agent-exec/subagent.js";
+} from "../../lib/agent-exec/subagent.js";
 import {
   backgroundShellExecutorResource,
-} from "../../packages/agent-exec/background-shell.js";
+} from "../../lib/agent-exec/background-shell.js";
 import {
   requestContextExecutorResource,
-} from "../../packages/agent-exec/request-context.js";
+} from "../../lib/agent-exec/request-context.js";
 import {
   shellStreamExecutorResource,
-} from "../../packages/agent-exec/shell-stream.js";
+} from "../../lib/agent-exec/shell-stream.js";
 import {
   smartModeClassifierExecutorResource,
-} from "../../packages/agent-exec/smart-mode-classifier.js";
+} from "../../lib/agent-exec/smart-mode-classifier.js";
 import {
   mcpExecutorResource,
   mcpStateExecutorResource,
-} from "../../packages/agent-exec/mcp.js";
+} from "../../lib/agent-exec/mcp.js";
 import type {
   BackgroundShellSpawnArgs,
   BackgroundShellSpawnResult,
@@ -105,12 +105,12 @@ import type { AgentSkill } from "../../proto/generated/agent/v1/agent_skills_pb.
 import type {
   SubagentSession,
 } from "./subagent-runtime.js";
-import { SubagentRegistry, subagentRegistryResource } from "../../packages/agent/tools/subagent-registry.js";
+import { SubagentRegistry, subagentRegistryResource } from "../../lib/agent/tools/subagent-registry.js";
 import {
   NoopDocumentationHydrationService,
   NoopWebScraperService,
-} from "../../packages/agent/utils/agent-config.js";
-import { createSubagentModels } from "../../packages/agent/tools/core/subagent/models.js";
+} from "../../lib/agent/utils/agent-config.js";
+import { createSubagentModels } from "../../lib/agent/tools/core/subagent/models.js";
 import { createSandSummarizationHandler } from "./conversation-state.js";
 import {
   createDiskPressureReminderMiddleware,

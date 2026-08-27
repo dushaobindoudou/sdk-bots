@@ -17,10 +17,10 @@ import {
   WaitAction,
   type ComputerUseResult as GeneratedComputerUseResult,
 } from "../../proto/generated/agent/v1/computer_use_tool_pb.js";
-import { computerUseExecutorResource } from "../../packages/agent-exec/computer-use.js";
-import { shellExecutorResource } from "../../packages/agent-exec/shell.js";
-import type { Executor, ExecutorOptions } from "../../packages/agent-exec/remote.js";
-import type { Context } from "../../packages/context/core.js";
+import { computerUseExecutorResource } from "../../lib/agent-exec/computer-use.js";
+import { shellExecutorResource } from "../../lib/agent-exec/shell.js";
+import type { Executor, ExecutorOptions } from "../../lib/agent-exec/remote.js";
+import type { Context } from "../../lib/context/core.js";
 import { buildHostShellArgs, type HostShellArgsInput } from "../box/box-shell-command.js";
 import type { ShellArgs, ShellResult } from "../../proto/generated/agent/v1/shell_exec_pb.js";
 import type {

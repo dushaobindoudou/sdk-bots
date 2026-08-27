@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { McpToolCall, McpToolError, McpToolResult } from "../../../../proto/generated/agent/v1/mcp_tool_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 import { fromRedactedMcpArgs, fromRedactedMcpPermissionDenied, fromRedactedMcpRejected, fromRedactedMcpSuccess, toRedactedMcpArgs, toRedactedMcpPermissionDenied, toRedactedMcpRejected, toRedactedMcpSuccess } from "./mcp_exec_redacted.js";
 
 function toRedactedMcpToolError(msg, privacyMode) {

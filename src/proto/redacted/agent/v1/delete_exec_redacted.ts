@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { DeleteArgs, DeleteError, DeleteFileBusy, DeleteFileNotFound, DeleteNotFile, DeletePermissionDenied, DeleteRejected, DeleteResult, DeleteSuccess } from "../../../../proto/generated/agent/v1/delete_exec_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 
 function toRedactedDeleteArgs(msg, privacyMode) {
   return {

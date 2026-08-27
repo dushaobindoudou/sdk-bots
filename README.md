@@ -115,7 +115,14 @@ Generated (gitignored): `dist/box-exec-daemon/main.cjs`, `dist/host-workers/*.cj
 - `src/sdk` — `SdkBotsClient` + `startHost()` (public entry)
 - `src/bootstrap` — headless CLI bootstrap + shared host composition (`composition.ts`)
 - `src/host` — gateway, group chat, box daemon, inference (recovered runtime)
+- `src/lib` — recovered library shelf (agent tools, shell-exec, chat-inference, …)
+- `src/proto` — generated protobuf closures (`generated/` + `redacted/`; machine-owned, never hand-edit)
+- `src/shared` — shared kernel: contracts (`host-extensions`), path policy (`sand-paths`), backend clients
 - `test/unit` — no host; `test/integration` — isolated host per case
+
+Strict layering: `sdk → bootstrap → host → {lib, proto, shared}`; `shared` never imports `host`.
+
+CLI (host process): `npx multibot-host` after installing this package, or `npm start` in this repo.
 
 ## Status
 

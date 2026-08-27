@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { BlameByFilePathArgs, BlameByFilePathError, BlameByFilePathResult, BlameByFilePathSuccess, BlameByFilePathToolCall } from "../../../../proto/generated/agent/v1/blame_by_file_path_tool_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 
 function toRedactedBlameByFilePathArgs(msg, privacyMode) {
   return {

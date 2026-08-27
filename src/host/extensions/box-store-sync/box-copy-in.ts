@@ -12,8 +12,8 @@ import {
   type DebouncePolicy,
   type RetryPolicy,
 } from "../../../shared/scheduling.js";
-import { isAgentStoreSourceId } from "../../../packages/constants/agent-store-ids.js";
-import { tryAcquireStoreLock } from "../../../packages/agent-store-sync/store-lock.js";
+import { isAgentStoreSourceId } from "../../../lib/constants/agent-store-ids.js";
+import { tryAcquireStoreLock } from "../../../lib/agent-store-sync/store-lock.js";
 import { errorMessage } from "../../../shared/errors.js";
 import { STRUCTURED_LOG_SUBMIT_DEADLINE_MS } from "../../../shared/observability/structured-log-transport.js";
 import { getSandInferenceBackendUrl } from "../../../shared/node/cursor-backend/cursor-inference.js";

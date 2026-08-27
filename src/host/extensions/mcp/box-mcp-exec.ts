@@ -5,10 +5,10 @@ import {
   McpStateExecArgs,
   McpStateExecResult
 } from "../../../proto/generated/agent/v1/mcp_exec_pb.js";
-import { mcpExecutorResource, mcpStateExecutorResource } from "../../../packages/agent-exec/mcp.js";
-import type { ResourceAccessor } from "../../../packages/agent-exec/resource-provider.js";
-import type { RemoteExecManager } from "../../../packages/agent-exec/remote.js";
-import { createContext } from "../../../packages/context/core.js";
+import { mcpExecutorResource, mcpStateExecutorResource } from "../../../lib/agent-exec/mcp.js";
+import type { ResourceAccessor } from "../../../lib/agent-exec/resource-provider.js";
+import type { RemoteExecManager } from "../../../lib/agent-exec/remote.js";
+import { createContext } from "../../../lib/context/core.js";
 import { recordMcpExecErrorClass } from "../../../shared/node/mcp/mcp-diagnostics.js";
 import {
   boxLoadMcpServers,

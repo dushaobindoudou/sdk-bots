@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { ListMcpResourcesError, ListMcpResourcesExecArgs, ListMcpResourcesExecResult, ListMcpResourcesExecResult_McpResource, ListMcpResourcesRejected, ListMcpResourcesSuccess, McpArgs, McpImageContent, McpPermissionDenied, McpRejected, McpSuccess, McpTextContent, McpToolResultContentItem, ReadMcpResourceError, ReadMcpResourceExecArgs, ReadMcpResourceExecResult, ReadMcpResourceNotFound, ReadMcpResourceRejected, ReadMcpResourceSuccess } from "../../../../proto/generated/agent/v1/mcp_exec_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedBytes, createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedBytes, createRedactedString } from "../../../../lib/redaction/factory.js";
 import { fromRedactedOutputLocation, fromRedactedSmartModeApproval, toRedactedOutputLocation, toRedactedSmartModeApproval } from "./utils_redacted.js";
 import { Struct, Value } from "@bufbuild/protobuf";
 

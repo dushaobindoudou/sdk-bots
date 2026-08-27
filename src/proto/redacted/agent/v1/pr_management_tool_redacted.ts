@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { CreatePrAction, GetCiStatusAction, PostCommentAction, PrManagementArgs, PrManagementError, PrManagementNeedsConfirmation, PrManagementRegistered, PrManagementRejected, PrManagementRequestQuery, PrManagementResult, PrManagementSuccess, PrManagementToolCall, ResolveCommentAction, SetPrStatusAction, UpdatePrAction } from "../../../../proto/generated/agent/v1/pr_management_tool_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 
 function toRedactedPrManagementArgs(msg, privacyMode) {
   return {

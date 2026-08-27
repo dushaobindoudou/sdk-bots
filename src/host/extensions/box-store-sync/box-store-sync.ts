@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import type { DebouncePolicy } from "../../../shared/scheduling.js";
-import { tryAcquireStoreLock } from "../../../packages/agent-store-sync/store-lock.js";
+import { tryAcquireStoreLock } from "../../../lib/agent-store-sync/store-lock.js";
 import { errorMessage } from "../../../shared/errors.js";
 import { isBoxStoreManifestFileEntry } from "./box-store-manifest-format.js";
 import { BoxStoreManifestStore, countAgentDirManifestEntries, countStoreDbManifestEntries, type ManifestStoreDependencies } from "./box-store-manifest.js";

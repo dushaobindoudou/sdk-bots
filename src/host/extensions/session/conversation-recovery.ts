@@ -1,5 +1,5 @@
 import { ConversationStateStructure } from "../../../proto/generated/agent/v1/agent_pb.js";
-import { toHex, fromHex } from "../../../packages/agent-kv/serde.js";
+import { toHex, fromHex } from "../../../lib/agent-kv/serde.js";
 
 export const MAX_ROOT_BLOB_BYTES = 8 * 1024 * 1024;
 export const REBUILT_ENTRY_ID_PREFIX = "recovered-";

@@ -14,21 +14,21 @@ import { resolveSandExternalMachine } from "../../../shared/agents/agent-tool-na
 import { SAND_REACT_TO_MESSAGE_TOOL_NAME } from "./sand-reaction-tool.js";
 import { SAND_UPDATE_STATE_TOOL_NAME } from "./sand-state-tool.js";
 import { SAND_SEND_MESSAGE_TOOL_NAME } from "./send-message-tool.js";
-import { createTaskTool } from "../../../packages/agent/tools/task.js";
-import type { ToolSetHandle } from "../../../packages/agent/tools/core.js";
+import { createTaskTool } from "../../../lib/agent/tools/task.js";
+import type { ToolSetHandle } from "../../../lib/agent/tools/core.js";
 import { sandLocalToolScopeKey, sandTurnDirectionEpochKey } from "../../../shared/local-tool-permission-machinery.js";
 import type { SandLocalToolAction } from "../../../shared/local-tool-permission.js";
-import type { Context } from "../../../packages/context/core.js";
+import type { Context } from "../../../lib/context/core.js";
 import type { ForwardedUpdate } from "../agent-adapters.js";
 import {
   DynamicToolRegistry,
   resolveDynamicDispatchToolName,
-} from "../../../packages/agent/tools/mcp/builtin-tools.js";
+} from "../../../lib/agent/tools/mcp/builtin-tools.js";
 import {
   createCallMcpTool,
   type CreateCallMcpToolOptions,
-} from "../../../packages/agent/tools/mcp/mcp.js";
-import { createGetMcpToolsTool } from "../../../packages/agent/tools/mcp/get-mcp-tools.js";
+} from "../../../lib/agent/tools/mcp/mcp.js";
+import { createGetMcpToolsTool } from "../../../lib/agent/tools/mcp/get-mcp-tools.js";
 import type { ProductionTurnToolInputs } from "../../runner-production-bridge.js";
 import { SAND_BOX_WORKSPACE_ROOT } from "../../cloud-agents/cloud-agent-images.js";
 import {
@@ -62,21 +62,21 @@ import {
 import {
   createGenerateImageTool,
   type GenerateImageToolDependencies,
-} from "../../../packages/agent/tools/core/generate-image.js";
+} from "../../../lib/agent/tools/core/generate-image.js";
 import {
   createWebSearchTool,
   type WebSearchToolDependencies,
-} from "../../../packages/agent/tools/core/web-search.js";
+} from "../../../lib/agent/tools/core/web-search.js";
 import {
   createWebFetchTool,
   type WebFetchToolDependencies,
-} from "../../../packages/agent/tools/core/web-fetch.js";
-import { createToolCallExecutionTimeoutError } from "../../../packages/agent/tools/common.js";
+} from "../../../lib/agent/tools/core/web-fetch.js";
+import { createToolCallExecutionTimeoutError } from "../../../lib/agent/tools/common.js";
 import {
   createAwaitTool,
   type AwaitToolOptions,
   type AwaitToolResourceAccessor,
-} from "../../../packages/agent/tools/core/await.js";
+} from "../../../lib/agent/tools/core/await.js";
 import {
   createSendMessageTool,
   type SendMessageDependencies,
@@ -113,13 +113,13 @@ import {
   type ReadFormattingOptions,
   type ReadResourceAccessor,
   type ReadToolOptions,
-} from "../../../packages/agent/tools/core/read/read.js";
+} from "../../../lib/agent/tools/core/read/read.js";
 import {
   createShellTool,
   type ShellAutoRunInstructions,
   type ShellToolOptions,
   type ShellToolResourceAccessor,
-} from "../../../packages/agent/tools/core/shell/create-shell-tool.js";
+} from "../../../lib/agent/tools/core/shell/create-shell-tool.js";
 import { buildSandShellAutoReviewTargetEnrichment } from "../sand-shell-auto-review-enrichment.js";
 import { createSandShellApprovalProvider } from "../sand-auto-review-tool-escalations.js";
 import type {

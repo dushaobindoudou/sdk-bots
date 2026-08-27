@@ -1,11 +1,11 @@
 import { dirname, join } from "node:path";
 import type { HostExtensionContext } from "../../../shared/host-extensions.js";
-import { computerUseExecutorResource } from "../../../packages/agent-exec/computer-use.js";
-import type { Executor, RemoteExecManager } from "../../../packages/agent-exec/remote.js";
-import type { ResourceAccessor } from "../../../packages/agent-exec/resource-provider.js";
-import { AgentStore2, deriveConversationStateFromStructure } from "../../../packages/agent-kv/agent-store.js";
-import { createContext } from "../../../packages/context/core.js";
-import { loggerKey } from "../../../packages/context/logger.js";
+import { computerUseExecutorResource } from "../../../lib/agent-exec/computer-use.js";
+import type { Executor, RemoteExecManager } from "../../../lib/agent-exec/remote.js";
+import type { ResourceAccessor } from "../../../lib/agent-exec/resource-provider.js";
+import { AgentStore2, deriveConversationStateFromStructure } from "../../../lib/agent-kv/agent-store.js";
+import { createContext } from "../../../lib/context/core.js";
+import { loggerKey } from "../../../lib/context/logger.js";
 import {
   ComputerUseAction,
   ComputerUseArgs,

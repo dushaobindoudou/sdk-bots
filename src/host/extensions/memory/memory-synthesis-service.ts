@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
-import type { PromptExecutor } from "../../../packages/chat-inference/base.js";
-import { conversationIdKey, requestIdKey } from "../../../packages/chat-inference-proto/client.js";
-import { createContext } from "../../../packages/context/core.js";
+import type { PromptExecutor } from "../../../lib/chat-inference/base.js";
+import { conversationIdKey, requestIdKey } from "../../../lib/chat-inference-proto/client.js";
+import { createContext } from "../../../lib/context/core.js";
 import { normalizeMemoryContent } from "../../runner/sand-memory.js";
 import { SandError } from "../../../shared/errors/registry.js";
 import type { SynthesisChange, SynthesisSnapshot } from "./memory-service.js";

@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
-import type { Context } from "../../packages/context/core.js";
+import type { Context } from "../../lib/context/core.js";
 import { CONNECTOR_MANIFESTS, type ConnectorManifest } from "../../shared/channels.js";
-import { InMemoryBlobStore } from "../../packages/agent-kv/blob-store.js";
-import type { BlobStore } from "../../packages/agent-kv/blob-store.js";
+import { InMemoryBlobStore } from "../../lib/agent-kv/blob-store.js";
+import type { BlobStore } from "../../lib/agent-kv/blob-store.js";
 import {
   createBackgroundWatches,
   type BackgroundWatchesHost,

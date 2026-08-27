@@ -1,5 +1,5 @@
 import type { HostInferenceOptions } from "./inference-service.js";
-import type { SummarizationPromptSession } from "../../../packages/agent-summarization/summarization-handler.js";
+import type { SummarizationPromptSession } from "../../../lib/agent-summarization/summarization-handler.js";
 
 export interface InferenceExtensionContext {
   deps: {

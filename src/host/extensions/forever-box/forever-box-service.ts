@@ -1,5 +1,5 @@
 import { DeadlineExceededError, type DeadlinePolicy, type ExpiryPolicy, type PollingPolicy, type RetryPolicy } from "../../../shared/scheduling.js";
-import { createContext, type Context } from "../../../packages/context/core.js";
+import { createContext, type Context } from "../../../lib/context/core.js";
 import { HostBox, type BoxStatus } from "./host-box.js";
 
 export class SandForeverBoxError extends Error {}

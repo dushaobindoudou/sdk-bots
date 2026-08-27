@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { CreateAgentArgs, CreateAgentError, CreateAgentResult, CreateAgentSuccess, CreateAgentToolCall, GetAgentStatusArgs, GetAgentStatusError, GetAgentStatusResult, GetAgentStatusSuccess, GetAgentStatusToolCall, GetAgentStatusWorker, ReadAgentTranscriptArgs, ReadAgentTranscriptError, ReadAgentTranscriptResult, ReadAgentTranscriptSuccess, ReadAgentTranscriptToolCall, SendToAgentArgs, SendToAgentError, SendToAgentResult, SendToAgentSuccess, SendToAgentToolCall, StopAgentArgs, StopAgentError, StopAgentResult, StopAgentSuccess, StopAgentToolCall } from "../../../../proto/generated/agent/v1/coordinator_tools_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 
 function toRedactedGetAgentStatusArgs(msg, privacyMode) {
   return {

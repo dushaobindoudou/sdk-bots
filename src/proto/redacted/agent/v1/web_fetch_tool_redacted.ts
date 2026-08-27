@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { WebFetchArgs, WebFetchError, WebFetchRejected, WebFetchRequestQuery, WebFetchRequestResponse, WebFetchRequestResponse_Approved, WebFetchRequestResponse_Rejected, WebFetchResult, WebFetchSuccess, WebFetchToolCall } from "../../../../proto/generated/agent/v1/web_fetch_tool_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 import { fromRedactedOutputLocation, fromRedactedSmartModeApproval, toRedactedOutputLocation, toRedactedSmartModeApproval } from "./utils_redacted.js";
 
 function toRedactedWebFetchArgs(msg, privacyMode) {

@@ -1,8 +1,8 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import type { Clock, DebouncePolicy, PollingPolicy, RetryPolicy } from "../../../shared/scheduling.js";
-import { SAND_BOX_PERSIST_ARCHIVE_EXCLUDES } from "../../../packages/constants/sand-box-archive.js";
-import { isAgentStoreSourceId } from "../../../packages/constants/agent-store-ids.js";
+import { SAND_BOX_PERSIST_ARCHIVE_EXCLUDES } from "../../../lib/constants/sand-box-archive.js";
+import { isAgentStoreSourceId } from "../../../lib/constants/agent-store-ids.js";
 import { errorMessage } from "../../../shared/errors.js";
 import { getBoxStoreBackendPolicy, isBoxStoreSyncEnabled, type BoxStoreBackendPolicy } from "../../box/box-store-backend-policy.js";
 import { BOX_STORE_SAND_DATA_EXCLUDED_FILE_NAMES } from "../../durable-file-policy.js";

@@ -1,4 +1,4 @@
-import type { Context } from "../../packages/context/core.js";
+import type { Context } from "../../lib/context/core.js";
 import type { TransferBox } from "../box/box-transfer.js";
 import { boxIsPreparing, type CapableBox } from "../box/box-capabilities.js";
 import type { AutomationStatusReminderRequestContext, AutomationStatusReminderStore } from "../automations/automation-status-reminder.js";

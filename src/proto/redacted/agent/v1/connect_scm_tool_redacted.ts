@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { ConnectScmArgs, ConnectScmError, ConnectScmGithub, ConnectScmGithubRepository, ConnectScmRejected, ConnectScmRequestQuery, ConnectScmRequestResponse, ConnectScmRequestResponse_Approved, ConnectScmRequestResponse_Failed, ConnectScmRequestResponse_Rejected, ConnectScmResult, ConnectScmSuccess, ConnectScmToolCall } from "../../../../proto/generated/agent/v1/connect_scm_tool_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 
 function toRedactedConnectScmArgs(msg, privacyMode) {
   return {

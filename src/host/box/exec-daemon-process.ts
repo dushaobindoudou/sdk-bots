@@ -3,7 +3,7 @@ import { access, mkdir } from "node:fs/promises";
 import { createConnection } from "node:net";
 import path from "node:path";
 
-import { createContext } from "../../packages/context/core.js";
+import { createContext } from "../../lib/context/core.js";
 import { pingBoxClassified } from "./box-remote-accessor.js";
 import type { ErasedProductionBoxGeneratedPorts } from "./production.js";
 import { DEFAULT_AUTH_TOKEN, EXEC_DAEMON_PORT } from "./loopback-sand-box.js";

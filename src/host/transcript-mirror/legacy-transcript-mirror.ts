@@ -1,8 +1,8 @@
 import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import { TranscriptStore } from "../../packages/agent-transcript/index.js";
-import { stripContextTags } from "../../packages/agent-transcript/context-stripping.js";
-import { getSafeConversationId } from "../../packages/utils/workspace-paths.js";
+import { TranscriptStore } from "../../lib/agent-transcript/index.js";
+import { stripContextTags } from "../../lib/agent-transcript/context-stripping.js";
+import { getSafeConversationId } from "../../lib/utils/workspace-paths.js";
 import { decodeSummaryArchiveMessageIds } from "./conversation-state-binary.js";
 import type { TranscriptCheckpoint } from "./transcript-journal-codec.js";
 

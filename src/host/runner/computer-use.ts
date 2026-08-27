@@ -2,8 +2,8 @@ import {
   computerUseAuditKind,
   createSandNavigationProbe,
 } from "./sand-action-audit.js";
-import { computerUseExecutorResource } from "../../packages/agent-exec/computer-use.js";
-import { shellExecutorResource } from "../../packages/agent-exec/shell.js";
+import { computerUseExecutorResource } from "../../lib/agent-exec/computer-use.js";
+import { shellExecutorResource } from "../../lib/agent-exec/shell.js";
 import { buildHostShellArgs } from "../box/box-shell-command.js";
 import type { ComputerUseArgs } from "../../proto/generated/agent/v1/computer_use_tool_pb.js";
 import type { ShellArgs } from "../../proto/generated/agent/v1/shell_exec_pb.js";

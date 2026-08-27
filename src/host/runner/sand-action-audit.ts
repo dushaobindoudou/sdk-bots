@@ -1,6 +1,6 @@
-import { requestIdKey } from "../../packages/chat-inference-proto/client.js";
-import { shellExecutorResource } from "../../packages/agent-exec/shell.js";
-import { delay } from "../../packages/utils/promise-extras.js";
+import { requestIdKey } from "../../lib/chat-inference-proto/client.js";
+import { shellExecutorResource } from "../../lib/agent-exec/shell.js";
+import { delay } from "../../lib/utils/promise-extras.js";
 import {
   buildHostShellArgs,
   type HostShellArgsInput,

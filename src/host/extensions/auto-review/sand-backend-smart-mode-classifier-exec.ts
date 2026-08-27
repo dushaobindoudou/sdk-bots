@@ -1,5 +1,5 @@
 import type { MethodInfoUnary } from "@bufbuild/protobuf";
-import type { Context } from "../../../packages/context/core.js";
+import type { Context } from "../../../lib/context/core.js";
 import {
   SmartModeClassifierArgs,
   type SmartModeClassifierResult,
@@ -16,7 +16,7 @@ import {
 import {
   smartModeClassifierAttemptIndexKey,
   smartModeClassifierModeKey,
-} from "../../../packages/agent/utils/smart-mode-classifier-measurement.js";
+} from "../../../lib/agent/utils/smart-mode-classifier-measurement.js";
 
 export class SandSmartModeClassifierError extends Error {}
 

@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { ClickAction, ComputerUseAction, ComputerUseArgs, ComputerUseError, ComputerUseResult, ComputerUseSuccess, ComputerUseToolCall, Coordinate, CursorPositionAction, DragAction, KeyAction, MouseDownAction, MouseMoveAction, MouseUpAction, ScreenshotAction, ScrollAction, TypeAction, WaitAction } from "../../../../proto/generated/agent/v1/computer_use_tool_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 
 function toRedactedCoordinate(msg, privacyMode) {
   return {

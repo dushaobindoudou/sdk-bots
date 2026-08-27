@@ -1,4 +1,4 @@
-import type { Context } from "../../packages/context/core.js";
+import type { Context } from "../../lib/context/core.js";
 import type {
   ConversationStateStructure as ConversationStateStructureMessage,
 } from "../../proto/generated/agent/v1/agent_pb.js";

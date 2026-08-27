@@ -6,7 +6,7 @@ import { query as queryClaude, type SDKResultMessage } from "@anthropic-ai/claud
 import { createOpenAI } from "@ai-sdk/openai";
 import { jsonSchema, streamText, tool, type CoreMessage, type LanguageModelV1, type ToolSet } from "ai";
 
-import { BasePromptBuilder, BasePromptExecutor } from "../../../packages/chat-inference/base.js";
+import { BasePromptBuilder, BasePromptExecutor } from "../../../lib/chat-inference/base.js";
 import type { SandInferenceProvider } from "../../../shared/inference-router.js";
 import { resolveClaudeCodeCliPath } from "../../../shared/node/inference-router-local.js";
 import { getSandRootDir } from "../../../shared/sand-paths.js";

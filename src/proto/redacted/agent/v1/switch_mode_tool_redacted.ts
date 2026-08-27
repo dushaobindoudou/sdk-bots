@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { SwitchModeArgs, SwitchModeError, SwitchModeRejected, SwitchModeRequestQuery, SwitchModeRequestResponse, SwitchModeRequestResponse_Approved, SwitchModeRequestResponse_Rejected, SwitchModeResult, SwitchModeSuccess, SwitchModeToolCall } from "../../../../proto/generated/agent/v1/switch_mode_tool_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 
 function toRedactedSwitchModeArgs(msg, privacyMode) {
   return {

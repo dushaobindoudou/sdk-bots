@@ -47,8 +47,8 @@ import {
   getDefaultAgentMetadata,
   type AgentMetadata,
   type AgentMetadataKey,
-} from "../../../packages/agent-kv/agent-store.js";
-import { fromHex, toHex } from "../../../packages/agent-kv/serde.js";
+} from "../../../lib/agent-kv/agent-store.js";
+import { fromHex, toHex } from "../../../lib/agent-kv/serde.js";
 
 export type { AgentMetadata, AgentMetadataKey };
 export type TranscriptEntry = Record<string, unknown> & { id: string; kind: string };

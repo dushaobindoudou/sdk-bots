@@ -1,5 +1,5 @@
-import { createContext } from "../packages/context/core.js";
-import { HistoryVisibilityMode, convertConversationMessagesToTrace } from "../packages/agent-transcript/trace-format.js";
+import { createContext } from "../lib/context/core.js";
+import { HistoryVisibilityMode, convertConversationMessagesToTrace } from "../lib/agent-transcript/trace-format.js";
 import type { ConversationMessage } from "../proto/generated/aiserver/v1/chat_pb.js";
 import { createSecretsExtension } from "./extensions/secrets/extension.js";
 import { createStateBackstopExtension } from "./extensions/state-backstop/extension.js";

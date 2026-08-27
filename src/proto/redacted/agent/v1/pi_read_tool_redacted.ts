@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { PiReadToolArgs, PiReadToolCall, PiReadToolError, PiReadToolResult, PiReadToolSuccess } from "../../../../proto/generated/agent/v1/pi_read_tool_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 import { fromRedactedPiTruncation, toRedactedPiTruncation } from "./pi_common_redacted.js";
 
 function toRedactedPiReadToolCall(msg, privacyMode) {

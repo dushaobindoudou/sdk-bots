@@ -15,7 +15,7 @@ import {
   createProductionTurnToolsetHost,
   type ProductionTurnToolsetHostInput,
 } from "./runner-production-bridge.js";
-import { NoopConversationActionReceiver } from "../packages/agent-core/conversation-actions/remote.js";
+import { NoopConversationActionReceiver } from "../lib/agent-core/conversation-actions/remote.js";
 import {
   RequestContext,
   RequestContextEnv,
@@ -23,7 +23,7 @@ import {
 import {
   SummarizationHandler,
   type SummarizationPromptSession,
-} from "../packages/agent-summarization/summarization-handler.js";
+} from "../lib/agent-summarization/summarization-handler.js";
 import { getAgentBlobStore } from "./runner/sand-agent-runner.js";
 import type { AgentProfileForRunner } from "./runner/sand-agent-runner.js";
 import type {
@@ -53,15 +53,15 @@ import type {
 import type {
   RemoteResource,
   ResourceAccessor,
-} from "../packages/agent-exec/resource-provider.js";
-import { subagentExecutorResource } from "../packages/agent-exec/subagent.js";
-import { requestContextExecutorResource } from "../packages/agent-exec/request-context.js";
-import { subagentRegistryResource } from "../packages/agent/tools/subagent-registry.js";
-import { smartModeClassifierExecutorResource } from "../packages/agent-exec/smart-mode-classifier.js";
-import { mcpExecutorResource, mcpStateExecutorResource } from "../packages/agent-exec/mcp.js";
-import { shellStreamExecutorResource } from "../packages/agent-exec/shell-stream.js";
-import { backgroundShellExecutorResource } from "../packages/agent-exec/background-shell.js";
-import type { RemoteExecManager } from "../packages/agent-exec/remote.js";
+} from "../lib/agent-exec/resource-provider.js";
+import { subagentExecutorResource } from "../lib/agent-exec/subagent.js";
+import { requestContextExecutorResource } from "../lib/agent-exec/request-context.js";
+import { subagentRegistryResource } from "../lib/agent/tools/subagent-registry.js";
+import { smartModeClassifierExecutorResource } from "../lib/agent-exec/smart-mode-classifier.js";
+import { mcpExecutorResource, mcpStateExecutorResource } from "../lib/agent-exec/mcp.js";
+import { shellStreamExecutorResource } from "../lib/agent-exec/shell-stream.js";
+import { backgroundShellExecutorResource } from "../lib/agent-exec/background-shell.js";
+import type { RemoteExecManager } from "../lib/agent-exec/remote.js";
 import {
   SAND_BOX_AWAIT_SHELL_TOOL_NAME,
   SAND_BOX_READ_TOOL_NAME,
@@ -120,8 +120,8 @@ import {
   createSystemPromptAssembly,
   type PromptSnapshotStore,
 } from "./runner/system-prompt-assembly.js";
-import { PrivacyMode, type PrivacyMode as PrivacyModeValue } from "../packages/redaction/privacy-mode.js";
-import { tryExtractSandAutoReviewClassifierConversationContext } from "../packages/agent/smart-mode-classifier-context.js";
+import { PrivacyMode, type PrivacyMode as PrivacyModeValue } from "../lib/redaction/privacy-mode.js";
+import { tryExtractSandAutoReviewClassifierConversationContext } from "../lib/agent/smart-mode-classifier-context.js";
 import {
   buildSandAutomationWriteRiskTarget,
   reviewSandAutomationWrite,
@@ -140,7 +140,7 @@ import {
   reviewSandCloudAgentLifecycleAction,
   SAND_CLOUD_AGENT_CLASSIFIER_ERROR_REASON,
 } from "./runner/sand-cloud-agent-auto-review.js";
-import type { Context } from "../packages/context/core.js";
+import type { Context } from "../lib/context/core.js";
 import type {
   TurnShellAutoReviewInput,
   TurnToolsetHost,

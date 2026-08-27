@@ -1,4 +1,4 @@
-import type { Context } from "../../packages/context/core.js";
+import type { Context } from "../../lib/context/core.js";
 
 export const BOX_MCP_UNSUPPORTED_MESSAGE = "Grok Bot's computer is running an older image without MCP support — update it from Settings → Updates → Update Grok Bot's Computer.";
 export class SandBoxMcpUnsupportedError extends Error { constructor(message = BOX_MCP_UNSUPPORTED_MESSAGE, options?: ErrorOptions) { super(message, options); this.name = "SandBoxMcpUnsupportedError"; } }

@@ -3,10 +3,10 @@ import { createHash } from "node:crypto";
 import { buildHostShellArgs } from "../../box/box-shell-command.js";
 import { navigationProbeCommand, normalizeNavigationUrl, parseNavigationProbeOutput } from "../sand-action-audit.js";
 import { SAND_BOX_NO_MONITOR_AVAILABLE_MESSAGE } from "../../ports/box.js";
-import { shellExecutorResource } from "../../../packages/agent-exec/shell.js";
-import type { ResourceAccessor } from "../../../packages/agent-exec/resource-provider.js";
-import type { RemoteExecManager } from "../../../packages/agent-exec/remote.js";
-import type { Context as OperationContext } from "../../../packages/context/core.js";
+import { shellExecutorResource } from "../../../lib/agent-exec/shell.js";
+import type { ResourceAccessor } from "../../../lib/agent-exec/resource-provider.js";
+import type { RemoteExecManager } from "../../../lib/agent-exec/remote.js";
+import type { Context as OperationContext } from "../../../lib/context/core.js";
 import {
   runSandBrowserAutoReviewPreflight,
   SandBrowserAutoReviewBlockedError,

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { defineCommunicateTool } from "./communicate-tool.js";
 import { invariant } from "../../../shared/invariant.js";
-import type { Context } from "../../../packages/context/core.js";
+import type { Context } from "../../../lib/context/core.js";
 
 export const requestBoxHelpParameters = z.object({
   instruction: z.string().trim().min(1).describe(

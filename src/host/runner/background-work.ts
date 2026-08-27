@@ -1,4 +1,4 @@
-import { decodeBackgroundWorkMetadata } from "../../packages/agent-exec/background-work-metadata.js";
+import { decodeBackgroundWorkMetadata } from "../../lib/agent-exec/background-work-metadata.js";
 
 export interface BackgroundWorkRecord { readonly id: string; readonly kind: string; readonly state: string; readonly ownerId?: string; readonly abort?: () => void; readonly metadata?: unknown }
 export interface BackgroundWakeup { readonly id?: string; readonly conversationId?: string; readonly payload: { readonly kind: string; readonly reason?: string; readonly taskId: string; readonly title?: string; readonly status?: string; readonly detail?: string; readonly outputPath?: string } }

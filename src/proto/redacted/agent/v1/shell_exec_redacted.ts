@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { CommandClassifierResult, CommandClassifierResult_ClassifiedCommand, ShellArgs, ShellCommandParsingResult, ShellCommandParsingResult_ExecutableCommand, ShellCommandParsingResult_ExecutableCommandArg, ShellCommandParsingResult_Redirect, ShellFailure, ShellHookApprovalRequirement, ShellOutputNotificationConfig, ShellPermissionDenied, ShellRejected, ShellResult, ShellSpawnError, ShellStreamExit, ShellStreamStart, ShellStreamStderr, ShellStreamStdout, ShellSuccess, ShellTimeout } from "../../../../proto/generated/agent/v1/shell_exec_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 import { toRedactedHookAdditionalContext } from "./hook_additional_context_redacted.js";
 import { fromRedactedSandboxPolicy, toRedactedSandboxPolicy } from "./sandbox_redacted.js";
 import { fromRedactedOutputLocation, fromRedactedSmartModeApproval, toRedactedOutputLocation, toRedactedSmartModeApproval } from "./utils_redacted.js";

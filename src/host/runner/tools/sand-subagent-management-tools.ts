@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { defineCommunicateTool } from "./communicate-tool.js";
-import type { Context } from "../../../packages/context/core.js";
+import type { Context } from "../../../lib/context/core.js";
 
 export interface RunningSubagentInfo {
   readonly subagentId: string;

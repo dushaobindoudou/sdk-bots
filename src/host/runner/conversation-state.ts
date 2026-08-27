@@ -2,7 +2,7 @@ import { SAND_HIDDEN_PROMPT_MARKER } from "./sand-prompt-markers.js";
 import {
   SummarizationHandler,
   type SummarizationPromptSession,
-} from "../../packages/agent-summarization/summarization-handler.js";
+} from "../../lib/agent-summarization/summarization-handler.js";
 export interface RecentUserMessage { readonly id: string; readonly text: string }
 export function selectUnconfirmedUserMessages<T extends RecentUserMessage>(params: { recentUserMessages: readonly T[]; currentMessageId?: string; lastTurnUserMessageId?: string; hasConfirmedTurns: boolean }): T[] {
   if (!params.currentMessageId) return [];

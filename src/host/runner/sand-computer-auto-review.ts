@@ -1,10 +1,10 @@
 import { createHash } from "node:crypto";
 import { Struct } from "@bufbuild/protobuf";
-import type { Context } from "../../packages/context/core.js";
-import type { RemoteExecManager } from "../../packages/agent-exec/remote.js";
-import type { ResourceAccessor } from "../../packages/agent-exec/resource-provider.js";
-import { tryExtractSandAutoReviewClassifierConversationContext } from "../../packages/agent/smart-mode-classifier-context.js";
-import { withToolExecutionTimeoutSuspended } from "../../packages/agent/tools/tool-timeout-suspension.js";
+import type { Context } from "../../lib/context/core.js";
+import type { RemoteExecManager } from "../../lib/agent-exec/remote.js";
+import type { ResourceAccessor } from "../../lib/agent-exec/resource-provider.js";
+import { tryExtractSandAutoReviewClassifierConversationContext } from "../../lib/agent/smart-mode-classifier-context.js";
+import { withToolExecutionTimeoutSuspended } from "../../lib/agent/tools/tool-timeout-suspension.js";
 import { SmartModeRiskTarget, type SmartModeClassifierConversationMessage } from "../../proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
 import { fingerprintSandAutoReviewTarget, type SandAutoReviewController, type SandAutoReviewMode } from "./sand-auto-review.js";
 import { summarizeSandComputerTypedText } from "./sand-auto-review-summaries.js";

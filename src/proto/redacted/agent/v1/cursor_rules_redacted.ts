@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { CursorRule as CursorRule2, CursorRuleType, CursorRuleTypeAgentFetched, CursorRuleTypeFileGlobs, CursorRuleTypeGlobal, CursorRuleTypeManuallyAttached } from "../../../../proto/generated/agent/v1/cursor_rules_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 
 function toRedactedCursorRuleTypeGlobal(msg, privacyMode) {
   return {

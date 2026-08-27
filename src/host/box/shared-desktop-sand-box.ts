@@ -1,5 +1,5 @@
 import { setTimeout as delay } from "node:timers/promises";
-import type { Context } from "../../packages/context/core.js";
+import type { Context } from "../../lib/context/core.js";
 import { boxApplyEnvironment, boxDescription, boxIsAvailable, boxIsPreparing, boxLoadMcpServers, boxMaxWindows, boxMcpResourceAccessor, boxTerminalsFolder, type CapableBox } from "./box-capabilities.js";
 import { SAND_BOX_FIRST_FORK_WINDOW_INDEX, SAND_BOX_PRIMARY_WINDOW_INDEX, isPrimaryWindowIndex } from "../ports/box.js";
 import { BoxFileUnreadableError } from "./box-transfer.js";

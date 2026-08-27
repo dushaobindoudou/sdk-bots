@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { LsArgs, LsDirectoryTreeNode, LsDirectoryTreeNode_File, LsError, LsRejected, LsResult, LsSuccess, LsTimeout, TerminalMetadata, TerminalMetadata_Command } from "../../../../proto/generated/agent/v1/ls_exec_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 import { fromRedactedSandboxPolicy, toRedactedSandboxPolicy } from "./sandbox_redacted.js";
 
 function toRedactedLsArgs(msg, privacyMode) {

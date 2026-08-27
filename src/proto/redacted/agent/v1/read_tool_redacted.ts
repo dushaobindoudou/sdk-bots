@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { ReadRange, ReadToolArgs, ReadToolCall, ReadToolError, ReadToolResult, ReadToolSuccess } from "../../../../proto/generated/agent/v1/read_tool_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedBytes, createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedBytes, createRedactedString } from "../../../../lib/redaction/factory.js";
 import { fromRedactedCursorRule2 as fromRedactedCursorRule, toRedactedCursorRule2 as toRedactedCursorRule } from "./cursor_rules_redacted.js";
 
 function toRedactedReadToolCall(msg, privacyMode) {

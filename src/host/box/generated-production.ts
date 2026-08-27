@@ -1,16 +1,16 @@
 import type { Transport } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-node";
-import { computerUseExecutorResource } from "../../packages/agent-exec/computer-use.js";
+import { computerUseExecutorResource } from "../../lib/agent-exec/computer-use.js";
 import {
   CombinedResourceAccessor,
   RemoteResourceAccessor,
   resourceEntry,
   type ResourceAccessor
-} from "../../packages/agent-exec/resource-provider.js";
-import { readExecutorResource } from "../../packages/agent-exec/read.js";
-import type { RemoteExecManager } from "../../packages/agent-exec/remote.js";
-import type { Context } from "../../packages/context/core.js";
-import { createContextPropagatingClient } from "../../packages/context-rpc/index.js";
+} from "../../lib/agent-exec/resource-provider.js";
+import { readExecutorResource } from "../../lib/agent-exec/read.js";
+import type { RemoteExecManager } from "../../lib/agent-exec/remote.js";
+import type { Context } from "../../lib/context/core.js";
+import { createContextPropagatingClient } from "../../lib/context-rpc/index.js";
 import {
   LoadMcpServersRequest,
   PingRequest,

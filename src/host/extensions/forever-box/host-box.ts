@@ -1,4 +1,4 @@
-import type { Context } from "../../../packages/context/core.js";
+import type { Context } from "../../../lib/context/core.js";
 import { boxApplyEnvironment, boxDescription, boxIsAvailable, boxIsPreparing, boxLoadMcpServers, boxMaxWindows, boxMcpResourceAccessor, boxTerminalsFolder } from "../../box/box-capabilities.js";
 
 export class SandBoxCapabilityError extends Error {}

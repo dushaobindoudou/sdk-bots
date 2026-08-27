@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { ShellToolCall, ShellToolCallDelta, ShellToolCallStderrDelta, ShellToolCallStdoutDelta } from "../../../../proto/generated/agent/v1/shell_tool_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 import { fromRedactedShellArgs, fromRedactedShellResult, toRedactedShellArgs, toRedactedShellResult } from "./shell_exec_redacted.js";
 
 function toRedactedShellToolCall(msg, privacyMode) {

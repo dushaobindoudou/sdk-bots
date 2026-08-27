@@ -2,10 +2,10 @@ import { Buffer } from "node:buffer";
 import { buildHostShellArgs } from "../../box/box-shell-command.js";
 import { navigationProbeCommand } from "../sand-action-audit.js";
 import { SAND_BOX_NO_MONITOR_AVAILABLE_MESSAGE } from "../../ports/box.js";
-import { shellExecutorResource } from "../../../packages/agent-exec/shell.js";
-import type { ResourceAccessor } from "../../../packages/agent-exec/resource-provider.js";
-import type { RemoteExecManager } from "../../../packages/agent-exec/remote.js";
-import type { Context } from "../../../packages/context/core.js";
+import { shellExecutorResource } from "../../../lib/agent-exec/shell.js";
+import type { ResourceAccessor } from "../../../lib/agent-exec/resource-provider.js";
+import type { RemoteExecManager } from "../../../lib/agent-exec/remote.js";
+import type { Context } from "../../../lib/context/core.js";
 import { z } from "zod";
 import {
   isSandComputerAutoReviewBypassAction,
@@ -258,7 +258,7 @@ export function createComputerTool<Context>(deps: ComputerToolDependencies<Conte
       if (sequence.at(-1)?.action !== "screenshot") actions.push(toAction({ action: "screenshot" }));
       if (deps.autoReview != null) {
         await runSandComputerAutoReviewPreflight({
-          ctx: meta.context as unknown as import("../../../packages/context/core.js").Context,
+          ctx: meta.context as unknown as import("../../../lib/context/core.js").Context,
           resourceAccessor: deps.resourceAccessor as ResourceAccessor<RemoteExecManager>,
           exactAction: toExactActionArgs(parsed),
           ...(parsed.description == null ? {} : { description: parsed.description }),

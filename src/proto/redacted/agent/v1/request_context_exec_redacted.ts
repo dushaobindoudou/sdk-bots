@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { DebugModeConfig, GitRepoInfo, HooksConfigInfo, MatchedInstalledPlugin, MountedAgentStore, PermissionsAutoRunInstructions, PrecomputedHumanChange, PrecomputedHumanChangeRenderedDiff, RecentlyAddedPlugin, RecentlyAddedPlugin_CapabilityDescriptor, RequestContext, RequestContextEnv, SkillDescriptor, SkillOptions } from "../../../../proto/generated/agent/v1/request_context_exec_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 import { fromRedactedAgentSkill, toRedactedAgentSkill } from "./agent_skills_redacted.js";
 import { fromRedactedCursorRule2 as fromRedactedCursorRule, toRedactedCursorRule2 as toRedactedCursorRule } from "./cursor_rules_redacted.js";
 import { fromRedactedLsDirectoryTreeNode, toRedactedLsDirectoryTreeNode } from "./ls_exec_redacted.js";

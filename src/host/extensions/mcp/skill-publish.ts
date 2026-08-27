@@ -2,9 +2,9 @@ import { existsSync, readFileSync } from "node:fs";
 import { cp, mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { basename, dirname, join } from "node:path";
-import { packPluginArtifact } from "../../../packages/cursor-plugins/tarball.js";
-import { restoreSkillsFromPluginDir } from "../../../packages/cursor-plugins/skill-plugin-restore.js";
-import { synthesizeSkillPluginDir } from "../../../packages/cursor-plugins/skill-plugin-synthesizer.js";
+import { packPluginArtifact } from "../../../lib/cursor-plugins/tarball.js";
+import { restoreSkillsFromPluginDir } from "../../../lib/cursor-plugins/skill-plugin-restore.js";
+import { synthesizeSkillPluginDir } from "../../../lib/cursor-plugins/skill-plugin-synthesizer.js";
 import { DashboardService } from "../../../proto/generated/aiserver/v1/dashboard_connect.js";
 import {
   GetTeamsRequest,

@@ -14,14 +14,14 @@ import {
   ConversationTurnStructure,
   UserMessage,
 } from "../../proto/generated/agent/v1/agent_pb.js";
-import { readExecutorResource } from "../../packages/agent-exec/read.js";
+import { readExecutorResource } from "../../lib/agent-exec/read.js";
 import { ReadArgs, type ReadResult } from "../../proto/generated/agent/v1/read_exec_pb.js";
-import type { BlobStore } from "../../packages/agent-kv/blob-store.js";
+import type { BlobStore } from "../../lib/agent-kv/blob-store.js";
 import {
   SandLocalToolPermissionDeniedError,
   sandLocalToolScopeKey,
 } from "../../shared/local-tool-permission-machinery.js";
-import type { Context } from "../../packages/context/core.js";
+import type { Context } from "../../lib/context/core.js";
 
 export class SandTerminalReadError extends Error {
 }

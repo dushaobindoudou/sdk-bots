@@ -6,11 +6,11 @@ import { getSandVariant } from "../sand-variant.js";
 import {
   AnalyticsBuffer,
   type AnalyticsBufferClient,
-} from "../../../packages/analytics-client/buffer.js";
+} from "../../../lib/analytics-client/buffer.js";
 import {
   DeferredAnalyticsBuffer,
   type DeferredAnalyticsEvent,
-} from "../../../packages/analytics-client/deferred-buffer.js";
+} from "../../../lib/analytics-client/deferred-buffer.js";
 
 const SAND_PRODUCT_ANALYTICS_GATE = "sand_product_analytics";
 const MAX_DEFERRED_EVENTS = 256;

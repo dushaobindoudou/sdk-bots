@@ -20,10 +20,10 @@ import type {
   SandAutoReviewExpiryPolicy,
 } from "./runner/sand-auto-review.js";
 import type { SandAutoReviewInstructions } from "../shared/sand-auto-review-instructions.js";
-import type { AwaitToolOptions } from "../packages/agent/tools/core/await.js";
-import type { WebFetchToolDependencies } from "../packages/agent/tools/core/web-fetch.js";
-import type { WebSearchToolDependencies } from "../packages/agent/tools/core/web-search.js";
-import type { ShellSmartModeApprovalState } from "../packages/agent/tools/core/shell/create-shell-tool.js";
+import type { AwaitToolOptions } from "../lib/agent/tools/core/await.js";
+import type { WebFetchToolDependencies } from "../lib/agent/tools/core/web-fetch.js";
+import type { WebSearchToolDependencies } from "../lib/agent/tools/core/web-search.js";
+import type { ShellSmartModeApprovalState } from "../lib/agent/tools/core/shell/create-shell-tool.js";
 import type { RequestContext } from "../proto/generated/agent/v1/request_context_exec_pb.js";
 
 export type ProductionTurnCancelThisRun = (reason: {

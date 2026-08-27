@@ -1,9 +1,9 @@
-import type { Context } from "../../packages/context/core.js";
-import { smartModeClassifierExecutorResource } from "../../packages/agent-exec/smart-mode-classifier.js";
-import type { RemoteExecManager } from "../../packages/agent-exec/remote.js";
-import type { ResourceAccessor } from "../../packages/agent-exec/resource-provider.js";
-import { getConversationId } from "../../packages/agent/utils/request-id.js";
-import { executeSmartModeClassifierWithMeasurement } from "../../packages/agent/utils/smart-mode-classifier-measurement.js";
+import type { Context } from "../../lib/context/core.js";
+import { smartModeClassifierExecutorResource } from "../../lib/agent-exec/smart-mode-classifier.js";
+import type { RemoteExecManager } from "../../lib/agent-exec/remote.js";
+import type { ResourceAccessor } from "../../lib/agent-exec/resource-provider.js";
+import { getConversationId } from "../../lib/agent/utils/request-id.js";
+import { executeSmartModeClassifierWithMeasurement } from "../../lib/agent/utils/smart-mode-classifier-measurement.js";
 import {
   SmartModeClassifierArgs,
   SmartModeClassifierDecision,

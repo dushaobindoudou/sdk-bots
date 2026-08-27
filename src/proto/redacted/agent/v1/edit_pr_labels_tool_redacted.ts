@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { EditPrLabelsArgs, EditPrLabelsError, EditPrLabelsResult, EditPrLabelsSuccess, EditPrLabelsToolCall } from "../../../../proto/generated/agent/v1/edit_pr_labels_tool_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 
 function toRedactedEditPrLabelsArgs(msg, privacyMode) {
   return {

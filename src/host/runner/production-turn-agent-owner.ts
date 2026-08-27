@@ -1,5 +1,5 @@
-import type { Context } from "../../packages/context/core.js";
-import type { BlobStore } from "../../packages/agent-kv/blob-store.js";
+import type { Context } from "../../lib/context/core.js";
+import type { BlobStore } from "../../lib/agent-kv/blob-store.js";
 import {
   ConversationStateStructure,
 } from "../../proto/generated/agent/v1/agent_pb.js";
@@ -22,7 +22,7 @@ import {
   type ProductionTurnLazyToolsetHostInput,
   type ProductionTurnToolsetHostInput,
 } from "../runner-production-bridge.js";
-import type { SummarizationPromptSession } from "../../packages/agent-summarization/summarization-handler.js";
+import type { SummarizationPromptSession } from "../../lib/agent-summarization/summarization-handler.js";
 import type { DiskPressureReminderEpisodes } from "../extensions/forever-box/disk-pressure.js";
 import type { AgentProfilePromptSnapshot } from "./sand-agent-profile-prompt.js";
 import type { PromptSnapshotStore } from "./system-prompt-assembly.js";

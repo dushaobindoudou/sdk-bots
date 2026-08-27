@@ -6,9 +6,9 @@ import {
   SendMessageSuccess,
   SendMessageToolCall,
 } from "../../../proto/generated/agent/v1/send_message_tool_pb.js";
-import type { Context } from "../../../packages/context/core.js";
-import { createStringResult } from "../../../packages/chat-inference/prompt-executor.js";
-import { createZodAgentTool, withSafeParsedArgs } from "../../../packages/agent/tools/common.js";
+import type { Context } from "../../../lib/context/core.js";
+import { createStringResult } from "../../../lib/chat-inference/prompt-executor.js";
+import { createZodAgentTool, withSafeParsedArgs } from "../../../lib/agent/tools/common.js";
 import { createSendMessageToolCall, encodeSendMessage } from "./send-message-encoding.js";
 import { sendMessageParameters, type SendMessageInput } from "./send-message-schema.js";
 import { clampSecretDescription, clampSecretLabel } from "./sand-secret-request.js";

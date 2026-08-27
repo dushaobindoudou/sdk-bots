@@ -1,5 +1,5 @@
-import type { Context } from "../../packages/context/core.js";
-import type { PrivacyMode } from "../../packages/redaction/privacy-mode.js";
+import type { Context } from "../../lib/context/core.js";
+import type { PrivacyMode } from "../../lib/redaction/privacy-mode.js";
 import {
   createTurnAgentRunInputProjection,
   createTurnAgentStreamStart,

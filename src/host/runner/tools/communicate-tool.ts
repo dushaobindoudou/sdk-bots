@@ -1,7 +1,7 @@
 import type { ZodTypeAny } from "zod";
 
-import type { Context } from "../../../packages/context/core.js";
-import { createStringResult } from "../../../packages/chat-inference/prompt-executor.js";
+import type { Context } from "../../../lib/context/core.js";
+import { createStringResult } from "../../../lib/chat-inference/prompt-executor.js";
 import { ToolCall } from "../../../proto/generated/agent/v1/agent_pb.js";
 import {
   CommunicateUpdateArgs,
@@ -10,7 +10,7 @@ import {
   CommunicateUpdateSuccess,
   CommunicateUpdateToolCall,
 } from "../../../proto/generated/agent/v1/communicate_update_tool_pb.js";
-import { createZodAgentTool, withSafeParsedArgs } from "../../../packages/agent/tools/common.js";
+import { createZodAgentTool, withSafeParsedArgs } from "../../../lib/agent/tools/common.js";
 
 export const SAND_TOOL_MARKER = "__sand_tool__";
 export type CommunicateResult = CommunicateUpdateResult;

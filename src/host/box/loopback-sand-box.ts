@@ -1,8 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { setTimeout as delay } from "node:timers/promises";
-import { createContext, type Context } from "../../packages/context/core.js";
+import { createContext, type Context } from "../../lib/context/core.js";
 import { findSystemErrno } from "../../shared/system-errno.js";
-import { SAND_BOX_FORK_NOVNC_PORT, SAND_BOX_PRIMARY_NOVNC_PORT } from "../../packages/constants/sand-box.js";
+import { SAND_BOX_FORK_NOVNC_PORT, SAND_BOX_PRIMARY_NOVNC_PORT } from "../../lib/constants/sand-box.js";
 import { SandBoxDaemonUnreachableError, isPrimaryWindowIndex } from "../ports/box.js";
 import { assertPathOutsideProtectedRoots } from "./protected-path-guard.js";
 import type { BoxEnvironmentUpdate } from "./box-env.js";

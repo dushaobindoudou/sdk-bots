@@ -1,6 +1,6 @@
-import type { Context } from "../../../packages/context/core.js";
-import { conversationIdKey, requestIdKey } from "../../../packages/chat-inference-proto/client.js";
-import { coreMessageToProto } from "../../../packages/chat-inference-proto/converters.js";
+import type { Context } from "../../../lib/context/core.js";
+import { conversationIdKey, requestIdKey } from "../../../lib/chat-inference-proto/client.js";
+import { coreMessageToProto } from "../../../lib/chat-inference-proto/converters.js";
 import { InferenceService } from "../../../proto/generated/aiserver/v1/inference_connect.js";
 import {
   AgentFollowupCategorizationRequest,

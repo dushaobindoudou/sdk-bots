@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { CustomSubagent, SubagentType, SubagentTypeBash, SubagentTypeBrowserUse, SubagentTypeComputerUse, SubagentTypeCursorGuide, SubagentTypeCustom, SubagentTypeDebug, SubagentTypeExplore, SubagentTypeMediaReview, SubagentTypeShell, SubagentTypeUnspecified, SubagentTypeVmSetupHelper, SubagentTypeWatchVideo } from "../../../../proto/generated/agent/v1/subagents_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 
 function toRedactedSubagentType(msg, privacyMode) {
   return {

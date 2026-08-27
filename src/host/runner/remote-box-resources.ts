@@ -1,21 +1,21 @@
 import {
   backgroundShellExecutorResource,
-} from "../../packages/agent-exec/background-shell.js";
-import { computerUseExecutorResource } from "../../packages/agent-exec/computer-use.js";
-import { readExecutorResource } from "../../packages/agent-exec/read.js";
+} from "../../lib/agent-exec/background-shell.js";
+import { computerUseExecutorResource } from "../../lib/agent-exec/computer-use.js";
+import { readExecutorResource } from "../../lib/agent-exec/read.js";
 import {
   RegistryResourceAccessor,
   type ResourceAccessor,
-} from "../../packages/agent-exec/resource-provider.js";
-import { shellExecutorResource } from "../../packages/agent-exec/shell.js";
-import { shellStreamExecutorResource } from "../../packages/agent-exec/shell-stream.js";
-import { smartModeClassifierExecutorResource } from "../../packages/agent-exec/smart-mode-classifier.js";
+} from "../../lib/agent-exec/resource-provider.js";
+import { shellExecutorResource } from "../../lib/agent-exec/shell.js";
+import { shellStreamExecutorResource } from "../../lib/agent-exec/shell-stream.js";
+import { smartModeClassifierExecutorResource } from "../../lib/agent-exec/smart-mode-classifier.js";
 import type {
   Executor,
   RemoteExecManager,
   StreamExecutor,
-} from "../../packages/agent-exec/remote.js";
-import type { Context } from "../../packages/context/core.js";
+} from "../../lib/agent-exec/remote.js";
+import type { Context } from "../../lib/context/core.js";
 import type {
   BackgroundShellSpawnArgs,
   BackgroundShellSpawnResult,
@@ -42,7 +42,7 @@ import {
   SandBoxNoMonitorAvailableError,
   SAND_BOX_NOT_READY_MESSAGE,
 } from "../ports/box.js";
-import { requestIdKey } from "../../packages/chat-inference-proto/client.js";
+import { requestIdKey } from "../../lib/chat-inference-proto/client.js";
 
 export class SandBoxNotReadyError extends Error {
   override readonly name = "SandBoxNotReadyError";

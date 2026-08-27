@@ -4,7 +4,7 @@ import path from "node:path";
 import {
   MCP_TEXT_FILE_THRESHOLD_BYTES,
   materializeMcpTextOutput,
-} from "../../packages/agent-exec/agent-tools-file.js";
+} from "../../lib/agent-exec/agent-tools-file.js";
 import type { McpResult } from "../../proto/generated/agent/v1/mcp_exec_pb.js";
 import { OutputLocation } from "../../proto/generated/agent/v1/utils_pb.js";
 

@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { join } from "node:path";
-import type { Context } from "../../packages/context/core.js";
-import type { PrivacyMode } from "../../packages/redaction/privacy-mode.js";
+import type { Context } from "../../lib/context/core.js";
+import type { PrivacyMode } from "../../lib/redaction/privacy-mode.js";
 import { SAND_SUMMARIZATION_MODEL_ID } from "../../shared/agents/sand-agent-model.js";
 import type { DiskPressureReminderEpisodes } from "../extensions/forever-box/disk-pressure.js";
 import {
@@ -11,7 +11,7 @@ import {
   type PromptExecutor,
 } from "./send-message-reminder-middleware.js";
 import { createStartOfTurnAckReminderMiddleware } from "./start-of-turn-ack-reminder-middleware.js";
-import { SimplePromptToolExecutor } from "../../packages/agent/tool-stream-executor.js";
+import { SimplePromptToolExecutor } from "../../lib/agent/tool-stream-executor.js";
 import {
   createShellWatchGeneratedStateProjection,
   createShellWatchReadAccessor,
@@ -27,7 +27,7 @@ import type {
 import type {
   PromptSnapshotStore,
 } from "./system-prompt-assembly.js";
-import type { SummarizationPromptSession } from "../../packages/agent-summarization/summarization-handler.js";
+import type { SummarizationPromptSession } from "../../lib/agent-summarization/summarization-handler.js";
 import { createProviderPromptSession, OPENROUTER_CLOUD_BASE_URL, resolveOpenRouterEndpoint } from "../extensions/inference/provider-session.js";
 import { getSandRootDir } from "../../shared/sand-paths.js";
 import { SandSettingsStore } from "../../shared/node/settings/sand-settings-store.js";
@@ -36,7 +36,7 @@ import {
   ConversationAction,
   ResumeAction,
 } from "../../proto/generated/agent/v1/agent_pb.js";
-import type { BlobStore } from "../../packages/agent-kv/blob-store.js";
+import type { BlobStore } from "../../lib/agent-kv/blob-store.js";
 import {
   createTurnSettle,
   type TurnCheckpoint,

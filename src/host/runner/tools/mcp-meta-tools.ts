@@ -1,7 +1,7 @@
 import {
   buildToolCallExecutionTimedOutMessage,
   toolCallExecutionGuardMs,
-} from "../../../packages/agent/tools/tool-execution-timeout.js";
+} from "../../../lib/agent/tools/tool-execution-timeout.js";
 
 export function sandToolCallExecutionTimeoutMs(
   toolName: string,

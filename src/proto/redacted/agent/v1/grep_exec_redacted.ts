@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { GrepArgs, GrepContentMatch, GrepContentResult, GrepCountResult, GrepError, GrepFileCount, GrepFileMatch, GrepFilesResult, GrepResult, GrepSuccess, GrepUnionResult } from "../../../../proto/generated/agent/v1/grep_exec_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 import { fromRedactedSandboxPolicy, toRedactedSandboxPolicy } from "./sandbox_redacted.js";
 
 function toRedactedGrepArgs(msg, privacyMode) {

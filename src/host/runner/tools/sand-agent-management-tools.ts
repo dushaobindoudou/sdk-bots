@@ -6,7 +6,7 @@ import {
 } from "../../agents/agent-messaging.js";
 import { defineCommunicateTool } from "./communicate-tool.js";
 import { isValidAttachmentUrl } from "./send-message-schema.js";
-import type { Context } from "../../../packages/context/core.js";
+import type { Context } from "../../../lib/context/core.js";
 
 export interface AgentImage {
   readonly url: string;

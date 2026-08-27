@@ -1,16 +1,16 @@
 import { randomBytes } from "node:crypto";
 import { posix } from "node:path";
-import type { Context } from "../../packages/context/core.js";
+import type { Context } from "../../lib/context/core.js";
 import { WriteArgs } from "../../proto/generated/agent/v1/write_exec_pb.js";
 import {
   shellExecutorResource,
   type ShellExecResult,
   type ShellExecutor
-} from "../../packages/agent-exec/shell.js";
+} from "../../lib/agent-exec/shell.js";
 import {
   writeExecutorResource,
   type WriteExecutor
-} from "../../packages/agent-exec/write.js";
+} from "../../lib/agent-exec/write.js";
 import { buildHostShellArgs } from "./box-shell-command.js";
 export class SandBoxFileTransferError extends Error { override name = "SandBoxFileTransferError"; }
 export class BoxShellTransientError extends Error { override name = "BoxShellTransientError"; }

@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { PiFindToolArgs, PiFindToolCall, PiFindToolError, PiFindToolResult, PiFindToolSuccess } from "../../../../proto/generated/agent/v1/pi_find_tool_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 import { fromRedactedPiTruncation, toRedactedPiTruncation } from "./pi_common_redacted.js";
 
 function toRedactedPiFindToolCall(msg, privacyMode) {

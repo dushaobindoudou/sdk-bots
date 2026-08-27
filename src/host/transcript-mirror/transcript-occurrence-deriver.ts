@@ -1,4 +1,4 @@
-import { stripContextTags } from "../../packages/agent-transcript/context-stripping.js";
+import { stripContextTags } from "../../lib/agent-transcript/context-stripping.js";
 import {
   bytesEqual,
   formatToolLine,

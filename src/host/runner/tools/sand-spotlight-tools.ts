@@ -1,7 +1,7 @@
 import { spotlightToolResultContent, type SpotlightContentPart } from "../../../shared/sand-spotlight.js";
-import { ToolSetHandle } from "../../../packages/agent/tools/core.js";
-import { partitionDynamicTools } from "../../../packages/agent/tools/exclude-tools.js";
-import type { DynamicToolRegistry } from "../../../packages/agent/tools/mcp/builtin-tools.js";
+import { ToolSetHandle } from "../../../lib/agent/tools/core.js";
+import { partitionDynamicTools } from "../../../lib/agent/tools/exclude-tools.js";
+import type { DynamicToolRegistry } from "../../../lib/agent/tools/mcp/builtin-tools.js";
 
 export interface SandTool {
   readonly name: string;

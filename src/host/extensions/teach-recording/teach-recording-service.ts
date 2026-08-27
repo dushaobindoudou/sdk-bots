@@ -1,6 +1,6 @@
 import { createHash, createHmac, randomUUID, timingSafeEqual } from "node:crypto";
-import { createContext, type Context } from "../../../packages/context/core.js";
-import { shellExecutorResource, type ShellExecutor } from "../../../packages/agent-exec/shell.js";
+import { createContext, type Context } from "../../../lib/context/core.js";
+import { shellExecutorResource, type ShellExecutor } from "../../../lib/agent-exec/shell.js";
 import { IDLE_TEACH_RECORDING_STATUS, SAND_TEACH_MAX_DURATION_MS } from "../../../shared/agents/teach-recording.js";
 import { WORKFLOW_REFERENCE_NODE_TYPE } from "../../../shared/workflows.js";
 import { SAND_MONITOR_HEIGHT, SAND_MONITOR_WIDTH } from "../../box/box-monitor-layout.js";

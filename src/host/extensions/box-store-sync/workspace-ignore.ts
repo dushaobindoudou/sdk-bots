@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { SAND_BOX_WORKSPACE_DEFAULT_IGNORE_PATTERNS, SAND_WORKSPACE_IGNORE_FILE_NAME } from "../../../packages/constants/sand-box-archive.js";
+import { SAND_BOX_WORKSPACE_DEFAULT_IGNORE_PATTERNS, SAND_WORKSPACE_IGNORE_FILE_NAME } from "../../../lib/constants/sand-box-archive.js";
 export { SAND_BOX_WORKSPACE_DEFAULT_IGNORE_PATTERNS, SAND_WORKSPACE_IGNORE_FILE_NAME };
 export interface WorkspaceIgnore { ignores(relPath: string): boolean; canPruneDir(relDir: string): boolean }
 export const IGNORE_NOTHING: WorkspaceIgnore = { ignores: () => false, canPruneDir: () => false };

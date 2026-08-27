@@ -1,7 +1,7 @@
 // @ts-nocheck -- exact generated runtime; declaration typing is a subsequent mechanical pass.
 import { AppliedAgentChange, ApplyAgentDiffArgs, ApplyAgentDiffError, ApplyAgentDiffResult, ApplyAgentDiffSuccess, ApplyAgentDiffToolCall } from "../../../../proto/generated/agent/v1/apply_agent_diff_tool_pb.js";
-import { DataClassification } from "../../../../packages/redaction/classification.js";
-import { createRedactedString } from "../../../../packages/redaction/factory.js";
+import { DataClassification } from "../../../../lib/redaction/classification.js";
+import { createRedactedString } from "../../../../lib/redaction/factory.js";
 
 function toRedactedApplyAgentDiffToolCall(msg, privacyMode) {
   return {

@@ -1,9 +1,9 @@
-import { createContext, type Context } from "../packages/context/core.js";
+import { createContext, type Context } from "../lib/context/core.js";
 import {
   getLoggerBackend,
   loggerKey,
   type ContextLoggerBackend,
-} from "../packages/context/logger.js";
+} from "../lib/context/logger.js";
 
 export { getLoggerBackend, loggerKey };
 

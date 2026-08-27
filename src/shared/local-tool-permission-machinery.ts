@@ -1,4 +1,4 @@
-import { createKey, type ContextKey } from "../packages/context/core.js";
+import { createKey, type ContextKey } from "../lib/context/core.js";
 import type { SandLocalToolAction } from "./local-tool-permission.js";
 
 export const SAND_LOCAL_TOOL_ASK_TTL_MS = 10 * 60 * 1_000;
