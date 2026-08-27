@@ -1,4 +1,4 @@
-import { DeadlineExceededError, type DeadlinePolicy, type ExpiryPolicy, type PollingPolicy, type RetryPolicy } from "../../../internal/scheduling.js";
+import { DeadlineExceededError, type DeadlinePolicy, type ExpiryPolicy, type PollingPolicy, type RetryPolicy } from "../../../shared/scheduling.js";
 import { createContext, type Context } from "../../../packages/context/core.js";
 import { HostBox, type BoxStatus } from "./host-box.js";
 

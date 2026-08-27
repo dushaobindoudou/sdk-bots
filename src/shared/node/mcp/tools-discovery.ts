@@ -8,7 +8,7 @@ import {
   createDeadlinePolicy,
   realClock,
   type DeadlinePolicy,
-} from "../../../internal/scheduling.js";
+} from "../../scheduling.js";
 import { displayRowOwnsIdentifier } from "./mcp-definition-source.js";
 import { SandMcpConfigError } from "./mcp-config-error.js";
 import { generatedMcpResultFactory } from "./mcp-result-factory.js";

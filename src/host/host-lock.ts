@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import { closeSync, mkdirSync, openSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { findSystemErrno } from "../shared/system-errno.js";
-import { getHostLockPath } from "./host-paths.js";
+import { getHostLockPath } from "../shared/sand-paths.js";
 export const DEFAULT_TAKEOVER_TIMEOUT_MS = 3_000; export const DEFAULT_POLL_INTERVAL_MS = 100; export const MAX_ACQUIRE_ATTEMPTS = 5;
 export function defaultIsProcessAlive(pid: number): boolean { try { process.kill(pid, 0); return true; } catch { return false; } }
 export function readProcessCommand(pid: number): string | null { try { const value = readFileSync(`/proc/${pid}/cmdline`, "utf8"); if (value.length > 0) return value.replace(/\0/g, " ").trim(); } catch {} try { return execFileSync("ps", ["-p", String(pid), "-o", "command="], { encoding: "utf8", timeout: 2_000 }).trim(); } catch { return null; } }

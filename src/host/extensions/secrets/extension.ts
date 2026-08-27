@@ -1,4 +1,4 @@
-import { createDeadlinePolicy, createRetryPolicy, realClock } from "../../../internal/scheduling.js"; import { defineHostExtension } from "../../../internal/host-extensions.js"; import type { Context } from "../../../packages/context/core.js"; import { boxApplyEnvironment, type CapableBox } from "../../box/box-capabilities.js"; import { HostExtensions } from "../extension-ids.generated.js"; import { BoxSecretsApplier, SECRETS_APPLY_WAIT_MS, SECRETS_RETRY_INITIAL_MS, SECRETS_RETRY_MAX_MS } from "./secrets-service.js";
+import { createDeadlinePolicy, createRetryPolicy, realClock } from "../../../shared/scheduling.js"; import { defineHostExtension } from "../../../shared/host-extensions.js"; import type { Context } from "../../../packages/context/core.js"; import { boxApplyEnvironment, type CapableBox } from "../../box/box-capabilities.js"; import { HostExtensions } from "../extension-ids.generated.js"; import { BoxSecretsApplier, SECRETS_APPLY_WAIT_MS, SECRETS_RETRY_INITIAL_MS, SECRETS_RETRY_MAX_MS } from "./secrets-service.js";
 
 interface NamedRequestContextFactory {
   withName(name: string): Context;

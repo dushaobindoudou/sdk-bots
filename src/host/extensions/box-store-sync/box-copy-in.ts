@@ -11,13 +11,13 @@ import {
   realClock,
   type DebouncePolicy,
   type RetryPolicy,
-} from "../../../internal/scheduling.js";
+} from "../../../shared/scheduling.js";
 import { isAgentStoreSourceId } from "../../../packages/constants/agent-store-ids.js";
 import { tryAcquireStoreLock } from "../../../packages/agent-store-sync/store-lock.js";
 import { errorMessage } from "../../../shared/errors.js";
 import { STRUCTURED_LOG_SUBMIT_DEADLINE_MS } from "../../../shared/observability/structured-log-transport.js";
 import { getSandInferenceBackendUrl } from "../../../shared/node/cursor-backend/cursor-inference.js";
-import { getSandRootDir } from "../../host-paths.js";
+import { getSandRootDir } from "../../../shared/sand-paths.js";
 import { getOrCreateHostMachineId } from "../../host-secret-store.js";
 import { getBoxStoreBackendPolicy, isBoxStoreCopyInEnabled } from "../../box/box-store-backend-policy.js";
 import { resolveSandBoxIdentityTags } from "../../ports/telemetry.js";

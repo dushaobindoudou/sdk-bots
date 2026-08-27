@@ -1,5 +1,5 @@
-import { defineHostExtension } from "../../../internal/host-extensions.js";
-import { getSandRootDir } from "../../host-paths.js";
+import { defineHostExtension } from "../../../shared/host-extensions.js";
+import { getSandRootDir } from "../../../shared/sand-paths.js";
 import { resolveMultitaskEnabled } from "../../sand-multitask.js";
 import { resolveSpotlightEnabled } from "../../../shared/sand-spotlight.js";
 import { SandExperimentService } from "../../../shared/node/experiments/cursor-experiments.js";

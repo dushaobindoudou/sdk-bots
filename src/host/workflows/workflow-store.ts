@@ -1,6 +1,6 @@
 import { dirname, join } from "node:path";
 import { readFileSync, readdirSync, renameSync, rmSync, statSync } from "node:fs";
-import { createDebouncePolicy, realClock } from "../../internal/scheduling.js";
+import { createDebouncePolicy, realClock } from "../../shared/scheduling.js";
 import { cronTrigger } from "../../shared/automations.js";
 import { LEGACY_WORKFLOW_FILENAME, automationToWorkflow, clampWorkflowBody, clampWorkflowName, deriveWorkflowNameFromUrl, liveWorkflowSpecFromSource, parseWorkflowFile, serializeWorkflowFile, workflowSpecFromMarkdown, type WorkflowRecord, type WorkflowSpec } from "../../shared/workflow-model.js";
 import { AgentWorkflowEnablement } from "../agents/agent-workflow-enablement.js";

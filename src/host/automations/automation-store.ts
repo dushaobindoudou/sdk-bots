@@ -1,6 +1,6 @@
 import { readFileSync, readdirSync, rmSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { createDebouncePolicy, realClock } from "../../internal/scheduling.js";
+import { createDebouncePolicy, realClock } from "../../shared/scheduling.js";
 import { automationAnchor, computeNextRunAt, describeTrigger, normalizeSchedule } from "../../shared/automation-schedule.js";
 import { cronTrigger, triggerCronSchedules, triggerFromList, triggerList, triggerSchedule, type AutomationTrigger } from "../../shared/automations.js";
 import { isSafeFolderId } from "../storage/folder-id.js";

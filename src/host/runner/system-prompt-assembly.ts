@@ -7,7 +7,7 @@ import {
   type AgentProfilePromptSnapshot,
 } from "./sand-agent-profile-prompt.js";
 import { SAND_EXTERNAL_SHELL_TOOL_NAME } from "../sand-activity.js";
-import { toModelVisiblePath } from "../host-paths.js";
+import { toModelVisiblePath } from "../../shared/sand-paths.js";
 import {
   isMemoryFreezeEnabled,
   projectMemoryHasFacts,

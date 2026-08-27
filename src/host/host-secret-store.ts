@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 
-import { getHostSecretsPath } from "./host-paths.js";
+import { getHostSecretsPath } from "../shared/sand-paths.js";
 
 let machineIdCache: string | undefined;
 

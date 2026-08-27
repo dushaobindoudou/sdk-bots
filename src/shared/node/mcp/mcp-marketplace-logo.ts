@@ -2,7 +2,7 @@ import {
   createDeadlinePolicy,
   realClock,
   type DeadlinePolicy,
-} from "../../../internal/scheduling.js";
+} from "../../scheduling.js";
 import { responseToImageDataUrl } from "../http-image.js";
 import { CURSOR_MARKETPLACE_REQUEST_TIMEOUT_MS } from "../marketplace/cursor-marketplace-client.js";
 import { isKnownPluginLogoUrl } from "../marketplace/cursor-marketplace-logo-registry.js";

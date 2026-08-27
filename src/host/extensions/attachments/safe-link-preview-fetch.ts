@@ -2,7 +2,7 @@ import { lookup } from "node:dns/promises";
 import type { IncomingHttpHeaders } from "node:http";
 import { request } from "node:https";
 import net from "node:net";
-import { createDeadlinePolicy, realClock } from "../../../internal/scheduling.js";
+import { createDeadlinePolicy, realClock } from "../../../shared/scheduling.js";
 import { hasNonPublicHostnameSuffix } from "../../../shared/link-preview-policy.js";
 import { SAND_PRODUCT_HTTP_TOKEN } from "../../../shared/product-name.js";
 

@@ -29,7 +29,7 @@ import type {
 } from "./system-prompt-assembly.js";
 import type { SummarizationPromptSession } from "../../packages/agent-summarization/summarization-handler.js";
 import { createProviderPromptSession, OPENROUTER_CLOUD_BASE_URL, resolveOpenRouterEndpoint } from "../extensions/inference/provider-session.js";
-import { getSandRootDir } from "../host-paths.js";
+import { getSandRootDir } from "../../shared/sand-paths.js";
 import { SandSettingsStore } from "../../shared/node/settings/sand-settings-store.js";
 import type { AgentProfilePromptSnapshot } from "./sand-agent-profile-prompt.js";
 import {

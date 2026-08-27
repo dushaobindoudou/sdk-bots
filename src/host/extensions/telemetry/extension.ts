@@ -4,8 +4,8 @@ import {
   createIdleWatchdogPolicy,
   createPollingPolicy,
   realClock,
-} from "../../../internal/scheduling.js";
-import { defineHostExtension } from "../../../internal/host-extensions.js";
+} from "../../../shared/scheduling.js";
+import { defineHostExtension } from "../../../shared/host-extensions.js";
 import { getBoxStoreBackendPolicy } from "../../box/box-store-backend-policy.js";
 import { resolveSandBoxIdentityTags } from "../../ports/telemetry.js";
 import { pinExperimentsDiagnosticsReporter } from "../../../shared/node/experiments/experiments-diagnostics.js";

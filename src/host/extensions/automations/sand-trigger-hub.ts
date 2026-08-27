@@ -1,4 +1,4 @@
-import type { PollingPolicy } from "../../../internal/scheduling.js";
+import type { PollingPolicy } from "../../../shared/scheduling.js";
 import { triggerListeners, type AutomationTrigger, type EventTrigger } from "../../../shared/automations.js";
 import { triggerMatchesEvent } from "../../automations/automation-trigger.js";
 

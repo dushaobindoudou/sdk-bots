@@ -1,4 +1,4 @@
-import { defineHostExtension } from "../../../internal/host-extensions.js";
+import { defineHostExtension } from "../../../shared/host-extensions.js";
 import type { SandLocalToolPermission } from "../../../shared/local-tool-permission.js";
 import { HostExtensions } from "../extension-ids.generated.js";
 import { SandLocalToolPermissionController } from "./local-tool-permission-controller.js";

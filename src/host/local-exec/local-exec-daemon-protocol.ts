@@ -1,7 +1,7 @@
 import { promises as fs } from "node:fs";
 import { dirname, join } from "node:path";
 
-import { getSandRootDir } from "../host-paths.js";
+import { getSandRootDir } from "../../shared/sand-paths.js";
 import {
   LOCAL_EXEC_DAEMON_CONNECTION_FILENAME,
   LOCAL_EXEC_DAEMON_CREDENTIAL_FILENAME,

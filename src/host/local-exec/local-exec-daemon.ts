@@ -7,7 +7,7 @@ import { getSandBackendClientHeaders } from "../../shared/node/sand-client-metad
 import { SandSettingsStore } from "../../shared/node/settings/sand-settings-store.js";
 import { getSandVariant } from "../../shared/node/sand-variant.js";
 import { errorLogTag } from "../../shared/errors.js";
-import { getSandRootDir } from "../host-paths.js";
+import { getSandRootDir } from "../../shared/sand-paths.js";
 import {
   clearLocalExecDaemonDiscoveryIfMatches, getLocalExecDaemonConnectionPath, getLocalExecDaemonCredentialPath, getLocalExecDaemonDiscoveryPath,
   getLocalExecSupervisorHeartbeatPath, readLocalExecDaemonConnection, readLocalExecDaemonCredential, readLocalExecSupervisorHeartbeat,

@@ -1,6 +1,6 @@
 import { join } from "node:path";
-import { createRealPollingPolicy } from "../../../internal/scheduling.js";
-import { defineHostExtension } from "../../../internal/host-extensions.js";
+import { createRealPollingPolicy } from "../../../shared/scheduling.js";
+import { defineHostExtension } from "../../../shared/host-extensions.js";
 import { getConfiguredBackendUrl } from "../../../shared/node/cursor-token.js";
 import { AutomationsService } from "../../../packages/proto/generated/aiserver/v1/automations_connect.js";
 import { createSandCursorBackendClient } from "../../../shared/node/cursor-backend/cursor-inference.js";

@@ -4,18 +4,40 @@ import { SAND_COMPUTER_USE_MODEL_SELECTION, SAND_COMPUTER_USE_SUBAGENT_MODEL_ID,
 import { type InferenceReason } from "../../../packages/proto/generated/aiserver/v1/inference_pb.js";
 import { createMockPromptExecutor } from "../../../packages/chat-inference/mock-prompt-executor.js";
 import {
-  createCursorInferencePromptSession,
+  SAND_RUN_PRIVACY_MODE_FALLBACK,
   createSandAttachedMediaUrlProvider,
   resolveSandRunPrivacyMode,
-  SAND_RUN_PRIVACY_MODE_FALLBACK,
   type RequestLineage,
+  type SandInferenceOptions,
 } from "../../../shared/node/cursor-backend/cursor-inference.js";
 import { createSandLabelingClient, recordSandPostTurnLabeling, wrapPromptSessionWithSandFollowupLabeling, type LabelMessage, type LabelingClient, type PromptExecutor } from "./sand-labeling.js";
 import { selectSandExperimentTurnModel } from "./sand-model-experiment.js";
 import type { SummarizationPromptSession } from "../../../packages/agent-summarization/summarization-handler.js";
 import { SandSettingsStore } from "../../../shared/node/settings/sand-settings-store.js";
-import { getSandRootDir } from "../../host-paths.js";
+import { getSandRootDir } from "../../../shared/sand-paths.js";
 import { createProviderPromptSession } from "./provider-session.js";
+import { InferenceService } from "../../../packages/proto/generated/aiserver/v1/inference_connect.js";
+import { createProtoSessionProvider } from "../../../packages/chat-inference-proto/client.js";
+import { imageResizingMiddleware } from "../../../packages/chat-inference/middleware/image-resizing-middleware.js";
+import { createSandCursorBackendClient } from "../../../shared/node/cursor-backend/cursor-inference.js";
+
+/**
+ * Provider-routing prompt session: honours the routed `inferenceProvider`
+ * (settings.json) and only talks to the Cursor inference backend when the
+ * provider is `cursor`; otherwise delegates to the local provider sessions.
+ * Lives in host (not shared) because it composes host provider routing.
+ */
+function createCursorInferencePromptSession(options: Omit<SandInferenceOptions, "backendUrl"> & {
+  readonly requestedModel: RequestedModel;
+  readonly inferenceReason?: InferenceReason;
+}) {
+  const settingsPath = join(getSandRootDir(), "settings.json");
+  const routedProvider = new SandSettingsStore(settingsPath).getInferenceProvider();
+  if (routedProvider !== "cursor") return createProviderPromptSession(routedProvider) as unknown as CursorPromptSession;
+  const client = createSandCursorBackendClient(InferenceService, options);
+  return createProtoSessionProvider(client, options.requestedModel, undefined, options.inferenceReason).getSession(imageResizingMiddleware) as unknown as CursorPromptSession;
+}
+
 
 export const SAND_DEFAULT_MODEL_ID = "grok-4.5";
 export const SAND_DEFAULT_MODEL_SELECTION: SandAgentModelSelection = { modelId: SAND_DEFAULT_MODEL_ID, maxMode: true, parameters: [{ id: "effort", value: "high" }, { id: "fast", value: "true" }] };

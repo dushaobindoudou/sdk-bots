@@ -1,5 +1,5 @@
 import { readFile, rm } from "node:fs/promises";
-import { getHostCrashMarkerPath } from "../../host-paths.js";
+import { getHostCrashMarkerPath } from "../../../shared/sand-paths.js";
 
 export const HOST_CRASH_EXIT_SIGNALS = [
   "none",

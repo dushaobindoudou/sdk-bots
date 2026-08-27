@@ -1,8 +1,8 @@
 import { existsSync } from "node:fs";
 import { readFile, rm } from "node:fs/promises";
-import { defineHostExtension } from "../../../internal/host-extensions.js";
-import { createRealPollingPolicy, realClock } from "../../../internal/scheduling.js";
-import { getHostUpgradeMarkerPath } from "../../host-paths.js";
+import { defineHostExtension } from "../../../shared/host-extensions.js";
+import { createRealPollingPolicy, realClock } from "../../../shared/scheduling.js";
+import { getHostUpgradeMarkerPath } from "../../../shared/sand-paths.js";
 import { HostExtensions } from "../extension-ids.generated.js";
 import { HOST_BUNDLE_WATCH_INTERVAL_MS, HOST_BUNDLE_WATCH_JITTER_RATIO, isHostVersionSwapVetoed, readLocalHostVersion, stageHostBundleUpgrade } from "./host-bundle-upgrade.js";
 import { resolveHostBundleSource } from "./host-bundle-source.js";

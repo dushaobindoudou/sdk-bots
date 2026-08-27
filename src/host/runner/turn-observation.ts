@@ -8,7 +8,7 @@ import { MCP_TOOL_CALL_OUTLINE_NAME } from "./conversation-outline.js";
 import {
   createRealExpiryPolicy,
   type ExpiryPolicy,
-} from "../../internal/scheduling.js";
+} from "../../shared/scheduling.js";
 import { decodeBackgroundWorkMetadata } from "../../packages/agent-exec/background-work-metadata.js";
 
 export const MCP_EXEC_STALL_THRESHOLD_MS = 15 * 60 * 1_000;

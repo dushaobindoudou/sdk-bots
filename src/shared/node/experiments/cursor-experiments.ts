@@ -1,5 +1,5 @@
 import { LogEventCompressionMode, StatsigClient, type StatsigUser } from "@statsig/js-client";
-import { createDeadlinePolicy, createPollingPolicy, DeadlineExceededError, realClock, type PollingPolicy } from "../../../internal/scheduling.js";
+import { createDeadlinePolicy, createPollingPolicy, DeadlineExceededError, realClock, type PollingPolicy } from "../../scheduling.js";
 import { errorLogTag } from "../../errors.js";
 import { getConfiguredBackendUrl } from "../cursor-token.js";
 import { DYNAMIC_CONFIGS, EXPERIMENTS, FLAGS, type DynamicConfigName, type ExperimentName, type FeatureFlagName } from "./experiment-config.gen.js";

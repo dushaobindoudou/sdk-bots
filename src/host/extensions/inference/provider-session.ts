@@ -9,7 +9,7 @@ import { jsonSchema, streamText, tool, type CoreMessage, type LanguageModelV1, t
 import { BasePromptBuilder, BasePromptExecutor } from "../../../packages/chat-inference/base.js";
 import type { SandInferenceProvider } from "../../../shared/inference-router.js";
 import { resolveClaudeCodeCliPath } from "../../../shared/node/inference-router-local.js";
-import { getSandRootDir } from "../../host-paths.js";
+import { getSandRootDir } from "../../../shared/sand-paths.js";
 import { SandSettingsStore } from "../../../shared/node/settings/sand-settings-store.js";
 import { getBoxSecretsStorePath } from "../secrets/secrets-service.js";
 import { GROUP_CHAT_TAG_PREFIX, SAND_HIDDEN_PROMPT_MARKER } from "../../groups/group-chat.js";

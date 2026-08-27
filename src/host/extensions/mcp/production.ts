@@ -1,11 +1,11 @@
-import type { HostExtensionContext } from "../../../internal/host-extensions.js";
+import type { HostExtensionContext } from "../../../shared/host-extensions.js";
 import {
   createRealPollingPolicy
-} from "../../../internal/scheduling.js";
+} from "../../../shared/scheduling.js";
 import { getSandInferenceBackendUrl } from "../../../shared/node/cursor-backend/cursor-inference.js";
 import { cleanupLegacyMcpAuthCredentials } from "../../../shared/node/mcp/mcp-auth-cleanup.js";
 import type { CapableBox } from "../../box/box-capabilities.js";
-import { getSandRootDir } from "../../host-paths.js";
+import { getSandRootDir } from "../../../shared/sand-paths.js";
 import type { McpExtensionContext, McpPluginSkillsService } from "./extension.js";
 import {
   removeWorkflowLiveReferences,

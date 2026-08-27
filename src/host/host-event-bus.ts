@@ -1,4 +1,4 @@
-import { createHostEvents } from "../internal/host-extensions.js";
+import { createHostEvents } from "../shared/host-extensions.js";
 import { errorLogTag } from "../shared/errors.js";
 export class SandHostEventBus<Event = unknown> {
   private readonly listeners = new Set<(event: Event) => void>();

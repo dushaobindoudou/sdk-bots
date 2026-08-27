@@ -1,4 +1,4 @@
-import { DeadlineExceededError, type DeadlinePolicy, type PollingPolicy, type RetryPolicy } from "../../../internal/scheduling.js";
+import { DeadlineExceededError, type DeadlinePolicy, type PollingPolicy, type RetryPolicy } from "../../../shared/scheduling.js";
 import { CodebaseSnapshotTrigger } from "./codebase-snapshot-trigger.js";
 import { createSandCodebaseTelemetryHost } from "./codebase-telemetry-host.js";
 import { createCodebaseTelemetryPrivacyMode, type PrivacyMode, type TelemetryAuth } from "./privacy-mode.js";

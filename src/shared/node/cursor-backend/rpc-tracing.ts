@@ -1,4 +1,4 @@
-import { createExpiryPolicy, realClock, type ExpiryPolicy } from "../../../internal/scheduling.js";
+import { createExpiryPolicy, realClock, type ExpiryPolicy } from "../../scheduling.js";
 import type { Interceptor } from "@connectrpc/connect";
 
 export const UNTRACED_SERVICE_TYPE_NAMES = new Set(["aiserver.v1.AnalyticsService"]);

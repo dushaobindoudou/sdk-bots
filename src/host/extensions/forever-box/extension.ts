@@ -1,5 +1,5 @@
-import { defineHostExtension } from "../../../internal/host-extensions.js";
-import { createDeadlinePolicy, createExpiryPolicy, createPollingPolicy, createRetryPolicy, realClock } from "../../../internal/scheduling.js";
+import { defineHostExtension } from "../../../shared/host-extensions.js";
+import { createDeadlinePolicy, createExpiryPolicy, createPollingPolicy, createRetryPolicy, realClock } from "../../../shared/scheduling.js";
 import { errorMessage } from "../../../shared/errors.js";
 import { isSandPackaged } from "../../../shared/node/sand-variant.js";
 import { formatSandBoxStartupSummary } from "../../box/box-factory.js";
@@ -9,7 +9,7 @@ import { HostExtensions } from "../extension-ids.generated.js";
 import { startDiskPressureWatch } from "./disk-pressure.js";
 import { FOREVER_BOX_IMAGE_CHECK_TIMEOUT_MS, FOREVER_BOX_IMAGE_WATCH_INTERVAL_MS, FOREVER_BOX_MIGRATION_TTL_MS, FOREVER_BOX_RECREATE_FLUSH_WAIT_MS, FOREVER_BOX_SCREENSHOT_TIMEOUT_MS, ForeverBoxService } from "./forever-box-service.js";
 import { HostBox } from "./host-box.js";
-import { getSandRootDir } from "../../host-paths.js";
+import { getSandRootDir } from "../../../shared/sand-paths.js";
 import { createProductionBoxInner, type ErasedProductionBoxGeneratedPorts } from "../../box/production.js";
 import type { LoopbackTelemetry } from "../../box/loopback-sand-box.js";
 

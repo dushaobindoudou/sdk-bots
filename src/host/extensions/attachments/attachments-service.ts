@@ -5,7 +5,7 @@ import { pathToFileURL } from "node:url";
 import { ATTACHMENTS_DIRNAME, ASSETS_DIRNAME, getAgentAssetsDir, getAgentAttachmentsDir } from "../../attachment-paths.js";
 import { resolveChannelAttachment } from "../../connectors/channel-attachment.js";
 import { uploadBoxFiles } from "../../box/box-transfer.js";
-import { getSandRootDir, reanchorSandPath } from "../../host-paths.js";
+import { getSandRootDir, reanchorSandPath } from "../../../shared/sand-paths.js";
 import { resolveSandAgentDir } from "../../storage/agent-paths.js";
 import { isSafeFolderId } from "../../storage/folder-id.js";
 import { AttachmentTooLargeError, VIDEO_BYTE_LIMIT, attachmentByteLimitForName } from "../../../shared/media/attachment-limits.js";

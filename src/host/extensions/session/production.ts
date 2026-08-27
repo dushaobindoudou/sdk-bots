@@ -1,5 +1,5 @@
 import { dirname, join } from "node:path";
-import type { HostExtensionContext } from "../../../internal/host-extensions.js";
+import type { HostExtensionContext } from "../../../shared/host-extensions.js";
 import { computerUseExecutorResource } from "../../../packages/agent-exec/computer-use.js";
 import type { Executor, RemoteExecManager } from "../../../packages/agent-exec/remote.js";
 import type { ResourceAccessor } from "../../../packages/agent-exec/resource-provider.js";

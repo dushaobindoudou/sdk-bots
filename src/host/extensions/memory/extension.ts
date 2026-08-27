@@ -1,4 +1,4 @@
-import type { DebouncePolicy } from "../../../internal/scheduling.js";
+import type { DebouncePolicy } from "../../../shared/scheduling.js";
 import { AgentProjectMembership } from "./project-membership.js";
 import { createSandAgentState, type AgentStateDeps } from "./agent-state.js";
 import { MemoryService } from "./memory-service.js";

@@ -11,7 +11,7 @@ import {
   createDeadlinePolicy,
   realClock,
   type DeadlinePolicy,
-} from "../../../internal/scheduling.js";
+} from "../../scheduling.js";
 import {
   pluginVariablesSchemaToFields,
   type PluginVariableField,

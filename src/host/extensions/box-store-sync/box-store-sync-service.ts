@@ -1,12 +1,12 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import type { Clock, DebouncePolicy, PollingPolicy, RetryPolicy } from "../../../internal/scheduling.js";
+import type { Clock, DebouncePolicy, PollingPolicy, RetryPolicy } from "../../../shared/scheduling.js";
 import { SAND_BOX_PERSIST_ARCHIVE_EXCLUDES } from "../../../packages/constants/sand-box-archive.js";
 import { isAgentStoreSourceId } from "../../../packages/constants/agent-store-ids.js";
 import { errorMessage } from "../../../shared/errors.js";
 import { getBoxStoreBackendPolicy, isBoxStoreSyncEnabled, type BoxStoreBackendPolicy } from "../../box/box-store-backend-policy.js";
 import { BOX_STORE_SAND_DATA_EXCLUDED_FILE_NAMES } from "../../durable-file-policy.js";
-import { getSandRootDir } from "../../host-paths.js";
+import { getSandRootDir } from "../../../shared/sand-paths.js";
 import type { AgentStoreClientDependencies } from "./agent-store-sand-files.js";
 import { AgentStoreObjectStoreProvider, resolveBoxObjectStoreProvider, type BoxObjectStoreProvider } from "./box-object-store.js";
 import { CHROME_AUTH_STATE_CACHE_EXCLUDE_NAMES, CHROME_AUTH_STATE_REL_DIRS, CHROME_SESSION_CATEGORY_NAME, CHROME_SESSION_DB_DIR, CHROME_SESSION_DB_NAMES, CHROME_SESSION_DB_REL_DIR, stageBoxChromeSession, type ChromeStageReport } from "./chrome-session-stage.js";

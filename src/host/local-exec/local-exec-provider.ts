@@ -4,7 +4,7 @@ import { join } from "node:path";
 
 import type { JsonValue } from "@bufbuild/protobuf";
 
-import { createDeadlinePolicy, createIdleWatchdogPolicy, createPollingPolicy, createRetryPolicy, realClock } from "../../internal/scheduling.js";
+import { createDeadlinePolicy, createIdleWatchdogPolicy, createPollingPolicy, createRetryPolicy, realClock } from "../../shared/scheduling.js";
 import { errorLogTag, errorMessage } from "../../shared/errors.js";
 import { GATEWAY_AUTH_SCHEME } from "../../shared/gateway-wire.js";
 import {

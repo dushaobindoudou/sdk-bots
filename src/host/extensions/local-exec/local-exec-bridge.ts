@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-import type { Clock, IdleWatchdogPolicy } from "../../../internal/scheduling.js";
+import type { Clock, IdleWatchdogPolicy } from "../../../shared/scheduling.js";
 import { DEFAULT_MAX_LOCAL_EXEC_FILE_BYTES, SAND_LOCAL_EXEC_LIVENESS_WINDOW_MS, SAND_NO_LOCAL_MACHINE_MESSAGE, sandComputerUnavailableMessage } from "../../../shared/local-exec-gateway.js";
 import { SandLocalExecError } from "./local-exec-error.js";
 

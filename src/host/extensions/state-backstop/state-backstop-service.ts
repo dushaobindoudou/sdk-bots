@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs"; import { join } from "node:path"; import type { DebouncePolicy } from "../../../internal/scheduling.js"; import { errorMessage } from "../../../shared/errors.js";
+import { existsSync, readFileSync } from "node:fs"; import { join } from "node:path"; import type { DebouncePolicy } from "../../../shared/scheduling.js"; import { errorMessage } from "../../../shared/errors.js";
 export const SAND_STATE_BACKSTOP_REL_PATH = "state/store.db"; export const DEFAULT_MAX_SNAPSHOT_BYTES = 64 * 1024 * 1024; export const STATE_BACKSTOP_DEBOUNCE_MS = 5_000;
 export function readStoreDbBytes(dbPath: string, checkpoint: (path: string) => void): Buffer | null { if (!existsSync(dbPath)) return null; checkpoint(dbPath); return readFileSync(dbPath); }
 interface ObjectStore { put(path: string, bytes: Uint8Array): Promise<void>; get(path: string): Promise<Uint8Array | null>; }

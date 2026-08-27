@@ -13,7 +13,7 @@ import {
   type Clock,
   type DeadlinePolicy,
   type PollingPolicy,
-} from "../../../internal/scheduling.js";
+} from "../../scheduling.js";
 import { validateAuthorizationUrl } from "./mcp-catalog-cache.js";
 import {
   normalizeAccountKey,

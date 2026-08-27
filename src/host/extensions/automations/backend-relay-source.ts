@@ -1,5 +1,5 @@
 import { GITHUB_EVENT_KINDS, TRIGGER_ANY_SCOPE, type GithubTrigger, type SlackTrigger } from "../../../shared/automations.js";
-import type { PollingPolicy } from "../../../internal/scheduling.js";
+import type { PollingPolicy } from "../../../shared/scheduling.js";
 import { describeScopeIssues, type ListenerScopeIssue } from "../../automations/listener-integrations.js";
 export class SandBackendRelayError extends Error {}
 export const DEFAULT_REGISTER_INTERVAL_MS = 5 * 60_000, DEGRADED_REGISTER_INTERVAL_MS = 60_000, ERROR_BACKOFF_MS = 30_000;

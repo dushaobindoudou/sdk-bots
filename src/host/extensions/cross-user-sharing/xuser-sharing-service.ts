@@ -1,4 +1,4 @@
-import type { Clock, DeadlinePolicy, ExpiryPolicy, PollingPolicy } from "../../../internal/scheduling.js";
+import type { Clock, DeadlinePolicy, ExpiryPolicy, PollingPolicy } from "../../../shared/scheduling.js";
 import { EMPTY_SAND_SHARING_STATE, isPublishableShareAvatarDataUrl } from "../../../shared/agents/sharing.js";
 import { clampGuestName } from "../../groups/xuser.js";
 import { SandXuserDepartureObligations, type XuserDepartureHost } from "./xuser-departure-obligations.js";

@@ -6,7 +6,7 @@ import {
   getSandRootDir,
   SAND_BOX_DATA_ROOT,
   SAND_BOX_MODEL_VISIBLE_DATA_ROOT,
-} from "../host-paths.js";
+} from "../../shared/sand-paths.js";
 
 export const SAND_BOX_REFERENCE_DIR = "/home/box/reference";
 export const LEGACY_SAND_BOX_REFERENCE_DIR = "/home/box/sand-reference";

@@ -1,4 +1,4 @@
-import type { Clock, PollingPolicy } from "../../../internal/scheduling.js";
+import type { Clock, PollingPolicy } from "../../../shared/scheduling.js";
 import { getSandBackendClientHeaders } from "../../../shared/node/sand-client-metadata.js";
 import { createNotifyDrainGate } from "../../notify-drain-gate.js";
 

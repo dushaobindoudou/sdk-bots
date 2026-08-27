@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 
-import type { Clock, RetryPolicy } from "../../../internal/scheduling.js";
+import type { Clock, RetryPolicy } from "../../../shared/scheduling.js";
 import { errorLogTag } from "../../../shared/errors.js";
 import { getAccessTokenExpiryMs, getConfiguredBackendUrl } from "../../../shared/node/cursor-token.js";
 import { getSandBackendClientHeaders } from "../../../shared/node/sand-client-metadata.js";

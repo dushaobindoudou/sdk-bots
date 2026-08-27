@@ -1,9 +1,9 @@
 import {
   createDebouncePolicy,
   realClock,
-} from "../../../internal/scheduling.js";
-import { defineHostExtension } from "../../../internal/host-extensions.js";
-import { getSandRootDir } from "../../host-paths.js";
+} from "../../../shared/scheduling.js";
+import { defineHostExtension } from "../../../shared/host-extensions.js";
+import { getSandRootDir } from "../../../shared/sand-paths.js";
 import { HostExtensions } from "../extension-ids.generated.js";
 import { PromptAcceptanceLedger } from "./prompt-acceptance-ledger.js";
 import { OUTLINE_STREAM_COALESCE_MS } from "./roster-projection.js";

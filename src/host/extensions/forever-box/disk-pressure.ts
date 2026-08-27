@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { SAND_DISK_PRESSURE_REMINDERS_FILE_NAME } from "../../durable-file-policy.js";
-import { getSandRootDir } from "../../host-paths.js";
+import { getSandRootDir } from "../../../shared/sand-paths.js";
 import { createDiskPressureGuard, readDiskVolumeSnapshots, type DiskPressureLevel, type DiskPressureReport } from "./disk-pressure-guard.js";
 
 export class SandDiskPressureLedgerError extends Error {}

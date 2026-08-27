@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import type { DeadlinePolicy } from "../../../internal/scheduling.js";
+import type { DeadlinePolicy } from "../../../shared/scheduling.js";
 import { parseRemoteAgentId } from "../../../shared/agents/sharing.js";
 import { buildRemoteMemberTurnPrompts, clampGuestName, toXuserTurnMessages } from "../../groups/xuser.js";
 import { normalizeTurnMessages } from "./xuser-wire-normalization.js";

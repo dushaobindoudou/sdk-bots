@@ -3,7 +3,7 @@ import { DashboardService } from "../../../packages/proto/generated/aiserver/v1/
 import { GetUserPrivacyModeRequest, type GetUserPrivacyModeResponse } from "../../../packages/proto/generated/aiserver/v1/dashboard_pb.js";
 import { PrivacyMode as ProtoPrivacyMode } from "../../../packages/proto/generated/aiserver/v1/privacy_mode_pb.js";
 import { createSandCursorBackendClient } from "../../../shared/node/cursor-backend/cursor-inference.js";
-import type { DeadlinePolicy, PollingPolicy, RetryPolicy } from "../../../internal/scheduling.js";
+import type { DeadlinePolicy, PollingPolicy, RetryPolicy } from "../../../shared/scheduling.js";
 export const PrivacyModes = { Unspecified: 0, NoStorage: 1, NoTraining: 2, UsageDataTrainingAllowed: 3, UsageCodebaseTrainingAllowed: 4 } as const;
 export type PrivacyMode = number;
 export interface TelemetryAuth { readonly authId: string; readonly authToken: string }

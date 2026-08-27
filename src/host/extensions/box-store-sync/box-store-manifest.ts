@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { z } from "zod";
-import type { RetryPolicy } from "../../../internal/scheduling.js";
+import type { RetryPolicy } from "../../../shared/scheduling.js";
 import { errorMessage } from "../../../shared/errors.js";
 import { invariant } from "../../../shared/invariant.js";
 import { BOX_STORE_LEGACY_MANIFEST_VERSION, BOX_STORE_MANIFEST_REL_PATH, BOX_STORE_MANIFEST_VERSION, boxStoreManifestEntriesEqual, isSymlinkManifestValue, manifestSchema, type BoxStoreManifestEntry } from "./box-store-manifest-format.js";

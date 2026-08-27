@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-import { DeadlineExceededError, type Clock, type DeadlinePolicy } from "../../../internal/scheduling.js";
+import { DeadlineExceededError, type Clock, type DeadlinePolicy } from "../../../shared/scheduling.js";
 import {
   SAND_NO_WEBAUTHN_MACHINE_MESSAGE,
   SAND_WEBAUTHN_LIVENESS_WINDOW_MS,

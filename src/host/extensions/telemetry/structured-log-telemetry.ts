@@ -59,7 +59,7 @@ import type {
   DeadlinePolicy,
   ExpiryPolicy,
   PollingPolicy,
-} from "../../../internal/scheduling.js";
+} from "../../../shared/scheduling.js";
 import {
   StructuredLogTransport,
   type StructuredLogClient,

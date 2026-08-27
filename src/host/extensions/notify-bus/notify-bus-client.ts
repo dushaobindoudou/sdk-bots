@@ -1,4 +1,4 @@
-import type { IdleWatchdogPolicy, RetryPolicy } from "../../../internal/scheduling.js";
+import type { IdleWatchdogPolicy, RetryPolicy } from "../../../shared/scheduling.js";
 import { getSandBackendClientHeaders } from "../../../shared/node/sand-client-metadata.js";
 
 export const SAND_NOTIFY_TOPIC_FLAGS = { "automation-fires": true, "listener-events": true, "xuser-events": true } as const;

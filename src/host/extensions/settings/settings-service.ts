@@ -1,6 +1,6 @@
 import { join } from "node:path";
 
-import { getSandRootDir } from "../../host-paths.js";
+import { getSandRootDir } from "../../../shared/sand-paths.js";
 import { isSandAgentModelSelection, type SandAgentModelSelection } from "../../../shared/agents/sand-agent-model.js";
 import { normalizeSandLocalToolPermission, type SandLocalToolPermission } from "../../../shared/local-tool-permission.js";
 import type { SandAutoReviewInstructions } from "../../../shared/sand-auto-review-instructions.js";

@@ -1,7 +1,7 @@
 import { lookup } from "node:dns/promises";
 import { createConnection, isIP, type Socket } from "node:net";
 
-import { createRetryPolicy, realClock, type RetryPolicy } from "../../../internal/scheduling.js";
+import { createRetryPolicy, realClock, type RetryPolicy } from "../../scheduling.js";
 import type { EgressTunnelConfig } from "./box-connection.js";
 import type { EgressTunnelStatus } from "./egress-tunnel-controller.js";
 

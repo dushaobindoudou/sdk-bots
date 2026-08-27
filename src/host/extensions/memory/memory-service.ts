@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync, rmSync, statSync } from "node:fs";
 import { basename, join } from "node:path";
-import type { DebouncePolicy } from "../../../internal/scheduling.js";
+import type { DebouncePolicy } from "../../../shared/scheduling.js";
 import { MEMORY_PROFILE_PROMPT_LIMIT, formatMemoryDate, memoryDedupeKey, normalizeMemoryContent } from "../../runner/sand-memory.js";
 import { WatchedDirectory } from "../../watched-directory.js";
 import type { AgentProjectMembership } from "./project-membership.js";

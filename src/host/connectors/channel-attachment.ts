@@ -1,5 +1,5 @@
 import { promises as fs } from "node:fs"; import { basename } from "node:path"; import { fileURLToPath } from "node:url";
-import { reanchorSandPath } from "../host-paths.js"; import { imageMimeFromPath, videoMimeFromPath } from "../../shared/media/image-mime.js";
+import { reanchorSandPath } from "../../shared/sand-paths.js"; import { imageMimeFromPath, videoMimeFromPath } from "../../shared/media/image-mime.js";
 export const CHANNEL_ATTACHMENT_MAX_UPLOAD_BYTES = 50 * 1024 * 1024; export const GENERIC_BINARY_MIME = "application/octet-stream";
 function tryParseUrl(raw: string): URL | null { try { return new URL(raw); } catch { return null; } }
 export function toLocalChannelAttachmentPath(raw: string): string | null { const parsed = tryParseUrl(raw); if (parsed == null) return raw.length > 0 ? raw : null; if (parsed.protocol !== "file:") return null; try { return fileURLToPath(parsed); } catch { return null; } }

@@ -6,7 +6,7 @@ import {
   realClock,
   type Clock,
   type ExpiryPolicy,
-} from "../../../internal/scheduling.js";
+} from "../../../shared/scheduling.js";
 import {
   getAgentAssetsDir,
   getAgentAttachmentsDir,

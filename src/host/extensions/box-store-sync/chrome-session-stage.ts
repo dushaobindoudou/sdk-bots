@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { mkdtemp, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { RetryPolicy } from "../../../internal/scheduling.js";
+import type { RetryPolicy } from "../../../shared/scheduling.js";
 import { isSqliteBusyError } from "../../storage/sqlite-busy.js";
 import { classifySqliteSnapshotFailure, copyLockedSqliteDb, sqliteVacuumInto, type SqliteSnapshotFailure } from "./sqlite-snapshot.js";
 

@@ -11,7 +11,7 @@ import {
 import {
   startHostPluginRegistry
 } from "./extensions/registry.js";
-import type { HostExtensionDeclaration } from "../internal/host-extensions.js";
+import type { HostExtensionDeclaration } from "../shared/host-extensions.js";
 import type { HostExtensionId } from "./extensions/extension-ids.generated.js";
 import { createHostRequestContext } from "./host-request-context.js";
 import {

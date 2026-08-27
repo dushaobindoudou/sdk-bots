@@ -5,7 +5,7 @@ import {
   realClock,
   type Clock,
   type DebouncePolicy,
-} from "../../../internal/scheduling.js";
+} from "../../../shared/scheduling.js";
 import { isSandSubagentId } from "../../../shared/agents/subagents.js";
 import { transcriptReplicaKey } from "../../../shared/ordering.js";
 import { SEND_MESSAGE_TOOL_CALL_OUTLINE_NAME } from "../../runner/conversation-outline.js";

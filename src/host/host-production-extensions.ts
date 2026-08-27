@@ -2,7 +2,7 @@ import {
   defineHostExtension,
   type HostExtensionContext,
   type HostExtensionDeclaration
-} from "../internal/host-extensions.js";
+} from "../shared/host-extensions.js";
 import { actionAuditExtension } from "./extensions/action-audit/extension.js";
 import { attachmentsExtension } from "./extensions/attachments/extension.js";
 import { authExtension } from "./extensions/auth/extension.js";

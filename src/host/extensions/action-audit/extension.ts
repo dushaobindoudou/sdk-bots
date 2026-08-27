@@ -1,5 +1,5 @@
-import { defineHostExtension } from "../../../internal/host-extensions.js";
-import { createRealPollingPolicy } from "../../../internal/scheduling.js";
+import { defineHostExtension } from "../../../shared/host-extensions.js";
+import { createRealPollingPolicy } from "../../../shared/scheduling.js";
 import { HostExtensions } from "../extension-ids.generated.js";
 import { createSandAuditBatchSender } from "./action-audit-backend.js";
 import { ACTION_AUDIT_FLUSH_INTERVAL_MS, createSandActionAuditor } from "./action-audit-service.js";

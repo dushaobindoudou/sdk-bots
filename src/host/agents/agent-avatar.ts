@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { constants, copyFileSync, readFileSync, readdirSync, realpathSync, statSync } from "node:fs";
 import { readFile, stat } from "node:fs/promises";
 import { extname, isAbsolute, join, relative, resolve, sep } from "node:path";
-import { reanchorSandPath } from "../host-paths.js";
+import { reanchorSandPath } from "../../shared/sand-paths.js";
 
 export const CANONICAL_AVATAR_FILENAME = "avatar.png";
 export const CONVENTIONAL_AVATAR_EXTENSIONS = ["png", "jpg", "jpeg", "webp", "gif", "svg"] as const;

@@ -1,6 +1,6 @@
 import { spawn, type ChildProcessByStdio } from "node:child_process";
 import type { Readable, Writable } from "node:stream";
-import type { DeadlinePolicy } from "../../../internal/scheduling.js";
+import type { DeadlinePolicy } from "../../../shared/scheduling.js";
 import { CsnapsResponseDecoder, encodeCsnapsRequest, parseCsnapsOperationResult, type CsnapsErrorCode, type CsnapsOperation, type CsnapsResponse } from "./csnaps-protocol.js";
 export class CsnapsProcessError extends Error { constructor(message: string, options?: ErrorOptions) { super(message, options); this.name = "CsnapsProcessError"; } }
 export class CsnapsRequestError extends CsnapsProcessError { constructor(readonly method: string, readonly code: CsnapsErrorCode) { super(`csnaps ${method} request failed: ${code}`); this.name = "CsnapsRequestError"; } }

@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync, rmSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { createDebouncePolicy, realClock } from "../../../internal/scheduling.js";
+import { createDebouncePolicy, realClock } from "../../../shared/scheduling.js";
 import { isSafeFolderId } from "../../storage/folder-id.js";
 import { WatchedDirectory } from "../../watched-directory.js";
 

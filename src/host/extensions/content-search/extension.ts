@@ -1,8 +1,8 @@
 import { join } from "node:path";
-import { createDeadlinePolicy, realClock } from "../../../internal/scheduling.js";
-import { defineHostExtension } from "../../../internal/host-extensions.js";
+import { createDeadlinePolicy, realClock } from "../../../shared/scheduling.js";
+import { defineHostExtension } from "../../../shared/host-extensions.js";
 import { subscribeTranscriptMutations } from "../../transcript-mutation-events.js";
-import { getSandRootDir } from "../../host-paths.js";
+import { getSandRootDir } from "../../../shared/sand-paths.js";
 import { getSandAgentsRootDir } from "../../storage/agent-paths.js";
 import { HostExtensions } from "../extension-ids.generated.js";
 import { AGENT_CONTENT_SEARCH_MAX_MATCHES_PER_AGENT, AGENT_CONTENT_SEARCH_MAX_RESULTS, findAgentContentMatches } from "./agent-content-search.js";

@@ -1,4 +1,4 @@
-import { createDeadlinePolicy, realClock, type PollingPolicy } from "../../../internal/scheduling.js";
+import { createDeadlinePolicy, realClock, type PollingPolicy } from "../../../shared/scheduling.js";
 import type { WatchReceiver } from "./privacy-mode.js";
 export const CodebaseEnvironment = { SAND_BOX: 1 } as const;
 export interface CsnapsState { readonly tracked: readonly { readonly codebaseUuid: string; readonly path: string; readonly kind: number; readonly environment: number }[] }

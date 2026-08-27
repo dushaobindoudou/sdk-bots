@@ -1,10 +1,10 @@
-import { defineHostExtension } from "../../../internal/host-extensions.js";
+import { defineHostExtension } from "../../../shared/host-extensions.js";
 import {
   createDebouncePolicy,
   createPollingPolicy,
   createRetryPolicy,
   realClock,
-} from "../../../internal/scheduling.js";
+} from "../../../shared/scheduling.js";
 import { HostExtensions } from "../extension-ids.generated.js";
 import type { AgentStoreClientDependencies } from "./agent-store-sand-files.js";
 import { pinBoxStoreDiagnosticsReporter } from "./box-store-diagnostics.js";

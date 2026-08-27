@@ -2,7 +2,7 @@ import { stat } from "node:fs/promises";
 import type { Stats } from "node:fs";
 import { homedir } from "node:os";
 import { basename, dirname, join } from "node:path";
-import { getSandRootDir } from "../../host-paths.js";
+import { getSandRootDir } from "../../../shared/sand-paths.js";
 import { assertValidSandAgentId, getSandAgentsRootDir } from "../../storage/agent-paths.js";
 import { reportSessionDiagnostic } from "./session-diagnostics.js";
 

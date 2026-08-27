@@ -1,7 +1,7 @@
 import { promises as fs } from "node:fs";
 import { dirname, join } from "node:path";
 
-import { getSandRootDir } from "../../host-paths.js";
+import { getSandRootDir } from "../../../shared/sand-paths.js";
 
 export type SandSourceMode = "local" | "agent-store";
 export interface SandSourceEntry { readonly sourceId: string; readonly mode: SandSourceMode; }

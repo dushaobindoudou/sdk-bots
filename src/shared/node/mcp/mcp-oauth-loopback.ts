@@ -11,7 +11,7 @@ import {
   type ExpiryPolicy,
   type PollingPolicy,
   type RetryPolicy,
-} from "../../../internal/scheduling.js";
+} from "../../scheduling.js";
 import {
   isDeadlineExceededConnectError,
   isRateLimitConnectError,

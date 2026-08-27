@@ -7,7 +7,7 @@ import { createCursorSandInference } from "./cursor-session.js";
 import type { SandInferenceProvider } from "../../../shared/inference-router.js";
 import type { PromptExecutor } from "./sand-labeling.js";
 import { createProviderPromptSession } from "./provider-session.js";
-import { getSandRootDir } from "../../host-paths.js";
+import { getSandRootDir } from "../../../shared/sand-paths.js";
 export interface HostInferenceOptions {
   auth: { getAccessToken(...args: unknown[]): Promise<string>; getMachineId(): string };
   experiments: { checkFeatureGate(name: string): boolean; getComputerUseModelOverride(): SandAgentModelSelection | undefined; getBrowserUseModelOverride(): SandAgentModelSelection | undefined; getSandModelExperimentState(): SandModelExperimentState | null | undefined; hasHydratedStatsigUserId(): boolean; getConfiguredDefaultModel(): SandAgentModelSelection | undefined; getConfiguredAutomationsModel(): SandAgentModelSelection | undefined };

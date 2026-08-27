@@ -1,4 +1,4 @@
-import type { HostExtensionContext } from "../../../internal/host-extensions.js";
+import type { HostExtensionContext } from "../../../shared/host-extensions.js";
 import type { SandAgentModelSelection } from "../../../shared/agents/sand-agent-model.js";
 import { createCursorWebFetchService, createCursorWebSearchService } from "./cursor-web-tools.js";
 import { createHostInference } from "./inference-service.js";

@@ -1,9 +1,9 @@
 import { join } from "node:path";
 import { createCursorChecksum, getSandInferenceBackendUrl } from "../../../shared/node/cursor-backend/cursor-inference.js";
 import { getSandBackendClientHeaders } from "../../../shared/node/sand-client-metadata.js";
-import { createDeadlinePolicy, createRealPollingPolicy, createRealRetryPolicy, realClock } from "../../../internal/scheduling.js";
-import { defineHostExtension } from "../../../internal/host-extensions.js";
-import { getSandRootDir } from "../../host-paths.js";
+import { createDeadlinePolicy, createRealPollingPolicy, createRealRetryPolicy, realClock } from "../../../shared/scheduling.js";
+import { defineHostExtension } from "../../../shared/host-extensions.js";
+import { getSandRootDir } from "../../../shared/sand-paths.js";
 import { HostExtensions } from "../extension-ids.generated.js";
 import { CsnapsCodebaseTelemetryAdapter } from "./codebase-telemetry-adapter.js";
 import { resolveCsnapsCapability } from "./csnaps-capability.js";

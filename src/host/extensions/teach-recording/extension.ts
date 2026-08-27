@@ -1,9 +1,9 @@
 import { randomBytes } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { createDebouncePolicy, realClock } from "../../../internal/scheduling.js";
+import { createDebouncePolicy, realClock } from "../../../shared/scheduling.js";
 import { SAND_TEACH_MAX_DURATION_MS } from "../../../shared/agents/teach-recording.js";
-import { getSandRootDir } from "../../host-paths.js";
+import { getSandRootDir } from "../../../shared/sand-paths.js";
 import type { HostBox } from "../forever-box/host-box.js";
 import { createTeachRecordingService, LEARN_SKILL_NAME } from "./teach-recording-service.js";
 

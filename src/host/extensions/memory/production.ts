@@ -1,13 +1,13 @@
-import type { HostExtensionContext } from "../../../internal/host-extensions.js";
+import type { HostExtensionContext } from "../../../shared/host-extensions.js";
 import {
   createDeadlinePolicy,
   createRealDebouncePolicy,
   createRealPollingPolicy,
   createRealRetryPolicy,
   realClock
-} from "../../../internal/scheduling.js";
+} from "../../../shared/scheduling.js";
 import { getSandAgentsRootDir } from "../../storage/agent-paths.js";
-import { getSandRootDir } from "../../host-paths.js";
+import { getSandRootDir } from "../../../shared/sand-paths.js";
 import { SAND_SUMMARIZATION_MODEL_ID } from "../../../shared/agents/sand-agent-model.js";
 import type { MemoryExtensionContext } from "./extension.js";
 import {

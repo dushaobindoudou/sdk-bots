@@ -4,7 +4,7 @@ import { startGatewayServer } from "./gateway-server.js";
 import { clearGatewayDiscovery, writeGatewayDiscovery } from "./host-discovery.js";
 import { pinHostDiagnosticsReporter } from "./host-diagnostics.js";
 import { acquireHostLock } from "./host-lock.js";
-import { getSandRootDir } from "./host-paths.js";
+import { getSandRootDir } from "../shared/sand-paths.js";
 import path from "node:path";
 import { installProcessCrashGuards } from "./process-crash-guard.js";
 import {

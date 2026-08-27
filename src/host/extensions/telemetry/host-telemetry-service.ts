@@ -5,7 +5,7 @@ import type {
   DeadlinePolicy,
   ExpiryPolicy,
   PollingPolicy,
-} from "../../../internal/scheduling.js";
+} from "../../../shared/scheduling.js";
 import type { StructuredLogClient } from "../../../shared/observability/structured-log-transport.js";
 import { errorLogTag } from "../../../shared/errors.js";
 import { getSandInferenceBackendUrl } from "../../../shared/node/cursor-backend/cursor-inference.js";

@@ -2,9 +2,9 @@ import { lstat, readlink, rm, symlink } from "node:fs/promises";
 import { homedir } from "node:os";
 import { isAbsolute, join, relative, resolve } from "node:path";
 
-import { getSandVariant } from "../shared/node/sand-variant.js";
-import { isPathWithin } from "../shared/node/paths.js";
-import { findSystemErrno } from "../shared/system-errno.js";
+import { getSandVariant } from "./node/sand-variant.js";
+import { isPathWithin } from "./node/paths.js";
+import { findSystemErrno } from "./system-errno.js";
 
 export const SAND_DATA_ROOT_ENV = "SAND_DATA_ROOT";
 export const SAND_PRODUCTION_DATA_DIRNAME = ".grokbot";

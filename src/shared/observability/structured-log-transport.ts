@@ -1,4 +1,4 @@
-import type { DeadlinePolicy, ExpiryPolicy, PollingPolicy } from "../../internal/scheduling.js";
+import type { DeadlinePolicy, ExpiryPolicy, PollingPolicy } from "../scheduling.js";
 import { SandError, sandErrorTags } from "../errors/registry.js";
 import { LogShipSchedule, takeLogShipBatch, type LogShipResult } from "./log-ship-cadence.js";
 import { BOX_LOG_EVENT, HOST_LOG_EVENT, TELEMETRY_DROPPED_EVENT, TELEMETRY_DROP_REASONS, TELEMETRY_DROP_UNIT_BY_REASON, TELEMETRY_SHIP_TIMEOUT_EVENT, type TelemetryDropReason } from "./telemetry-events.js";

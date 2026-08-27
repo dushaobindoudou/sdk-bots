@@ -1,5 +1,5 @@
-import { createRealRetryPolicy, realClock } from "../../../internal/scheduling.js";
-import { defineHostExtension } from "../../../internal/host-extensions.js";
+import { createRealRetryPolicy, realClock } from "../../../shared/scheduling.js";
+import { defineHostExtension } from "../../../shared/host-extensions.js";
 import { HostExtensions } from "../extension-ids.generated.js";
 import { createHostAuthService } from "./auth-service.js";
 import { CREDENTIAL_RETRY_BASE_DELAY_MS, CREDENTIAL_RETRY_MAX_DELAY_MS } from "./credential-renewer.js";

@@ -6,10 +6,7 @@ import { DashboardService } from "../../../packages/proto/generated/aiserver/v1/
 import { GetUserPrivacyModeRequest, type GetUserPrivacyModeResponse } from "../../../packages/proto/generated/aiserver/v1/dashboard_pb.js";
 import { AgentService } from "../../../packages/proto/generated/agent/v1/agent_service_connect.js";
 import { GetSignedUrlForAttachedMediaRequest, type GetSignedUrlForAttachedMediaResponse } from "../../../packages/proto/generated/agent/v1/agent_service_pb.js";
-import { InferenceService } from "../../../packages/proto/generated/aiserver/v1/inference_connect.js";
 import type { InferenceReason } from "../../../packages/proto/generated/aiserver/v1/inference_pb.js";
-import { createProtoSessionProvider } from "../../../packages/chat-inference-proto/client.js";
-import { imageResizingMiddleware } from "../../../packages/chat-inference/middleware/image-resizing-middleware.js";
 import { SAND_DEFAULT_MODEL_SELECTION } from "../../agents/agent-model.js";
 import { SAND_COMPUTER_USE_MODEL_SELECTION, type SandAgentModelSelection } from "../../agents/sand-agent-model.js";
 import { PrivacyMode } from "../../observability/sentry-privacy-mode.js";
@@ -17,8 +14,7 @@ import { accountCacheScope, getConfiguredBackendUrl } from "../cursor-token.js";
 import { SAND_BOX_NAMESPACE_HEADER, SAND_CLIENT_TYPE, getSandBoxNamespace, getSandClientVersion } from "../sand-client-metadata.js";
 import { createSandRpcTracingInterceptor } from "./rpc-tracing.js";
 import { SandSettingsStore } from "../settings/sand-settings-store.js";
-import { getSandRootDir } from "../../../host/host-paths.js";
-import { createProviderPromptSession } from "../../../host/extensions/inference/provider-session.js";
+import { getSandRootDir } from "../../sand-paths.js";
 
 export const PRIVACY_MODE_CACHE_MAX_AGE_MS = 5 * 60_000;
 export const PRIVACY_MODE_FALLBACK_CACHE_MAX_AGE_MS = 10_000;
@@ -184,15 +180,4 @@ export function createSandAttachedMediaUrlProvider(options: Omit<SandInferenceOp
       };
     },
   };
-}
-
-export function createCursorInferencePromptSession(options: Omit<SandInferenceOptions, "backendUrl"> & {
-  readonly requestedModel: RequestedModel;
-  readonly inferenceReason?: InferenceReason;
-}) {
-  const settingsPath = join(getSandRootDir(), "settings.json");
-  const routedProvider = new SandSettingsStore(settingsPath).getInferenceProvider();
-  if (routedProvider !== "cursor") return createProviderPromptSession(routedProvider);
-  const client = createSandCursorBackendClient(InferenceService, options);
-  return createProtoSessionProvider(client, options.requestedModel, undefined, options.inferenceReason).getSession(imageResizingMiddleware);
 }

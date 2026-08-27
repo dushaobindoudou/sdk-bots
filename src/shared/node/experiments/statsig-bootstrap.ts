@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { mkdir, rename, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import type { DeadlinePolicy } from "../../../internal/scheduling.js";
+import type { DeadlinePolicy } from "../../scheduling.js";
 import { errorLogTag } from "../../errors.js";
 import { getSandBackendClientHeaders } from "../sand-client-metadata.js";
 import { parseRetryAfterHeaderMs } from "../../retry-after.js";

@@ -1,7 +1,7 @@
-import type { HostExtensionContext } from "../../../internal/host-extensions.js";
+import type { HostExtensionContext } from "../../../shared/host-extensions.js";
 import { getSandInferenceBackendUrl } from "../../../shared/node/cursor-backend/cursor-inference.js";
 import { createDashboardClient } from "../../../shared/node/marketplace/cursor-marketplace-client.js";
-import { getSandRootDir } from "../../host-paths.js";
+import { getSandRootDir } from "../../../shared/sand-paths.js";
 import {
   fetchSandManagedSkills,
   fetchSkillCatalog,

@@ -1,4 +1,4 @@
-import type { PollingPolicy } from "../../../internal/scheduling.js";
+import type { PollingPolicy } from "../../../shared/scheduling.js";
 import type { ListenerPlatform } from "../../automations/listener-integrations.js";
 
 export const DEFAULT_WATCH_TIMEOUT_MS = 15 * 60 * 1_000;

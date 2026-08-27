@@ -1,5 +1,5 @@
-import { createRealPollingPolicy, realClock } from "../../../internal/scheduling.js";
-import { defineHostExtension } from "../../../internal/host-extensions.js";
+import { createRealPollingPolicy, realClock } from "../../../shared/scheduling.js";
+import { defineHostExtension } from "../../../shared/host-extensions.js";
 import { HostExtensions } from "../extension-ids.generated.js";
 import { CLOUD_AGENT_POLL_INTERVAL_MS } from "./cloud-agent-poll-loop.js";
 import { SandCloudAgentManager } from "./cloud-agents-service.js";

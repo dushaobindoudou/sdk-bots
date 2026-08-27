@@ -1,5 +1,5 @@
-import { createDeadlinePolicy, realClock } from "../../../internal/scheduling.js";
-import { defineHostExtension } from "../../../internal/host-extensions.js";
+import { createDeadlinePolicy, realClock } from "../../../shared/scheduling.js";
+import { defineHostExtension } from "../../../shared/host-extensions.js";
 import { SAND_WEBAUTHN_CEREMONY_TIMEOUT_MS, type WebAuthnCeremony, type WebAuthnResponseFrame } from "../../../shared/webauthn-gateway.js";
 import { HostExtensions } from "../extension-ids.generated.js";
 import { SandWebAuthnBridge } from "./webauthn-proxy-bridge.js";

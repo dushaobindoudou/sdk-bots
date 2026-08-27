@@ -1,4 +1,4 @@
-import { realClock, type Clock } from "../../internal/scheduling.js";
+import { realClock, type Clock } from "../scheduling.js";
 
 export function delay(ms: number, signal?: AbortSignal): Promise<void> { return delayWith(realClock, ms, signal); }
 export function delayWith(clock: Clock, ms: number, signal?: AbortSignal): Promise<void> {

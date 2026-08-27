@@ -1,5 +1,5 @@
-import { createIdleWatchdogPolicy, realClock } from "../../../internal/scheduling.js";
-import { defineHostExtension } from "../../../internal/host-extensions.js";
+import { createIdleWatchdogPolicy, realClock } from "../../../shared/scheduling.js";
+import { defineHostExtension } from "../../../shared/host-extensions.js";
 import { SAND_LOCAL_EXEC_RESPONSE_TIMEOUT_MS } from "../../../shared/local-exec-gateway.js";
 import { HostExtensions } from "../extension-ids.generated.js";
 import type { GatewayLocalToolGate } from "./gateway-local-exec-sand-box.js";

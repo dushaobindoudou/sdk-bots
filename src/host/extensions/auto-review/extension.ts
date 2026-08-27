@@ -1,4 +1,4 @@
-import { defineHostExtension } from "../../../internal/host-extensions.js";
+import { defineHostExtension } from "../../../shared/host-extensions.js";
 import { SAND_AUTO_REVIEW_HOST_GENERATION } from "../../runner/sand-auto-review.js";
 import { HostExtensions } from "../extension-ids.generated.js";
 import {
