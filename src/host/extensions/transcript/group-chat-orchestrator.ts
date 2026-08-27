@@ -5,6 +5,7 @@ import {
   SHARED_ROOM_HISTORY_LIMIT,
   buildGroupMemberSystemPrompt,
   buildGroupTurnPrompt,
+  groupDisplayName,
   isPassContent,
   stripGroupPassToken,
   messagesSinceMemberLastSpoke,
@@ -108,6 +109,14 @@ export class GroupChatOrchestrator {
       // "(pass)+commentary" is a pass with self-justification glued on: strip the
       // token, then relay only any real remainder (commentary), never the token.
       const content = stripGroupPassToken(rawContent);
+      // Audit trail: every member-turn output (passes, narration, receipts,
+      // answers alike) goes to the host log stream, so the console logs view
+      // shows the full process even when the chat view renders it as a quiet
+      // status note. pass = silent skip; note = pass with commentary; say = room message.
+      const kind = isPassContent(content) ? (content.length > 0 ? "note" : "pass") : "say";
+      console.log(
+        `[group-chat] ${groupDisplayName(group)}/${member.name} ${kind}: ${rawContent.trim().slice(0, 500)}`,
+      );
       if (isPassContent(content)) continue;
       const trimmed = content.trim();
       if (trimmed.length === 0) continue;

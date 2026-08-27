@@ -483,7 +483,19 @@ async function localChatCompletion(endpoint: { baseURL: string; apiKey: string; 
   }) : [];
   const usage = data.usage ?? {};
   const text = typeof message.content === "string" ? message.content : "";
-  if (toolCalls.length === 0 && text.trim().length > 0) {
+  // Plain text → synthesized SendMessage exists so tool-less models still
+  // deliver their answer. But synthesizing AGAIN after a send already happened
+  // this turn feeds a self-perpetuating receipt loop: the model sends its
+  // answer, reacts to the tool result with trailing narration, the narration
+  // becomes another send, which elicits more narration — unbounded. Once
+  // anything has been sent (explicit or synthesized), bare text is narration
+  // the user was never meant to see (the system prompt says plain text is
+  // invisible), so drop it and let the turn end.
+  const alreadySentThisTurn = messages.some((prior) => {
+    if (prior.role !== "assistant" || !Array.isArray(prior.content)) return false;
+    return prior.content.some((part) => (part as Loose | null)?.type === "tool-call" && (part as Loose).toolName === "SendMessage");
+  });
+  if (toolCalls.length === 0 && text.trim().length > 0 && !alreadySentThisTurn) {
     toolCalls.push({
       toolCallId: crypto.randomUUID(),
       toolName: "SendMessage",
