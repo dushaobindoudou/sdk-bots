@@ -23,7 +23,10 @@ import {
   BOX_STORE_BLOBS_PREFIX,
   isBoxStoreManifestFileEntry,
   isBoxStoreManifestSymlinkEntry,
+  type BoxStoreLegacyManifestFileEntry,
   type BoxStoreManifestEntry,
+  type BoxStoreManifestFileEntry,
+  type BoxStoreManifestSymlinkEntry,
 } from "./box-store-manifest-format.js";
 import type { BoxStoreManifestStore } from "./box-store-manifest.js";
 import type { BoxObjectStore } from "./box-object-store.js";
@@ -51,8 +54,8 @@ export function isCriticalRelPath(relPath: string): boolean {
   return COPY_IN_CRITICAL_BASENAMES.has(relPath.slice(relPath.lastIndexOf("/") + 1));
 }
 
-type ManifestFileEntry = Exclude<BoxStoreManifestEntry, { kind: "symlink" }>;
-type ManifestSymlinkEntry = Extract<BoxStoreManifestEntry, { kind: "symlink" }>;
+type ManifestFileEntry = BoxStoreManifestFileEntry | BoxStoreLegacyManifestFileEntry;
+type ManifestSymlinkEntry = BoxStoreManifestSymlinkEntry;
 
 export type BoxStoreSymlinkStep =
   | "prepare-parent"

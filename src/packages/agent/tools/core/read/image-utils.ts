@@ -10,8 +10,12 @@ const mimeTypes = mimeTypesModule as MimeTypesModule;
 // Extracted from ../packages/agent/dist/tools/core/read/image-utils.js as the
 // exact MIME projection leaf. The selected-context dispatcher and video paths
 // remain owned by their existing modules.
-export function detectImageMimeType(bytes: Uint8Array, filePath?: string): string | undefined {
-  const result = imageType(bytes);
+//
+// `image-type` v6 is async (returns a Promise), so magic-byte detection must
+// be awaited; the old synchronous call silently read `.mime` off the Promise
+// and always fell through to the extension lookup.
+export async function detectImageMimeType(bytes: Uint8Array, filePath?: string): Promise<string | undefined> {
+  const result = await imageType(bytes);
   if (result?.mime) {
     return result.mime;
   }

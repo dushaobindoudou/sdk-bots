@@ -36,8 +36,8 @@ Console (when the host is running): [http://127.0.0.1:7331/](http://127.0.0.1:73
 Demo:
 
 ```bash
-NODE_OPTIONS="--use-system-ca" pnpm example:group-chat
-NODE_OPTIONS="--use-system-ca" pnpm example:group-chat -- 帮我想一个周末徒步计划
+NODE_OPTIONS="--use-system-ca" npm run example:group-chat
+NODE_OPTIONS="--use-system-ca" npm run example:group-chat -- 帮我想一个周末徒步计划
 ```
 
 See [`examples/README.md`](examples/README.md).
@@ -76,10 +76,10 @@ Plain string, or `{"sendMessage": "..."}` / `{"toolCalls": [...]}` (see `parseSa
 ## Tests
 
 ```bash
-pnpm test:unit         # no host
-pnpm test:smoke        # boot + CRUD + SSE
-pnpm test:e2e          # mock group-chat loop
-pnpm test:integration  # isolated host per case
+npm run test:unit      # no host
+npm run test:smoke     # boot + CRUD + SSE
+npm run test:e2e       # mock group-chat loop
+npm run test:integration # isolated host per case
 ```
 
 Host-requiring scripts build the daemon/worker bundles first (`pre` hooks).
@@ -89,11 +89,11 @@ If a parent shell injects a `NODE_OPTIONS` preload, run tests with `NODE_OPTIONS
 ## Build
 
 ```bash
-pnpm build             # daemon + workers + tsc + assets
-pnpm typecheck
+npm run build          # clean + daemon + workers + tsc (JS + public d.ts)
+npm run typecheck
 ```
 
-Generated (gitignored): `src/box-exec-daemon/main.cjs`, `src/host-workers/*.cjs`. Packaged copies land in `dist/`.
+Generated (gitignored): `dist/box-exec-daemon/main.cjs`, `dist/host-workers/*.cjs` — built into the single `dist/` output; nothing generated lives inside `src/`.
 
 ## Environment
 
@@ -112,9 +112,9 @@ Generated (gitignored): `src/box-exec-daemon/main.cjs`, `src/host-workers/*.cjs`
 
 ## Layout
 
-- `src/sdk` — `SdkBotsClient` + `startHost()`
-- `src/host` — headless bootstrap
-- `source/host` — gateway, group chat, box daemon, inference
+- `src/sdk` — `SdkBotsClient` + `startHost()` (public entry)
+- `src/bootstrap` — headless CLI bootstrap + shared host composition (`composition.ts`)
+- `src/host` — gateway, group chat, box daemon, inference (recovered runtime)
 - `test/unit` — no host; `test/integration` — isolated host per case
 
 ## Status

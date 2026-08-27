@@ -214,7 +214,7 @@ export async function processSelectedContext(
   const blobHydrationStart = performance.now();
   const imageProcessingPromise = Promise.all(selectedContext.selectedImages.map(async (selectedImage, index) => {
     const hydrated = await hydrateSelectedImageData({ ctx, blobStore: blobStore!, selectedImage });
-    const mimeType = selectedImage.mimeType.trim() || (hydrated.imageData ? detectImageMimeType(hydrated.imageData, selectedImage.path) : undefined) || "image/png";
+    const mimeType = selectedImage.mimeType.trim() || (hydrated.imageData ? await detectImageMimeType(hydrated.imageData, selectedImage.path) : undefined) || "image/png";
     const imageFilePath = writeSelectedImageToProjectAssets({
       ctx,
       imageData: hydrated.imageData,

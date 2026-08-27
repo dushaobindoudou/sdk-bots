@@ -7,7 +7,7 @@ import {
   compactLocalMessages,
   openRouterChatTools,
   resolveOpenRouterEndpoint,
-} from "../../source/host/extensions/inference/provider-session.ts";
+} from "../../src/host/extensions/inference/provider-session.ts";
 
 describe("openRouterChatTools", () => {
   test("keeps sandbox tools including Shell and Read", () => {
@@ -70,6 +70,6 @@ describe("compactLocalMessages", () => {
       { role: "user", content: `[Group chat: "周末小队" - with 写手]\nIt's your turn, 研究员.` },
     ]);
     assert.equal(compacted.length, 1);
-    assert.match(compacted[0]!.content, /Group chat/);
+    assert.match(String(compacted[0]!.content), /Group chat/);
   });
 });

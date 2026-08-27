@@ -5,7 +5,7 @@ import {
   buildGroupTurnPrompt,
   parseGroupMentions,
   resolveResponders,
-} from "../../source/host/groups/group-chat.ts";
+} from "../../src/host/groups/group-chat.ts";
 
 const researcher = { id: "r", name: "研究员", description: "" };
 const writer = { id: "w", name: "写手", description: "" };

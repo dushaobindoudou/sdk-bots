@@ -59,21 +59,51 @@ export function defaultDataDir(): string {
 
 /**
  * Locates the bundled loopback box exec-daemon (single-file CJS bundle built
- * by `npm run build:daemon`). Dev layout: src/box-exec-daemon/main.cjs;
- * packaged layout: dist/box-exec-daemon/main.cjs. Returns null when absent —
- * the host then runs without the daemon (shell/file tools degraded).
+ * into dist/box-exec-daemon by `npm run build:daemon`). Dev runs (tsx, from
+ * src/sdk) and packaged runs (dist/sdk) both resolve it under dist/. Returns
+ * null when absent — the host then runs without the daemon (shell/file tools
+ * degraded).
  */
 export function resolveBoxExecDaemonEntry(): string | null {
   const here = dirname(fileURLToPath(import.meta.url));
   const candidates = [
-    join(here, "..", "box-exec-daemon", "main.cjs"), // src/sdk -> src/box-exec-daemon (dev)
-    join(here, "..", "..", "box-exec-daemon", "main.cjs"), // dist/src/sdk -> dist/box-exec-daemon (packaged)
-    join(here, "..", "..", "..", "src", "box-exec-daemon", "main.cjs"), // dist/src/sdk -> repo src
+    join(here, "..", "box-exec-daemon", "main.cjs"), // dist/sdk -> dist/box-exec-daemon (packaged)
+    join(here, "..", "..", "dist", "box-exec-daemon", "main.cjs"), // src/sdk -> dist (dev via tsx)
   ];
   for (const candidate of candidates) {
     if (existsSync(candidate)) return candidate;
   }
   return null;
+}
+
+/**
+ * Loads the shared headless host composition (src/bootstrap/composition.ts)
+ * and returns its boot function.
+ *
+ * The specifier is computed on purpose. A literal `import("../bootstrap/composition.js")`
+ * would make the compiler pull the entire host runtime graph (protobuf
+ * closures, tree-sitter, jimp, …) into the SDK's declaration-emit program,
+ * and this package's published types should cover only the small public
+ * surface below. Dev runs resolve the TypeScript source via tsx; packaged
+ * runs resolve the emitted JS next to this file. The wiring itself is
+ * exercised end-to-end by the smoke/e2e/integration suites, which boot a real
+ * host through this exact call.
+ */
+async function loadHeadlessHostBoot(): Promise<() => Promise<void>> {
+  const here = dirname(fileURLToPath(import.meta.url));
+  const candidates = [
+    "../bootstrap/composition.ts", // dev: this file is src/sdk/entry.ts (tsx)
+    "../bootstrap/composition.js", // packaged: dist/sdk/entry.js
+  ];
+  for (const candidate of candidates) {
+    if (!existsSync(resolve(here, candidate))) continue;
+    const specifier: string = candidate;
+    const mod = (await import(specifier)) as { startHeadlessHost: () => Promise<void> };
+    return mod.startHeadlessHost;
+  }
+  throw new Error(
+    "sdk-bots host composition module not found (expected src/bootstrap/composition.ts or dist/bootstrap/composition.js)"
+  );
 }
 
 export interface GatewayDiscovery {
@@ -156,38 +186,14 @@ export async function startHost(options: StartHostOptions = {}): Promise<Started
 
   let discovery: GatewayDiscovery;
   {
-    const { startProductionHost } = await import("../../source/host/main.js");
-    const { bindRecoveredProductionExtensions } = await import("../../source/host/host-production-extensions.js");
-    const { productionBoxGeneratedPorts } = await import("../../source/host/box/generated-production.js");
-    const { convertProductionCloudAgentConversationToTrace, productionSecretsContext, createProductionStateBackstop } = await import("../../source/host/production-binding-providers.js");
-    const { createProductionRunnerContext } = await import("../../source/host/runner-context-production-provider.js");
-    const { createDefaultProductionTranscriptMirrorProvider } = await import("../../source/host/transcript-mirror/production-provider.js");
-    const { executeBoxCopyInFromEnv } = await import("../../source/host/extensions/box-store-sync/box-copy-in.js");
-    const { productionLocalExecCodec } = await import("../../source/host/extensions/local-exec/production.js");
-
-    const ports = {
-      executeBoxCopyInFromEnv,
-      extensionHost: {
-        boxGenerated: productionBoxGeneratedPorts,
-        convertCloudAgentConversationToTrace: convertProductionCloudAgentConversationToTrace,
-      },
-      runnerContext: createProductionRunnerContext(),
-      createTranscriptMirror: createDefaultProductionTranscriptMirrorProvider(),
-      log: console,
-    };
-    const extensionBindings = {
-      stateBackstop: createProductionStateBackstop(),
-      // Concrete artifact-backed codec; without it every turn's resource
-      // accessor creation throws and the turn retry loop spins forever.
-      localExecCodec: productionLocalExecCodec,
-      secretsContext: productionSecretsContext,
-    };
+    // Single shared wiring with the CLI bootstrap (src/bootstrap/composition.ts).
+    const startHeadlessHost = await loadHeadlessHostBoot();
 
     // main() resolves before the discovery file is written, and resolves even
     // on the happy path only after handlers are installed — so readiness is
     // signalled by the discovery file, which is written atomically after the
     // gateway starts listening. Watch for it instead of racing on startup().
-    const startup = startProductionHost(bindRecoveredProductionExtensions(ports, extensionBindings));
+    const startup = startHeadlessHost();
     startup.catch(() => { /* fatal startup errors surface via the discovery timeout */ });
 
     discovery = await waitForDiscovery(dataDir, options.startupTimeoutMs ?? 180_000);

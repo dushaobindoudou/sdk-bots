@@ -15,7 +15,7 @@
 
 export interface SdkBotsClientOptions {
   baseUrl: string;
-  token?: string;
+  token?: string | undefined;
   fetch?: typeof fetch;
 }
 
@@ -34,7 +34,7 @@ export function normalizeAgentList(raw: unknown): AgentList {
 
 export class SdkBotsClient {
   private readonly baseUrl: string;
-  private readonly token?: string;
+  private readonly token: string | undefined;
   private readonly fetchFn: typeof fetch;
 
   constructor(opts: SdkBotsClientOptions) {
@@ -112,7 +112,7 @@ export class SdkBotsClient {
   private async openEventStream(signal?: AbortSignal): Promise<ReadableStreamDefaultReader<Uint8Array>> {
     const res = await this.fetchFn(`${this.baseUrl}/events`, {
       headers: this.headers({ accept: "text/event-stream" }),
-      signal,
+      ...(signal != null ? { signal } : {}),
     });
     if (!res.ok || !res.body) throw new Error(`events failed: ${res.status}`);
     return res.body.getReader();

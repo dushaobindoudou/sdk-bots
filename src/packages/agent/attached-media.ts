@@ -11,8 +11,11 @@ interface AttachedMediaConfig {
   };
 }
 
+/** Body payload type accepted by the global `fetch` (Node's undici-backed fetch). */
+type FetchBody = NonNullable<RequestInit["body"]>;
+
 interface UploadAttachedMediaOptions {
-  readonly data: BodyInit;
+  readonly data: FetchBody;
   readonly mimeType: string;
   readonly putUrl: string | URL;
   readonly signal?: AbortSignal;

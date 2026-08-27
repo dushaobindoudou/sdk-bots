@@ -1,7 +1,7 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 
-import { preservedExitCode } from "../../source/host/main.ts";
+import { preservedExitCode } from "../../src/host/main.ts";
 
 describe("preservedExitCode()", () => {
   test("keeps a failing process.exitCode so SIGTERM shutdown cannot green-wash tests", () => {

@@ -728,7 +728,7 @@ async function processAttachments(
       throw new Error(`Attachment is not binary data: ${filePath}`);
     }
     const binaryData = output.value;
-    const detectedImageMime = detectImageMimeType(binaryData, filePath);
+    const detectedImageMime = await detectImageMimeType(binaryData, filePath);
     const videoMime = getPotentialVideoMimeTypeFromPath(filePath);
     const lookupMime = mimeTypes.lookup(filePath);
     const mimeType =

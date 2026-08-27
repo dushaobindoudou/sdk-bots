@@ -1,6 +1,6 @@
 /**
  * Unit tests for the direct Codex Responses transport
- * (source/host/extensions/inference/codex-direct-responses.ts).
+ * (src/host/extensions/inference/codex-direct-responses.ts).
  *
  * Migrated from the original repo's tests/codex-direct-responses.test.mjs;
  * the esbuild transform loader is replaced by a direct tsx import.
@@ -15,7 +15,7 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 
-import { streamCodexDirectResponses } from "../../source/host/extensions/inference/codex-direct-responses.ts";
+import { streamCodexDirectResponses } from "../../src/host/extensions/inference/codex-direct-responses.ts";
 
 function sse(events: unknown[], split = 17): Response {
   const bytes = new TextEncoder().encode(

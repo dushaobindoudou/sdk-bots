@@ -1,6 +1,6 @@
 /**
  * Reverse dependency scanner: finds package.json dependencies that are never
- * referenced from the migrated source (source/ + src/ + test/ + scripts/).
+ * referenced from the source (src/ + test/ + scripts/).
  *
  * Handles: static imports, dynamic import(), require/createRequire string args,
  * and sub-path imports (@scope/pkg/sub -> @scope/pkg).
@@ -55,7 +55,7 @@ function walk(dir) {
     }
   }
 }
-for (const dir of ["source", "src", "test", "scripts"]) walk(path.join(root, dir));
+for (const dir of ["src", "test", "scripts"]) walk(path.join(root, dir));
 
 const rows = [];
 for (const dep of Object.keys(deps).sort()) {

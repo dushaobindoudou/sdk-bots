@@ -1,6 +1,6 @@
 /**
  * Unit tests for the inference router transcript store
- * (source/node-agent-coordinator/inference-router.ts).
+ * (src/node-agent-coordinator/inference-router.ts).
  *
  * Migrated from the original repo's tests/inference-router-transcript.test.mjs;
  * the esbuild temp-bundle loader is replaced by direct tsx imports.
@@ -17,7 +17,7 @@ import assert from "node:assert/strict";
 import {
   parseInferenceRouterTranscriptStore,
   projectInferenceRouterTranscriptEntry,
-} from "../../source/node-agent-coordinator/inference-router.ts";
+} from "../../src/node-agent-coordinator/inference-router.ts";
 
 describe("inference router transcript", () => {
   test("routed transcript preserves structured MCP mention rich text across reload", () => {

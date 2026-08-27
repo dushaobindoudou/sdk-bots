@@ -26,7 +26,7 @@ interface RecordedRequest {
 }
 
 interface FakeFetchHarness {
-  fetch: typeof fetch;
+  fetch: typeof globalThis.fetch;
   calls: RecordedRequest[];
   /** Route a request: `${method} ${url}` -> handler. `*` matches anything. */
   route(pattern: string, handler: (req: RecordedRequest) => Response): void;
@@ -37,7 +37,7 @@ function mockFetch(): FakeFetchHarness {
   const calls: RecordedRequest[] = [];
   const routes = new Map<string, (req: RecordedRequest) => Response>();
 
-  const fetch: typeof fetch = async (input, init) => {
+  const fetchImpl: typeof globalThis.fetch = async (input, init) => {
     const url = typeof input === "string" ? input : input instanceof URL ? input.href : (input as Request).url;
     const method = init?.method ?? "GET";
     const headers: Record<string, string> = {};
@@ -58,7 +58,7 @@ function mockFetch(): FakeFetchHarness {
     routes.set(pattern, handler);
   };
 
-  return { fetch, calls, route };
+  return { fetch: fetchImpl, calls, route };
 }
 
 const json = (data: unknown, status = 200): Response =>
@@ -94,7 +94,7 @@ describe("SdkBotsClient construction", () => {
     h.route("*", () => json({}));
     const sdk = new SdkBotsClient({ baseUrl: `${BASE}/`, fetch: h.fetch });
     void sdk.health();
-    assert.equal(h.calls[0].url, `${BASE}/health`);
+    assert.equal(h.calls[0]!.url, `${BASE}/health`);
   });
 
   test("defaults to globalThis.fetch when no fetch is injected", () => {
@@ -119,8 +119,8 @@ describe("SdkBotsClient headers", () => {
     h.route("*", () => json({ result: {} }));
     const sdk = new SdkBotsClient({ baseUrl: BASE, fetch: h.fetch });
     void sdk.call("listAgents");
-    assert.equal(h.calls[0].headers["content-type"], "application/json");
-    assert.equal(h.calls[0].headers.authorization, undefined);
+    assert.equal(h.calls[0]!.headers["content-type"], "application/json");
+    assert.equal(h.calls[0]!.headers.authorization, undefined);
   });
 
   test("sends a Bearer authorization header when token is set", () => {
@@ -128,7 +128,7 @@ describe("SdkBotsClient headers", () => {
     h.route("*", () => json({ result: {} }));
     const sdk = new SdkBotsClient({ baseUrl: BASE, token: "sekret", fetch: h.fetch });
     void sdk.call("listAgents");
-    assert.equal(h.calls[0].headers.authorization, "Bearer sekret");
+    assert.equal(h.calls[0]!.headers.authorization, "Bearer sekret");
   });
 });
 
@@ -142,8 +142,8 @@ describe("health()", () => {
     h.route("GET *", () => json({ ok: true, version: "0.1.0" }));
     const sdk = new SdkBotsClient({ baseUrl: BASE, fetch: h.fetch });
     const res = await sdk.health();
-    assert.equal(h.calls[0].method, "GET");
-    assert.equal(h.calls[0].url, `${BASE}/health`);
+    assert.equal(h.calls[0]!.method, "GET");
+    assert.equal(h.calls[0]!.url, `${BASE}/health`);
     assert.deepEqual(res, { ok: true, version: "0.1.0" });
   });
 });
@@ -160,9 +160,9 @@ describe("call() — RPC transport", () => {
 
     const res = await sdk.call("createAgent", { name: "alice" });
 
-    assert.equal(h.calls[0].method, "POST");
-    assert.equal(h.calls[0].url, `${BASE}/api/createAgent`);
-    assert.deepEqual(h.calls[0].body, { name: "alice" });
+    assert.equal(h.calls[0]!.method, "POST");
+    assert.equal(h.calls[0]!.url, `${BASE}/api/createAgent`);
+    assert.deepEqual(h.calls[0]!.body, { name: "alice" });
     assert.deepEqual(res, { id: "a1" });
   });
 
@@ -179,7 +179,7 @@ describe("call() — RPC transport", () => {
     h.route("*", () => json({ result: [] }));
     const sdk = new SdkBotsClient({ baseUrl: BASE, fetch: h.fetch });
     await sdk.call("listAgents");
-    assert.deepEqual(h.calls[0].body, {});
+    assert.deepEqual(h.calls[0]!.body, {});
   });
 
   test("throws with status text on HTTP errors", async () => {
@@ -249,8 +249,8 @@ describe("group methods — gateway parameter mapping", () => {
 
     await sdk.createGroup({ name: "war room", description: "ops", memberIds: ["a1", "a2"] });
 
-    assert.equal(h.calls[0].url, `${BASE}/api/createGroup`);
-    assert.deepEqual(h.calls[0].body, {
+    assert.equal(h.calls[0]!.url, `${BASE}/api/createGroup`);
+    assert.deepEqual(h.calls[0]!.body, {
       name: "war room",
       description: "ops",
       memberAgentIds: ["a1", "a2"],
@@ -265,7 +265,7 @@ describe("group methods — gateway parameter mapping", () => {
     await sdk.createGroup({ name: "g", memberIds: [] });
     // undefined properties are dropped by JSON.stringify, so only the
     // present keys are expected on the wire.
-    assert.deepEqual(h.calls[0].body, { name: "g", memberAgentIds: [] });
+    assert.deepEqual(h.calls[0]!.body, { name: "g", memberAgentIds: [] });
   });
 
   test("setGroupMembers maps groupId -> id and memberIds -> memberAgentIds", async () => {
@@ -275,8 +275,8 @@ describe("group methods — gateway parameter mapping", () => {
 
     await sdk.setGroupMembers({ groupId: "g1", memberIds: ["a3"] });
 
-    assert.equal(h.calls[0].url, `${BASE}/api/setGroupMembers`);
-    assert.deepEqual(h.calls[0].body, { id: "g1", memberAgentIds: ["a3"] });
+    assert.equal(h.calls[0]!.url, `${BASE}/api/setGroupMembers`);
+    assert.deepEqual(h.calls[0]!.body, { id: "g1", memberAgentIds: ["a3"] });
   });
 });
 
@@ -292,7 +292,7 @@ describe("events() — SSE stream", () => {
 
     const events = await collect(sdk.events());
     assert.deepEqual(events, [{ channel: "transcript", payload: { id: 1 } }]);
-    assert.equal(h.calls[0].headers.accept, "text/event-stream");
+    assert.equal(h.calls[0]!.headers.accept, "text/event-stream");
   });
 
   test("parses multiple events in one chunk", async () => {

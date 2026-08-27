@@ -1,6 +1,6 @@
 {
   "name": "multibot-sdk",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Headless multi-bot host: local HTTP gateway, group chat, third-party LLMs, directory-scoped tools.",
   "license": "UNLICENSED",
   "author": "dushaobindoudou",
@@ -30,25 +30,21 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "dist/src/sdk/entry.js",
-  "types": "dist/src/sdk/entry.d.ts",
+  "main": "dist/sdk/entry.js",
+  "types": "dist/sdk/entry.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/src/sdk/entry.js",
-      "types": "./dist/src/sdk/entry.d.ts"
-    },
-    "./host": {
-      "import": "./dist/src/host/index.js",
-      "types": "./dist/src/host/index.d.ts"
+      "import": "./dist/sdk/entry.js",
+      "types": "./dist/sdk/entry.d.ts"
     }
   },
   "scripts": {
-    "build": "npm run build:daemon && npm run build:workers && tsc -p tsconfig.sdk.json; node scripts/copy-build-assets.mjs",
-    "typecheck": "tsc -p tsconfig.sdk.json",
+    "build": "node scripts/clean-dist.mjs && npm run build:daemon && npm run build:workers && tsc -p tsconfig.build.json && tsc -p tsconfig.types.json",
+    "typecheck": "tsc -p tsconfig.json",
     "build:daemon": "node scripts/build-box-exec-daemon.mjs",
     "build:workers": "node scripts/build-host-workers.mjs",
-    "dev": "tsx src/host/index.ts",
-    "start": "node dist/src/host/index.js",
+    "dev": "tsx src/bootstrap/index.ts",
+    "start": "node dist/bootstrap/index.js",
     "test": "npm run test:unit && npm run test:smoke",
     "test:unit": "node --import tsx --test \"test/unit/*.test.ts\"",
     "pretest:smoke": "node scripts/build-host-workers.mjs && node scripts/build-box-exec-daemon.mjs",
@@ -110,11 +106,12 @@
     "playwright-core": "^1.62.1"
   },
   "devDependencies": {
-    "@types/js-yaml": "*",
+    "@types/js-yaml": "^3.12.10",
+    "@types/mime-types": "^3.0.1",
     "@types/node": "*",
     "esbuild": "*",
     "tsx": "*",
-    "typescript": "*"
+    "typescript": "~5.9.3"
   },
   "files": [
     "dist",

@@ -458,7 +458,7 @@ export function createReadTool(
     if (output.case === "data" || output.case === "dataBlobId") {
       const bytes = output.case === "data" ? output.value : hydratedBlobs.get(toHex(output.value));
       if (bytes === undefined) throw new Error(`Image blob not hydrated for render: ${toHex(output.value)} (path: ${success.path})`);
-      const mimeType = detectImageMimeType(bytes, success.path);
+      const mimeType = await detectImageMimeType(bytes, success.path);
       if (mimeType === undefined) return createStringResult(`Read binary file: ${success.path}`);
       return createImageResult(Buffer.from(bytes).toString("base64"), mimeType, `Read image file: ${success.path}`);
     }

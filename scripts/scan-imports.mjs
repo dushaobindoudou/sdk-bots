@@ -31,9 +31,7 @@ function walk(d) {
   }
 }
 
-for (const dir of ["source/host", "source/node-agent-coordinator", "source/shared", "source/packages", "source/internal", "src"]) {
-  walk(path.join(root, dir));
-}
+walk(path.join(root, "src"));
 
 const inst = new Set();
 for (const n of fs.readdirSync(path.join(root, "node_modules"))) {

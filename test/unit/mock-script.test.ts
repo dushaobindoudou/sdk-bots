@@ -1,7 +1,7 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 
-import { mockScriptFromEnv, parseSandMockScript } from "../../source/host/extensions/inference/cursor-session.ts";
+import { mockScriptFromEnv, parseSandMockScript } from "../../src/host/extensions/inference/cursor-session.ts";
 
 describe("parseSandMockScript", () => {
   test("reads { sendMessage } as a SendMessage tool call", () => {

@@ -1,12 +1,8 @@
 /**
- * Bundles the four host worker_threads entries into standalone CJS files.
- *
- * The worker entry resolvers in source/ assume the original packaged layout
- * (single host bundle at dist/host with sibling <sub>/<name>.cjs artifacts).
- * This SDK runs TypeScript per-file, so we emit every worker to
- * src/host-workers/<name>.cjs (dev) and dist/host-workers/<name>.cjs
- * (packaged); resolvers probe both via resolveHostWorkerEntry in
- * source/host/worker-entry.ts.
+ * Bundles the four host worker_threads entries into standalone CJS files
+ * under dist/host-workers — the single location the resolvers in
+ * src/host/worker-entry.ts probe (dev runs climb to the repo dist/,
+ * packaged runs resolve beside the emitted host code).
  *
  * Usage: node scripts/build-host-workers.mjs
  */
@@ -17,17 +13,14 @@ import { fileURLToPath } from "node:url";
 import { build } from "esbuild";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const outDirs = [
-  path.join(root, "src", "host-workers"),
-  path.join(root, "dist", "host-workers"),
-];
-for (const dir of outDirs) await mkdir(dir, { recursive: true });
+const outDir = path.join(root, "dist", "host-workers");
+await mkdir(outDir, { recursive: true });
 
 const entries = [
-  "source/host/agent-isolation/agent-store-worker.ts",
-  "source/host/agent-isolation/transcript-mirror-worker.ts",
-  "source/host/extensions/content-search/search-index-worker.ts",
-  "source/host/extensions/box-store-sync/box-store-vacuum-worker.ts",
+  "src/host/agent-isolation/agent-store-worker.ts",
+  "src/host/agent-isolation/transcript-mirror-worker.ts",
+  "src/host/extensions/content-search/search-index-worker.ts",
+  "src/host/extensions/box-store-sync/box-store-vacuum-worker.ts",
 ];
 
 await Promise.all(entries.map(async (entry) => {
@@ -36,7 +29,7 @@ await Promise.all(entries.map(async (entry) => {
     absWorkingDir: root,
     bundle: true,
     entryPoints: [path.join(root, entry)],
-    outfile: path.join(outDirs[0], `${name}.cjs`),
+    outfile: path.join(outDir, `${name}.cjs`),
     format: "cjs",
     platform: "node",
     target: "node22",
@@ -48,7 +41,6 @@ await Promise.all(entries.map(async (entry) => {
   });
   const contents = result.outputFiles[0]?.text;
   if (contents === undefined) throw new Error(`no output for ${entry}`);
-  await Promise.all(outDirs.map((dir) =>
-    writeFile(path.join(dir, `${name}.cjs`), contents, "utf8")));
-  process.stdout.write(`${path.join(outDirs[0], `${name}.cjs`)}\n`);
+  await writeFile(path.join(outDir, `${name}.cjs`), contents, "utf8");
+  process.stdout.write(`${path.join(outDir, `${name}.cjs`)}\n`);
 }));

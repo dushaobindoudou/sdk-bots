@@ -10,6 +10,7 @@ import {
 import { SpanKind, SpanStatusCode, type Span } from "@opentelemetry/api";
 import type { Context } from "../context/core.js";
 import { getSpan, withSpan } from "../context/otel.js";
+import type { HeadersInit } from "undici";
 
 export type ContextPropagatingClient<Service extends ServiceType> = {
   [Method in keyof Client<Service>]: Client<Service>[Method] extends (

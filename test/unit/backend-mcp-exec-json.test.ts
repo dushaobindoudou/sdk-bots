@@ -1,7 +1,7 @@
 /**
  * Unit tests for routed-provider MCP argument handling
- * (source/shared/node/mcp/mcp-validation.ts and
- *  source/shared/node/cursor-backend/backend-mcp-exec.ts).
+ * (src/shared/node/mcp/mcp-validation.ts and
+ *  src/shared/node/cursor-backend/backend-mcp-exec.ts).
  *
  * Migrated from the original repo's tests/backend-mcp-exec-json.test.mjs; the
  * esbuild temp-bundle loader is replaced by direct tsx imports.
@@ -16,8 +16,8 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 
-import { toJsonArgs } from "../../source/shared/node/mcp/mcp-validation.ts";
-import { createDashboardSandBackendMcpExec } from "../../source/shared/node/cursor-backend/backend-mcp-exec.ts";
+import { toJsonArgs } from "../../src/shared/node/mcp/mcp-validation.ts";
+import { createDashboardSandBackendMcpExec } from "../../src/shared/node/cursor-backend/backend-mcp-exec.ts";
 
 describe("backend MCP exec JSON handling", () => {
   test("MCP discovery accepts both routed JSON and native generated values", () => {

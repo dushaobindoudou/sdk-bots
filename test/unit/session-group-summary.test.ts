@@ -4,7 +4,7 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { groupFieldsFromDir } from "../../source/host/extensions/session/session-summaries.ts";
+import { groupFieldsFromDir } from "../../src/host/extensions/session/session-summaries.ts";
 
 describe("groupFieldsFromDir", () => {
   test("returns isGroup when group.json is present", () => {

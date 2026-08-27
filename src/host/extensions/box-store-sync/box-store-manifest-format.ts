@@ -14,7 +14,10 @@ export const legacyManifestSchema = z.object({ version: z.literal(BOX_STORE_LEGA
 export const currentManifestSchema = z.object({ version: z.literal(BOX_STORE_MANIFEST_VERSION), ...header, entries: z.record(z.string(), manifestEntrySchema) });
 export const manifestSchema = z.discriminatedUnion("version", [legacyManifestSchema, currentManifestSchema]);
 export type BoxStoreManifestEntry = z.infer<typeof manifestEntrySchema>;
-export function isBoxStoreManifestFileEntry(entry: BoxStoreManifestEntry): entry is Exclude<BoxStoreManifestEntry, { kind: "symlink" }> { return entry.kind !== "symlink"; }
-export function isBoxStoreManifestSymlinkEntry(entry: BoxStoreManifestEntry): entry is z.infer<typeof manifestSymlinkEntrySchema> { return entry.kind === "symlink"; }
+export type BoxStoreManifestFileEntry = z.infer<typeof manifestFileEntrySchema>;
+export type BoxStoreLegacyManifestFileEntry = z.infer<typeof legacyManifestFileEntrySchema>;
+export type BoxStoreManifestSymlinkEntry = z.infer<typeof manifestSymlinkEntrySchema>;
+export function isBoxStoreManifestFileEntry(entry: BoxStoreManifestEntry): entry is BoxStoreManifestFileEntry | BoxStoreLegacyManifestFileEntry { return entry.kind !== "symlink"; }
+export function isBoxStoreManifestSymlinkEntry(entry: BoxStoreManifestEntry): entry is BoxStoreManifestSymlinkEntry { return entry.kind === "symlink"; }
 export function boxStoreManifestEntriesEqual(left: BoxStoreManifestEntry | null | undefined, right: BoxStoreManifestEntry | null | undefined): boolean { if (left == null || right == null) return left === right; if (isBoxStoreManifestSymlinkEntry(left) || isBoxStoreManifestSymlinkEntry(right)) return isBoxStoreManifestSymlinkEntry(left) && isBoxStoreManifestSymlinkEntry(right) && left.target === right.target; return left.sha === right.sha && left.size === right.size && left.kind === right.kind && left.mode === right.mode; }
 export function isSymlinkManifestValue(entry: unknown): boolean { return manifestSymlinkEntrySchema.safeParse(entry).success; }

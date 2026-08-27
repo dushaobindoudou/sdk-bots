@@ -6,13 +6,15 @@
  * worker artifact sits at dist/host/<subdir>/<name>.cjs. This SDK executes
  * TypeScript per-file, so those joins double the subdirectory and miss.
  *
+ * Worker bundles live ONLY under dist/host-workers (built by
+ * scripts/build-host-workers.mjs into the single build output directory);
+ * there is no copy inside src/. Dev runs reach dist/ by climbing from the
+ * caller module, packaged runs find it beside the emitted host code.
+ *
  * Probe order (first existing file wins):
- *   1. <root>/src/host-workers/<name>.cjs   (dev; scripts/build-host-workers.mjs)
- *   2. <root>/dist/host-workers/<name>.cjs  (packaged; copied by npm run build)
- *   3. <caller dir>/<name>.cjs              (artifact emitted beside the source)
- *   4. <caller dir>/<subdir>/<name>.cjs     (original packaged bundle layout)
- * Roots 1-2 are found by climbing from the caller directory, so resolvers at
- * any source depth work.
+ *   1. <any ancestor>/dist/host-workers/<name>.cjs  (dev repo root and pkg root)
+ *   2. <caller dir>/<name>.cjs              (artifact emitted beside the source)
+ *   3. <caller dir>/<subdir>/<name>.cjs     (original packaged bundle layout)
  */
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -26,7 +28,6 @@ export function resolveHostWorkerEntry(
   let here = dirname(fileURLToPath(callerModuleUrl));
   const candidates: string[] = [];
   for (let depth = 0; depth < 8; depth += 1) {
-    candidates.push(join(here, "src", "host-workers", workerFileName));
     candidates.push(join(here, "dist", "host-workers", workerFileName));
     const parent = dirname(here);
     if (parent === here) break;

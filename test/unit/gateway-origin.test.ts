@@ -2,10 +2,10 @@ import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 import type { IncomingMessage, ServerResponse } from "node:http";
 
-import { rejectUntrustedBrowserRequest } from "../../source/host/gateway-server.ts";
+import { rejectUntrustedBrowserRequest } from "../../src/host/gateway-server.ts";
 
 function mockRes() {
-  const out: { status?: number; body?: string } = {};
+  const out: { status?: number; body?: string | undefined } = {};
   const res = {
     writeHead(status: number) { out.status = status; return res; },
     end(body?: string) { out.body = body; },

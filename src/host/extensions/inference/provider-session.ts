@@ -74,8 +74,12 @@ function providerPrompt(messages: readonly ProviderMessage[]): string {
 
 function deferred<T>() { return Promise.withResolvers<T>(); }
 
+export type LocalResponseContentPart =
+  | { type: "text"; text: string }
+  | { type: "tool-call"; toolCallId: string; toolName: string; args: unknown };
+
 function response(text: string, id: string, modelId: string) {
-  return { id, modelId, timestamp: new Date(), headers: {}, messages: [{ role: "assistant", content: [{ type: "text", text }] }] };
+  return { id, modelId, timestamp: new Date(), headers: {}, messages: [{ role: "assistant", content: [{ type: "text" as const, text }] as LocalResponseContentPart[] }] };
 }
 
 type CodexCredentials = { accessToken: string; refreshToken: string; idToken: string; accountId: string; path: string; document: Loose };
@@ -318,7 +322,7 @@ function openRouterRequest(messages: readonly ProviderMessage[], definitions?: r
       model,
       system: OPENROUTER_CHAT_PROMPT,
       messages: messages as CoreMessage[],
-      ...(tools === undefined ? {} : { tools, toolChoice: "auto" }),
+      ...(tools === undefined ? {} : { tools, toolChoice: "auto" as const }),
       maxSteps: 8 as const,
       maxRetries: 1 as const,
     },
@@ -406,7 +410,8 @@ export function compactLocalMessages(messages: readonly ProviderMessage[]): Loca
       break;
     }
   }
-  if (lastUserIndex >= 0 && typeof chat[lastUserIndex]?.content === "string" && isGroupTurnUserText(String(chat[lastUserIndex].content))) {
+  const lastUser = lastUserIndex >= 0 ? chat[lastUserIndex] : undefined;
+  if (lastUser != null && typeof lastUser.content === "string" && isGroupTurnUserText(lastUser.content)) {
     return chat.slice(lastUserIndex);
   }
   if (lastUserIndex < 0) return chat.slice(-8);
@@ -516,7 +521,7 @@ function openRouterFromLocalChat(
       usage.resolve(basic);
       extendedUsage.resolve(extended);
       metadata.resolve({});
-      const content: Loose[] = [];
+      const content: LocalResponseContentPart[] = [];
       if (result.text) {
         content.push({ type: "text", text: result.text });
         yield { type: "text-delta" as const, textDelta: result.text };
