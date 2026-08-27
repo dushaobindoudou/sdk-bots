@@ -41,6 +41,19 @@ function formatArgs(args: readonly unknown[]): string {
   return text.length > MAX_ENTRY_CHARS ? text.slice(0, MAX_ENTRY_CHARS) + " …[truncated]" : text;
 }
 
+/**
+ * Every agent-isolation worker spawn re-initializes Statsig and dumps ~450
+ * "WARN [Statsig] … id_type userID" lines through console.warn — enough to
+ * flush the whole ring on every spawn and bury the entries people actually
+ * open the logs view for. Keep passing them to real stdout, but keep them
+ * out of the ring and the SSE stream.
+ */
+const RING_NOISE = /\[\s*Statsig\s*\]/i;
+
+function isRingNoise(level: GatewayLogEntry["level"], text: string): boolean {
+  return level !== "error" && RING_NOISE.test(text);
+}
+
 interface RefcountedTap {
   readonly tap: GatewayLogTap;
   refs: number;
@@ -80,6 +93,7 @@ export function createGatewayLogTap(options: { readonly capacity?: number } = {}
     original[level](...args);
     try {
       const entry: GatewayLogEntry = { seq: (seq += 1), ts: Date.now(), level, text: formatArgs(args) };
+      if (isRingNoise(level, entry.text)) return;
       if (ring.length >= capacity) ring.splice(0, ring.length - capacity + 1);
       ring.push(entry);
       for (const listener of listeners) {

@@ -103,3 +103,16 @@ describe("createGatewayLogTap", () => {
     } finally { tap.dispose(); }
   });
 });
+
+describe("gateway log tap ring noise filter", () => {
+  test("Statsig warnings stay out of the ring but real warns enter it", async () => {
+    const tap = createGatewayLogTap({ capacity: 10 });
+    try {
+      console.warn('  WARN  [Statsig] The user does not have the required id_type "userID" for Gate "glass_tabs"');
+      console.warn("real warning from the host");
+      const entries = tap.recent(10);
+      assert.equal(entries.filter((e) => e.text.includes("Statsig")).length, 0);
+      assert.ok(entries.some((e) => e.text === "real warning from the host"));
+    } finally { tap.dispose(); }
+  });
+});
