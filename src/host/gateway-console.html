@@ -752,9 +752,11 @@
     }
     function isStatusNote(text) {
       const t = text.trim();
-      if (t.length === 0 || t.length > 120) return false;
-      const head = t.slice(0, 24);
-      if (/^(已回复|已从|回复已|消息已发出|消息已送达|The turn is complete|Response delivered)/i.test(head)) return true;
+      if (t.length === 0) return false;
+      const head = t.slice(0, 32);
+      const marker = /^(\(\s*pass\s*\)|已回复|已从|回复已|消息已发出|消息已送达|The turn is complete|Response delivered|The answer has already been delivered)/i.test(head);
+      if (marker) return true;
+      if (t.length > 120) return false;
       if (/(已发出|已发送|已回复)/.test(head) && t.length < 60) return true;
       return /(正在|暂时不可用|尝试用|尝试其他|换个方式|trying to|attempting to|searching for)/i.test(t) && !/[。！？!?]{1}.+[。！？!?]/.test(t.slice(0, -1));
     }

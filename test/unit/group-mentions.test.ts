@@ -5,6 +5,7 @@ import {
   buildGroupTurnPrompt,
   parseGroupMentions,
   resolveResponders,
+  stripGroupPassToken,
 } from "../../src/host/groups/group-chat.ts";
 
 const researcher = { id: "r", name: "研究员", description: "" };
@@ -75,5 +76,26 @@ describe("buildGroupTurnPrompt", () => {
     });
     assert.match(prompt, /@mentioned you/);
     assert.match(prompt, /do not pass/);
+  });
+});
+
+describe("stripGroupPassToken", () => {
+  test("strips a parenthesized leading token and keeps the commentary", () => {
+    assert.equal(
+      stripGroupPassToken("(pass)The answer has already been delivered to the room."),
+      "The answer has already been delivered to the room.",
+    );
+    assert.equal(stripGroupPassToken("(PASS) 已回复过，无需再说"), "已回复过，无需再说");
+    assert.equal(stripGroupPassToken("( pass ) — nothing new"), "nothing new");
+  });
+  test("reduces a bare pass to empty", () => {
+    assert.equal(stripGroupPassToken("(pass)"), "");
+    assert.equal(stripGroupPassToken("  (pass).  "), "");
+  });
+  test("never strips a bare leading Pass in a real English answer", () => {
+    assert.equal(
+      stripGroupPassToken("Pass me the chart and I will mark the levels."),
+      "Pass me the chart and I will mark the levels.",
+    );
   });
 });

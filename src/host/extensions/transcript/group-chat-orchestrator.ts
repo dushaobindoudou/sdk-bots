@@ -6,6 +6,7 @@ import {
   buildGroupMemberSystemPrompt,
   buildGroupTurnPrompt,
   isPassContent,
+  stripGroupPassToken,
   messagesSinceMemberLastSpoke,
   orderRoundSpeakers,
   parseGroupMentions,
@@ -103,7 +104,10 @@ export class GroupChatOrchestrator {
     });
 
     const spoken: string[] = [];
-    for (const content of sent) {
+    for (const rawContent of sent) {
+      // "(pass)+commentary" is a pass with self-justification glued on: strip the
+      // token, then relay only any real remainder (commentary), never the token.
+      const content = stripGroupPassToken(rawContent);
       if (isPassContent(content)) continue;
       const trimmed = content.trim();
       if (trimmed.length === 0) continue;
