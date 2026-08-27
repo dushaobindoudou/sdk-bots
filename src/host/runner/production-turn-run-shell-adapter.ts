@@ -1,7 +1,7 @@
 import type { Context } from "../../packages/context/core.js";
 import type {
   ConversationStateStructure as ConversationStateStructureMessage,
-} from "../../packages/proto/generated/agent/v1/agent_pb.js";
+} from "../../proto/generated/agent/v1/agent_pb.js";
 import {
   createProductionTurnAgentOwner,
   createProductionTurnAgentRunInput,

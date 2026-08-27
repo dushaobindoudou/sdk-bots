@@ -4,7 +4,7 @@
  */
 import { PrivacyCapability } from "../../../redaction/classification.js";
 import { toRedactedCoreMessages } from "../../../redaction/core-message.js";
-import { fromRedactedInterruptedPendingToolCallResolution } from "../../../redacted-protos/generated/agent/v1/agent_redacted.js";
+import { fromRedactedInterruptedPendingToolCallResolution } from "../../../../proto/redacted/agent/v1/agent_redacted.js";
 import { getExecutableTools } from "../../tools/core.js";
 import { renderShellResultToString, formatShellPartialOutputSection } from "../../tools/core/shell/formatters.js";
 import { renderTaskResultToString } from "../../tools/task-client.js";

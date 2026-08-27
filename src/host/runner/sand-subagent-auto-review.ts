@@ -1,5 +1,5 @@
 import { Struct } from "@bufbuild/protobuf";
-import { SmartModeRiskTarget } from "../../packages/proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
+import { SmartModeRiskTarget } from "../../proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
 import {
   fingerprintSandAutoReviewTarget,
   type SandAutoReviewController,

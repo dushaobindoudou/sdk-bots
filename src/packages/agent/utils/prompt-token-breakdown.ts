@@ -1,7 +1,7 @@
 // @ts-nocheck
 // Recovered from the exact host-main.cjs evidence region for this module.
 import { createHistogram } from "../../metrics/index.js";
-import { PromptTokenBreakdownCategory, PromptTokenBreakdownSnapshot } from "../../proto/generated/agent/v1/agent_pb.js";
+import { PromptTokenBreakdownCategory, PromptTokenBreakdownSnapshot } from "../../../proto/generated/agent/v1/agent_pb.js";
 import { buildDescriptionGeneratorProps, toAgentTools } from "../tools/core.js";
 import { estimateStringTokenCount } from "./token-estimate.js";
 import { extractCompleteTagRanges, extractCompleteTagRangesMatching } from "./prompt-tag-parsing.js";

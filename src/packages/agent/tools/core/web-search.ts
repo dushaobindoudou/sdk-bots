@@ -1,4 +1,4 @@
-import { ToolCall } from "../../../proto/generated/agent/v1/agent_pb.js";
+import { ToolCall } from "../../../../proto/generated/agent/v1/agent_pb.js";
 import {
   WebSearchArgs,
   WebSearchError,
@@ -6,7 +6,7 @@ import {
   WebSearchResult,
   WebSearchSuccess,
   WebSearchToolCall,
-} from "../../../proto/generated/agent/v1/web_search_tool_pb.js";
+} from "../../../../proto/generated/agent/v1/web_search_tool_pb.js";
 import type { Context } from "../../../context/core.js";
 import { createSpan } from "../../../context/otel.js";
 import { createStringResult } from "../../../chat-inference/prompt-executor.js";

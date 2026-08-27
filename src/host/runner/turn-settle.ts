@@ -1,5 +1,5 @@
 import { turnEndedOnSilentToolCalls } from "./turn-shape.js";
-import { StepTiming } from "../../packages/proto/generated/agent/v1/agent_pb.js";
+import { StepTiming } from "../../proto/generated/agent/v1/agent_pb.js";
 import {
   runTurnMemory,
   type EpisodeProgress,

@@ -7,7 +7,7 @@ import type { ResourceAccessor } from "../../../../agent-exec/resource-provider.
 import type { RemoteExecManager, StreamExecutor } from "../../../../agent-exec/remote.js";
 import { shellStreamExecutorResource } from "../../../../agent-exec/shell-stream.js";
 import { smartModeClassifierExecutorResource } from "../../../../agent-exec/smart-mode-classifier.js";
-import { SandboxPolicy_Type, SandboxPolicy } from "../../../../proto/generated/agent/v1/sandbox_pb.js";
+import { SandboxPolicy_Type, SandboxPolicy } from "../../../../../proto/generated/agent/v1/sandbox_pb.js";
 import {
   ShellAbortReason,
   ShellArgs,
@@ -26,12 +26,12 @@ import {
   ShellSuccess,
   ShellTimeout,
   TimeoutBehavior,
-} from "../../../../proto/generated/agent/v1/shell_exec_pb.js";
-import { SmartModeClassifierArgs, SmartModeClassifierDecision, SmartModeRiskTarget, type SmartModeClassifierConversationMessage } from "../../../../proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
-import type { RequestContext } from "../../../../proto/generated/agent/v1/request_context_exec_pb.js";
-import { ShellToolCall } from "../../../../proto/generated/agent/v1/shell_tool_pb.js";
-import { ToolCall } from "../../../../proto/generated/agent/v1/agent_pb.js";
-import type { HookAdditionalContext } from "../../../../proto/generated/agent/v1/hook_additional_context_pb.js";
+} from "../../../../../proto/generated/agent/v1/shell_exec_pb.js";
+import { SmartModeClassifierArgs, SmartModeClassifierDecision, SmartModeRiskTarget, type SmartModeClassifierConversationMessage } from "../../../../../proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
+import type { RequestContext } from "../../../../../proto/generated/agent/v1/request_context_exec_pb.js";
+import { ShellToolCall } from "../../../../../proto/generated/agent/v1/shell_tool_pb.js";
+import { ToolCall } from "../../../../../proto/generated/agent/v1/agent_pb.js";
+import type { HookAdditionalContext } from "../../../../../proto/generated/agent/v1/hook_additional_context_pb.js";
 import { analyzeShellCommand, type ShellCommandAnalysis } from "../../../../shell-exec/shell-parser.js";
 import {
   CustomToolCallError,

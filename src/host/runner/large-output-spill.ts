@@ -5,8 +5,8 @@ import {
   MCP_TEXT_FILE_THRESHOLD_BYTES,
   materializeMcpTextOutput,
 } from "../../packages/agent-exec/agent-tools-file.js";
-import type { McpResult } from "../../packages/proto/generated/agent/v1/mcp_exec_pb.js";
-import { OutputLocation } from "../../packages/proto/generated/agent/v1/utils_pb.js";
+import type { McpResult } from "../../proto/generated/agent/v1/mcp_exec_pb.js";
+import { OutputLocation } from "../../proto/generated/agent/v1/utils_pb.js";
 
 export const SAND_SHELL_FILE_OUTPUT_THRESHOLD_BYTES = BigInt(MCP_TEXT_FILE_THRESHOLD_BYTES);
 export const MAX_OUTPUT_FILE_SIZE = 1_000_000;

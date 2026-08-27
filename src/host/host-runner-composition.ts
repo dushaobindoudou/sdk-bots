@@ -19,7 +19,7 @@ import { NoopConversationActionReceiver } from "../packages/agent-core/conversat
 import {
   RequestContext,
   RequestContextEnv,
-} from "../packages/proto/generated/agent/v1/request_context_exec_pb.js";
+} from "../proto/generated/agent/v1/request_context_exec_pb.js";
 import {
   SummarizationHandler,
   type SummarizationPromptSession,
@@ -164,7 +164,7 @@ import type {
 import type {
   SubagentAdapterArgs,
 } from "./runner/agent-adapters.js";
-import type { CursorRule } from "../packages/proto/generated/agent/v1/cursor_rules_pb.js";
+import type { CursorRule } from "../proto/generated/agent/v1/cursor_rules_pb.js";
 
 export const DEFAULT_SAND_MODEL = "gpt-5.5-high-fast";
 export const SAND_SUMMARIZATION_MAX_PROMPT_CHARS = 2_800_000;

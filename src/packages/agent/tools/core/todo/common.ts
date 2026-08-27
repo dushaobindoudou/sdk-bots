@@ -2,14 +2,14 @@ import { JSONParser } from "@streamparser/json";
 import { z } from "zod";
 
 import { PrivacyCapability } from "../../../../redaction/classification.js";
-import { fromRedactedTodoItem } from "../../../../redacted-protos/generated/agent/v1/todo_tool_redacted.js";
-import { ToolCall } from "../../../../proto/generated/agent/v1/agent_pb.js";
+import { fromRedactedTodoItem } from "../../../../../proto/redacted/agent/v1/todo_tool_redacted.js";
+import { ToolCall } from "../../../../../proto/generated/agent/v1/agent_pb.js";
 import {
   TodoItem,
   TodoStatus,
   UpdateTodosArgs,
   UpdateTodosToolCall,
-} from "../../../../proto/generated/agent/v1/todo_tool_pb.js";
+} from "../../../../../proto/generated/agent/v1/todo_tool_pb.js";
 import { lenientEnum } from "../../lenient-enum.js";
 
 const todoStatusSchema = lenientEnum(

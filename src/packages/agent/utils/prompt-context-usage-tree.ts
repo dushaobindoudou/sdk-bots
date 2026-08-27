@@ -4,7 +4,7 @@ import {
   PromptContextNode,
   PromptContextSourceRef,
   PromptContextUsageTree,
-} from "../../proto/generated/agent/v1/agent_pb.js";
+} from "../../../proto/generated/agent/v1/agent_pb.js";
 import {
   PROMPT_TOKEN_BREAKDOWN_CATEGORIES,
 } from "./prompt-token-breakdown.js";

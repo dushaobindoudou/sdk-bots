@@ -1,4 +1,4 @@
-import { McpDescriptor, type McpDescriptor as McpDescriptorType } from "../../proto/generated/agent/v1/mcp_pb.js";
+import { McpDescriptor, type McpDescriptor as McpDescriptorType } from "../../../proto/generated/agent/v1/mcp_pb.js";
 import { CUSTOM_USER_TOOLS_PROVIDER_ID, CURSOR_DYNAMIC_TOOLS_NAMESPACE } from "../../agent-exec/mcp.js";
 
 export interface McpSnapshotToolNames {

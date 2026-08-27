@@ -1,4 +1,4 @@
-import { AgentMode } from "../../../../proto/generated/agent/v1/agent_pb.js";
+import { AgentMode } from "../../../../../proto/generated/agent/v1/agent_pb.js";
 import { ToolCallRejectedError } from "../../common.js";
 
 const MARKDOWN_SUFFIXES = [".md", ".markdown", ".mdown", ".mkd", ".mkdn", ".mdx"];

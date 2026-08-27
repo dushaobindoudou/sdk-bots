@@ -1,5 +1,5 @@
 import { SimpleControlledExecHandler } from "./controlled.js";
-import type { ExecuteHookArgs, ExecuteHookResult } from "../proto/generated/agent/v1/exec_pb.js";
+import type { ExecuteHookArgs, ExecuteHookResult } from "../../proto/generated/agent/v1/exec_pb.js";
 import { ExecutorResource, type Executor, type RemoteExecManager } from "./remote.js";
 import { createResource, type ControlledExecManager } from "./resource-provider.js";
 import { createClientDeserializer, createClientSerializer, createServerDeserializer, createServerSerializer } from "./serialization.js";

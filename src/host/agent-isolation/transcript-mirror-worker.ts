@@ -3,7 +3,7 @@ import { DatabaseSync, type StatementSync } from "node:sqlite";
 import { parentPort } from "node:worker_threads";
 
 import { createContext } from "../../packages/context/core.js";
-import { ConversationStateStructure } from "../../packages/proto/generated/agent/v1/agent_pb.js";
+import { ConversationStateStructure } from "../../proto/generated/agent/v1/agent_pb.js";
 import { invariant } from "../../shared/invariant.js";
 import { LegacyFileTranscriptMirror } from "../transcript-mirror/legacy-transcript-mirror.js";
 

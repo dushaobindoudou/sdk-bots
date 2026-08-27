@@ -3,18 +3,18 @@ import {
   AgentMode,
   SimulatedMsgReason,
   UserMessage,
-} from "../../proto/generated/agent/v1/agent_pb.js";
-import { SelectedContext } from "../../proto/generated/agent/v1/selected_context_pb.js";
+} from "../../../proto/generated/agent/v1/agent_pb.js";
+import { SelectedContext } from "../../../proto/generated/agent/v1/selected_context_pb.js";
 import { Updates } from "../../agent-core/interaction-updates.js";
 import { RedactedUpdates } from "../../agent-core/redacted-interaction-updates.js";
 import { createSpan } from "../../context/otel.js";
 import { createLogger } from "../../context/logger.js";
 import { PrivacyCapability } from "../../redaction/classification.js";
 import { toRedactedCoreMessages } from "../../redaction/core-message.js";
-import { fromRedactedBackgroundTaskCompletionAction, toRedactedInteractionUpdate } from "../../redacted-protos/generated/agent/v1/agent_redacted.js";
-import { fromRedactedRepositoryIndexingInfo } from "../../redacted-protos/generated/agent/v1/repo_redacted.js";
-import { fromRedactedRequestContext } from "../../redacted-protos/generated/agent/v1/request_context_exec_redacted.js";
-import { fromRedactedSelectedContext } from "../../redacted-protos/generated/agent/v1/selected_context_redacted.js";
+import { fromRedactedBackgroundTaskCompletionAction, toRedactedInteractionUpdate } from "../../../proto/redacted/agent/v1/agent_redacted.js";
+import { fromRedactedRepositoryIndexingInfo } from "../../../proto/redacted/agent/v1/repo_redacted.js";
+import { fromRedactedRequestContext } from "../../../proto/redacted/agent/v1/request_context_exec_redacted.js";
+import { fromRedactedSelectedContext } from "../../../proto/redacted/agent/v1/selected_context_redacted.js";
 import { AgentType } from "../utils/agent-config.js";
 import { AgentConversationTurnHandle } from "../state.js";
 import { buildRequestContextOptions } from "./meta-agent-notes.js";

@@ -1,5 +1,5 @@
-import { AiService } from "../../../packages/proto/generated/aiserver/v1/aiserver_connect.js";
-import { RunWebFetchRequest, RunWebSearchRequest, type RunWebFetchResponse, type RunWebSearchResponse } from "../../../packages/proto/generated/aiserver/v1/aiserver_pb.js";
+import { AiService } from "../../../proto/generated/aiserver/v1/aiserver_connect.js";
+import { RunWebFetchRequest, RunWebSearchRequest, type RunWebFetchResponse, type RunWebSearchResponse } from "../../../proto/generated/aiserver/v1/aiserver_pb.js";
 import {
   createSandCursorBackendClient,
   type SandInferenceOptions,

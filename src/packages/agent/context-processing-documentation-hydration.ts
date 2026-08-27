@@ -1,5 +1,5 @@
 import type { Context } from "../context/core.js";
-import type { SelectedDocumentation } from "../proto/generated/agent/v1/selected_context_pb.js";
+import type { SelectedDocumentation } from "../../proto/generated/agent/v1/selected_context_pb.js";
 
 export interface DocumentationIdentifier {
   readonly docId: string;

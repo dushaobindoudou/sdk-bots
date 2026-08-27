@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { AgentMode } from "../../proto/generated/agent/v1/agent_pb.js";
+import { AgentMode } from "../../../proto/generated/agent/v1/agent_pb.js";
 import { createLogger } from "../../context/index.js";
 import { DataClassification, PrivacyCapability } from "../../redaction/classification.js";
 import { toRedactedCoreMessages } from "../../redaction/core-message.js";
@@ -14,8 +14,8 @@ import {
   createRedactedShellStreamStdout,
   fromRedactedShellArgs,
   toRedactedShellStream,
-} from "../../redacted-protos/generated/agent/v1/shell_exec_redacted.js";
-import { createRedactedShellOutput } from "../../redacted-protos/generated/agent/v1/agent_redacted.js";
+} from "../../../proto/redacted/agent/v1/shell_exec_redacted.js";
+import { createRedactedShellOutput } from "../../../proto/redacted/agent/v1/agent_redacted.js";
 import { RedactedUpdates } from "../../agent-core/redacted-interaction-updates.js";
 import { shellStreamExecutorResource } from "../../agent-exec/shell-stream.js";
 import { getBrowserToolNames } from "../common.js";

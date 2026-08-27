@@ -1,4 +1,4 @@
-import type { RequestContext } from "../../proto/generated/agent/v1/request_context_exec_pb.js";
+import type { RequestContext } from "../../../proto/generated/agent/v1/request_context_exec_pb.js";
 import { DEV_SMART_MODE_CLASSIFIER_DELAY_MS } from "../../constants/smart-mode-classifier.js";
 import { delay } from "../../utils/promise-extras.js";
 

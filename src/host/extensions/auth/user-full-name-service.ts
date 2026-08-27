@@ -1,7 +1,7 @@
 import { parseJwtPayload } from "../../../shared/node/cursor-token.js";
 import { createSandCursorBackendClient, getSandInferenceBackendUrl } from "../../../shared/node/cursor-backend/cursor-inference.js";
-import { DashboardService } from "../../../packages/proto/generated/aiserver/v1/dashboard_connect.js";
-import { GetMeRequest, type GetMeResponse } from "../../../packages/proto/generated/aiserver/v1/dashboard_pb.js";
+import { DashboardService } from "../../../proto/generated/aiserver/v1/dashboard_connect.js";
+import { GetMeRequest, type GetMeResponse } from "../../../proto/generated/aiserver/v1/dashboard_pb.js";
 import type { MethodInfoUnary } from "@bufbuild/protobuf";
 
 export const GET_ME_TIMEOUT_MS = 10_000;

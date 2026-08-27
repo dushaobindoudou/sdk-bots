@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { TodoStatus, type UpdateTodosSuccess } from "../../../../proto/generated/agent/v1/todo_tool_pb.js";
+import { TodoStatus, type UpdateTodosSuccess } from "../../../../../proto/generated/agent/v1/todo_tool_pb.js";
 import { lenientArray } from "../../lenient-array.js";
 import { preprocessLenientBoolean } from "../../lenient-boolean.js";
 import { lenientEnum } from "../../lenient-enum.js";

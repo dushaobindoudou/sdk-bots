@@ -1,9 +1,9 @@
-import { BackgroundComposerSource } from "../../proto/generated/aiserver/v1/background_composer_pb.js";
+import { BackgroundComposerSource } from "../../../proto/generated/aiserver/v1/background_composer_pb.js";
 import {
   CommandClassifierResult,
   CommandClassifierResult_ClassifiedCommand,
   CommandClassifierResult_SuggestedSandboxMode,
-} from "../../proto/generated/agent/v1/shell_exec_pb.js";
+} from "../../../proto/generated/agent/v1/shell_exec_pb.js";
 
 export class NoopWebScraperService {
   async getContentInWebsiteFast(_context: unknown, _url: unknown): Promise<null> {

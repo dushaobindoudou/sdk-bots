@@ -7,8 +7,8 @@ import {
   UserMessage,
   UserMessageAction,
   type ConversationStateStructure,
-} from "../../proto/generated/agent/v1/agent_pb.js";
-import type { SelectedContext } from "../../proto/generated/agent/v1/selected_context_pb.js";
+} from "../../../proto/generated/agent/v1/agent_pb.js";
+import type { SelectedContext } from "../../../proto/generated/agent/v1/selected_context_pb.js";
 import type { Context } from "../../context/core.js";
 import {
   collectConversationStepsWithToolCallCount,
@@ -18,7 +18,7 @@ import {
 } from "./task-cluster-internal.js";
 import { generateSeededUuid } from "./common.js";
 import { executeRemotePostToolUseHook, executeRemoteSubagentStopHook } from "./core/remote-hooks.js";
-import type { SubagentType } from "../../proto/generated/agent/v1/subagents_pb.js";
+import type { SubagentType } from "../../../proto/generated/agent/v1/subagents_pb.js";
 
 export interface TaskSubagentIterationState {
   loopCount: number;

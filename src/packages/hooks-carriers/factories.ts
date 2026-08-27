@@ -1,4 +1,4 @@
-import { HookAdditionalContext } from "../proto/generated/agent/v1/hook_additional_context_pb.js";
+import { HookAdditionalContext } from "../../proto/generated/agent/v1/hook_additional_context_pb.js";
 import { HookAdditionalContextTooLargeError } from "./errors.js";
 import { HOOK_ADDITIONAL_CONTEXT_MAX_CHARS } from "./limits.js";
 

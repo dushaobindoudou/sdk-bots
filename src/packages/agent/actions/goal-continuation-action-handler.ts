@@ -1,8 +1,8 @@
 import * as crypto from "node:crypto";
 
-import { AgentMode, SimulatedMsgReason, UserMessage } from "../../proto/generated/agent/v1/agent_pb.js";
-import { GoalStatus } from "../../proto/generated/agent/v1/goal_tool_pb.js";
-import { createRedactedUserMessageAction, toRedactedUserMessage } from "../../redacted-protos/generated/agent/v1/agent_redacted.js";
+import { AgentMode, SimulatedMsgReason, UserMessage } from "../../../proto/generated/agent/v1/agent_pb.js";
+import { GoalStatus } from "../../../proto/generated/agent/v1/goal_tool_pb.js";
+import { createRedactedUserMessageAction, toRedactedUserMessage } from "../../../proto/redacted/agent/v1/agent_redacted.js";
 import { SYSTEM_NOTIFICATION_TAG } from "../../constants/system-notification.js";
 import { goalClockOnDeactivation, isGoalStateShapeValid } from "../../agent-core/goal-continuation.js";
 import { buildGoalPursuitGuidelines } from "../../agent-core/goal-pursuit-guidelines.js";

@@ -1,13 +1,13 @@
 import { AgentConversationTurnHandle, type ConversationStateHandle } from "./state.js";
 import { buildSimulatedMessagePromptUserContent } from "./simulated-message-prompts.js";
-import { fromRedactedUserMessage } from "../redacted-protos/generated/agent/v1/agent_redacted.js";
-import { fromRedactedAskQuestionArgs, fromRedactedAskQuestionResult } from "../redacted-protos/generated/agent/v1/ask_question_tool_redacted.js";
-import { fromRedactedComputerUseToolCall } from "../redacted-protos/generated/agent/v1/computer_use_tool_redacted.js";
+import { fromRedactedUserMessage } from "../../proto/redacted/agent/v1/agent_redacted.js";
+import { fromRedactedAskQuestionArgs, fromRedactedAskQuestionResult } from "../../proto/redacted/agent/v1/ask_question_tool_redacted.js";
+import { fromRedactedComputerUseToolCall } from "../../proto/redacted/agent/v1/computer_use_tool_redacted.js";
 import { fromRedactedCoreMessage } from "../redaction/core-message.js";
 import { PrivacyCapability } from "../redaction/classification.js";
-import { SimulatedMsgReason } from "../proto/generated/agent/v1/agent_pb.js";
-import { SelectedContext } from "../proto/generated/agent/v1/selected_context_pb.js";
-import { SmartModeClassifierConversationMessage } from "../proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
+import { SimulatedMsgReason } from "../../proto/generated/agent/v1/agent_pb.js";
+import { SelectedContext } from "../../proto/generated/agent/v1/selected_context_pb.js";
+import { SmartModeClassifierConversationMessage } from "../../proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
 import type { Context as OperationContext } from "../context/core.js";
 
 const SMART_MODE_CLASSIFIER_MAX_ASSISTANT_MESSAGES = 2;

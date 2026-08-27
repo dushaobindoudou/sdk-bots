@@ -1,4 +1,4 @@
-import type { SelectedPullRequest } from "../proto/generated/agent/v1/selected_context_pb.js";
+import type { SelectedPullRequest } from "../../proto/generated/agent/v1/selected_context_pb.js";
 
 const MAX_DESCRIPTION_LENGTH = 500;
 

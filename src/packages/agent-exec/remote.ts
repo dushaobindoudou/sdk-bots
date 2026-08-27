@@ -1,8 +1,8 @@
 import type { Context } from "../context/core.js";
 import { createSpan, getSpanContextData } from "../context/otel.js";
 import { createCounter } from "../metrics/index.js";
-import { ExecClientMessage, ExecServerMessage, SpanContext } from "../proto/generated/agent/v1/exec_pb.js";
-import type { HookAdditionalContext } from "../proto/generated/agent/v1/hook_additional_context_pb.js";
+import { ExecClientMessage, ExecServerMessage, SpanContext } from "../../proto/generated/agent/v1/exec_pb.js";
+import type { HookAdditionalContext } from "../../proto/generated/agent/v1/hook_additional_context_pb.js";
 import { getFirstItem } from "../utils/async-iterator.js";
 
 const logger = {

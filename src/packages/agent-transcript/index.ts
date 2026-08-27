@@ -1,4 +1,4 @@
-import { ConversationSummaryArchive, AgentMode } from "../proto/generated/agent/v1/agent_pb.js";
+import { ConversationSummaryArchive, AgentMode } from "../../proto/generated/agent/v1/agent_pb.js";
 import type { Context } from "../context/core.js";
 import { createSpan, withSuppressedChildSpans } from "../context/otel.js";
 import { getSafeConversationId } from "../utils/workspace-paths.js";

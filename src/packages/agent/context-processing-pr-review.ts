@@ -1,4 +1,4 @@
-import type { SelectedGitPRDiffSelection } from "../proto/generated/agent/v1/selected_context_pb.js";
+import type { SelectedGitPRDiffSelection } from "../../proto/generated/agent/v1/selected_context_pb.js";
 
 export interface PrReviewTextContent {
   readonly type: "text";

@@ -1,7 +1,7 @@
 import { AgentType } from "../utils/agent-config.js";
 import { Fragment, jsx, jsxs } from "../../prompt-jsx/jsx-runtime.js";
 import type { PromptNode } from "../../prompt-jsx/jsx-runtime.js";
-import type { GitRepoInfo } from "../../proto/generated/agent/v1/request_context_exec_pb.js";
+import type { GitRepoInfo } from "../../../proto/generated/agent/v1/request_context_exec_pb.js";
 import { sanitizeRemoteUrlForPrompt } from "./user-info-sanitization.js";
 
 interface GitStatusToolInfo {

@@ -1,5 +1,5 @@
-import { SandboxPolicy_Type } from "../../../../proto/generated/agent/v1/sandbox_pb.js";
-import { ShellAbortReason, ShellBackgroundReason } from "../../../../proto/generated/agent/v1/shell_exec_pb.js";
+import { SandboxPolicy_Type } from "../../../../../proto/generated/agent/v1/sandbox_pb.js";
+import { ShellAbortReason, ShellBackgroundReason } from "../../../../../proto/generated/agent/v1/shell_exec_pb.js";
 import { ASK_MODE_MODEL_ERROR, truncateOutput } from "../../common.js";
 import { buildToolCallExecutionTimedOutMessage } from "../../tool-execution-timeout.js";
 import { analyzeFailure } from "./retry-helpers.js";

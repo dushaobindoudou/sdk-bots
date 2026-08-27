@@ -1,7 +1,7 @@
 import path from "node:path";
 
 import { AGENT_STORE_AUTOMATION_MOUNT_NAME } from "../../../constants/agent-store-ids.js";
-import { MountedAgentStoreKind, type MountedAgentStore } from "../../../proto/generated/agent/v1/request_context_exec_pb.js";
+import { MountedAgentStoreKind, type MountedAgentStore } from "../../../../proto/generated/agent/v1/request_context_exec_pb.js";
 
 export function automationToolNameToSnakeCase(name: string): string {
   return name.replace(/([a-z0-9])([A-Z])/g, "$1_$2").replace(/([A-Z]+)([A-Z][a-z])/g, "$1_$2").toLowerCase();

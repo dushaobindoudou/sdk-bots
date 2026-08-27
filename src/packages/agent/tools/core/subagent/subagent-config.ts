@@ -1,5 +1,5 @@
-import { ConversationStateStructure } from "../../../../proto/generated/agent/v1/agent_pb.js";
-import type { SubagentType } from "../../../../proto/generated/agent/v1/subagents_pb.js";
+import { ConversationStateStructure } from "../../../../../proto/generated/agent/v1/agent_pb.js";
+import type { SubagentType } from "../../../../../proto/generated/agent/v1/subagents_pb.js";
 
 export const GENERAL_PURPOSE_SUBAGENT_TYPE = "generalPurpose" as const;
 

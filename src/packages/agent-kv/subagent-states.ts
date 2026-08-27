@@ -1,5 +1,5 @@
-import type { ConversationStateStructure, SubagentPersistedState as SubagentPersistedStateMessage } from "../proto/generated/agent/v1/agent_pb.js";
-import { SubagentPersistedState } from "../proto/generated/agent/v1/agent_pb.js";
+import type { ConversationStateStructure, SubagentPersistedState as SubagentPersistedStateMessage } from "../../proto/generated/agent/v1/agent_pb.js";
+import { SubagentPersistedState } from "../../proto/generated/agent/v1/agent_pb.js";
 import { createLogger } from "../context/logger.js";
 import { asyncMapValues } from "../utils/promise-extras.js";
 import type { BlobStore } from "./blob-store.js";

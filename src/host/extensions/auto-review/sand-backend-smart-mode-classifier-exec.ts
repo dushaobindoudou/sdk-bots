@@ -3,12 +3,12 @@ import type { Context } from "../../../packages/context/core.js";
 import {
   SmartModeClassifierArgs,
   type SmartModeClassifierResult,
-} from "../../../packages/proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
-import { DashboardService } from "../../../packages/proto/generated/aiserver/v1/dashboard_connect.js";
+} from "../../../proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
+import { DashboardService } from "../../../proto/generated/aiserver/v1/dashboard_connect.js";
 import {
   ClassifySandAutoReviewRequest,
   type ClassifySandAutoReviewResponse,
-} from "../../../packages/proto/generated/aiserver/v1/dashboard_pb.js";
+} from "../../../proto/generated/aiserver/v1/dashboard_pb.js";
 import {
   createSandCursorBackendClient,
   type SandInferenceOptions,

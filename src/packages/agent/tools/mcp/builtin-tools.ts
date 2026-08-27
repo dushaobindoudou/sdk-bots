@@ -7,8 +7,8 @@ import {
   McpSuccess,
   McpTextContent,
   McpToolResultContentItem,
-} from "../../../proto/generated/agent/v1/mcp_exec_pb.js";
-import { McpDescriptor, McpToolDescriptor } from "../../../proto/generated/agent/v1/mcp_pb.js";
+} from "../../../../proto/generated/agent/v1/mcp_exec_pb.js";
+import { McpDescriptor, McpToolDescriptor } from "../../../../proto/generated/agent/v1/mcp_pb.js";
 import { getConciseStaticContext, buildDescriptionGeneratorProps } from "../core.js";
 
 interface BuiltinTool {

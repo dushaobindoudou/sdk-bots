@@ -1,4 +1,4 @@
-import type { SelectedGitCommit } from "../proto/generated/agent/v1/selected_context_pb.js";
+import type { SelectedGitCommit } from "../../proto/generated/agent/v1/selected_context_pb.js";
 
 const GIT_COMMIT_APPROXIMATE_MAX_TOKENS_PER_COMMIT = 8_000;
 const GIT_COMMIT_CHARS_PER_TOKEN = 4;

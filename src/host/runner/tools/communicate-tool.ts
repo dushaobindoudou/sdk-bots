@@ -2,14 +2,14 @@ import type { ZodTypeAny } from "zod";
 
 import type { Context } from "../../../packages/context/core.js";
 import { createStringResult } from "../../../packages/chat-inference/prompt-executor.js";
-import { ToolCall } from "../../../packages/proto/generated/agent/v1/agent_pb.js";
+import { ToolCall } from "../../../proto/generated/agent/v1/agent_pb.js";
 import {
   CommunicateUpdateArgs,
   CommunicateUpdateError,
   CommunicateUpdateResult,
   CommunicateUpdateSuccess,
   CommunicateUpdateToolCall,
-} from "../../../packages/proto/generated/agent/v1/communicate_update_tool_pb.js";
+} from "../../../proto/generated/agent/v1/communicate_update_tool_pb.js";
 import { createZodAgentTool, withSafeParsedArgs } from "../../../packages/agent/tools/common.js";
 
 export const SAND_TOOL_MARKER = "__sand_tool__";

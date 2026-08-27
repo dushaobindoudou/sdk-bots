@@ -4,7 +4,7 @@
  * host-main.cjs:554845-554859 and 555129-555134.
  */
 import path from "node:path";
-import type { CursorRule } from "../../proto/generated/agent/v1/cursor_rules_pb.js";
+import type { CursorRule } from "../../../proto/generated/agent/v1/cursor_rules_pb.js";
 import { jsx, jsxs } from "../../prompt-jsx/jsx-runtime.js";
 import type { PromptNode } from "../../prompt-jsx/jsx-runtime.js";
 import { normalizeToUnixPath } from "../../utils/path-utils.js";

@@ -1,4 +1,4 @@
-import { PrivacyMode, type PrivacyMode as PrivacyModeValue } from "../proto/generated/aiserver/v1/privacy_mode_pb.js";
+import { PrivacyMode, type PrivacyMode as PrivacyModeValue } from "../../proto/generated/aiserver/v1/privacy_mode_pb.js";
 
 const DEFAULT_INLINE_VIDEO_MAX_BYTES = 15 * 1024 * 1024;
 const DEFAULT_SIGNED_URL_VIDEO_MAX_BYTES = 15 * 1024 * 1024;

@@ -1,4 +1,4 @@
-import type { McpDescriptor } from "../../proto/generated/agent/v1/mcp_pb.js";
+import type { McpDescriptor } from "../../../proto/generated/agent/v1/mcp_pb.js";
 import { McpMetaToolServerList } from "./user-info-mcp-catalog.js";
 import { MCP_AUTH_INSTRUCTION } from "../utils/mcp-auth-instruction.js";
 

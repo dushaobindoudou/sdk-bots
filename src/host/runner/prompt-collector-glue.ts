@@ -25,12 +25,12 @@ import {
   ConversationAction,
   UserMessage,
   UserMessageAction,
-} from "../../packages/proto/generated/agent/v1/agent_pb.js";
+} from "../../proto/generated/agent/v1/agent_pb.js";
 import {
   SelectedContext,
   SelectedImage,
   SelectedVideo as GeneratedSelectedVideo,
-} from "../../packages/proto/generated/agent/v1/selected_context_pb.js";
+} from "../../proto/generated/agent/v1/selected_context_pb.js";
 
 export class SandVideoAttachmentError extends Error {}
 

@@ -19,7 +19,7 @@ import {
 } from "./shared.js";
 import { parseComposer2CloudTestingSectionsPlacementMetadata } from "./composer2-cloud-testing-sections.js";
 import { renderMultitaskModeEnterUserReminderInner } from "./multitask-mode-user-reminder.js";
-import { AgentMode } from "../../proto/generated/agent/v1/agent_pb.js";
+import { AgentMode } from "../../../proto/generated/agent/v1/agent_pb.js";
 
 type UserMessageContent = string | readonly { readonly type: string; readonly text: string }[];
 

@@ -1,4 +1,4 @@
-import type { SelectedUIElement } from "../proto/generated/agent/v1/selected_context_pb.js";
+import type { SelectedUIElement } from "../../proto/generated/agent/v1/selected_context_pb.js";
 
 export interface SelectedUIElementsTextContent {
   readonly type: "text";

@@ -17,7 +17,7 @@ import { toHex, utf8Serde } from "../../../../agent-kv/serde.js";
 import type { ResourceAccessor } from "../../../../agent-exec/resource-provider.js";
 import type { RemoteExecManager } from "../../../../agent-exec/remote.js";
 import { readExecutorResource, redactedReadExecutorResource } from "../../../../agent-exec/read.js";
-import { ReadArgs, type ReadResult as ReadExecResult } from "../../../../proto/generated/agent/v1/read_exec_pb.js";
+import { ReadArgs, type ReadResult as ReadExecResult } from "../../../../../proto/generated/agent/v1/read_exec_pb.js";
 import {
   ReadRange,
   ReadToolArgs,
@@ -25,10 +25,10 @@ import {
   ReadToolError,
   ReadToolResult,
   ReadToolSuccess,
-} from "../../../../proto/generated/agent/v1/read_tool_pb.js";
-import { ToolCall } from "../../../../proto/generated/agent/v1/agent_pb.js";
-import type { CursorRule } from "../../../../proto/generated/agent/v1/cursor_rules_pb.js";
-import type { HookAdditionalContext } from "../../../../proto/generated/agent/v1/hook_additional_context_pb.js";
+} from "../../../../../proto/generated/agent/v1/read_tool_pb.js";
+import { ToolCall } from "../../../../../proto/generated/agent/v1/agent_pb.js";
+import type { CursorRule } from "../../../../../proto/generated/agent/v1/cursor_rules_pb.js";
+import type { HookAdditionalContext } from "../../../../../proto/generated/agent/v1/hook_additional_context_pb.js";
 import {
   ToolCallError,
   ToolCallRejectedError,

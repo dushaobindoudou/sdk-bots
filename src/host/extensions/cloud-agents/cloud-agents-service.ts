@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { BackgroundComposerService } from "../../../packages/proto/generated/aiserver/v1/background_composer_connect.js";
-import { DashboardService } from "../../../packages/proto/generated/aiserver/v1/dashboard_connect.js";
+import { BackgroundComposerService } from "../../../proto/generated/aiserver/v1/background_composer_connect.js";
+import { DashboardService } from "../../../proto/generated/aiserver/v1/dashboard_connect.js";
 import { createSandCursorBackendClient } from "../../../shared/node/cursor-backend/cursor-inference.js";
 import { CloudAgentCompletionPoller, CloudAgentModelCatalogCache, CloudAgentTeamAdminPolicyCache, resolveSandLimitError, resolveSavedEnvironment, type Clock, type DetailedComposer, type PollingPolicy, type SavedEnvironmentClient } from "./cloud-agent-poll-loop.js";
 import { SandCloudAgentLaunchError } from "./cloud-agent-launch-error.js";

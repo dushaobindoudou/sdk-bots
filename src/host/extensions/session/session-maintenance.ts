@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { readdir, rm } from "node:fs/promises";
 import { basename, dirname, join, resolve } from "node:path";
-import { ConversationStateStructure } from "../../../packages/proto/generated/agent/v1/agent_pb.js";
+import { ConversationStateStructure } from "../../../proto/generated/agent/v1/agent_pb.js";
 import { getSandProfilePath, readSandProfileFile } from "../../agents/agent-profile.js";
 import { rebuildTranscriptEntriesFromState, selectHiddenArtifactEntryIds, conversationStructureFullyResolves, type OutlineItem } from "./conversation-recovery.js";
 import { ConversationRecoveryScanError, transcriptEntryMatchesRecovered } from "./session-recovery.js";

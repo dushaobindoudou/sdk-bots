@@ -1,4 +1,4 @@
-import type { McpInstructions } from "../../proto/generated/agent/v1/mcp_pb.js";
+import type { McpInstructions } from "../../../proto/generated/agent/v1/mcp_pb.js";
 import { jsx } from "../../prompt-jsx/jsx-runtime.js";
 import type { PromptNode } from "../../prompt-jsx/jsx-runtime.js";
 

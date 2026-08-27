@@ -14,8 +14,8 @@ import {
   type ConversationState as ConversationStateMessage,
   type ConversationStateStructure as ConversationStateStructureMessage,
   type SubagentPersistedState as SubagentPersistedStateMessage,
-} from "../proto/generated/agent/v1/agent_pb.js";
-import { TodoItem } from "../proto/generated/agent/v1/todo_tool_pb.js";
+} from "../../proto/generated/agent/v1/agent_pb.js";
+import { TodoItem } from "../../proto/generated/agent/v1/todo_tool_pb.js";
 import { Disposable } from "../utils/disposable.js";
 import type { BlobStore } from "./blob-store.js";
 import { getBlobId } from "./blob-store.js";

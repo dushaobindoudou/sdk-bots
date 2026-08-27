@@ -1,6 +1,6 @@
-import { AgentMode } from "../../../proto/generated/agent/v1/agent_pb.js";
-import { fromRedactedRequestContext } from "../../../redacted-protos/generated/agent/v1/request_context_exec_redacted.js";
-import { fromRedactedUserMessage as fromRedactedUserMessage2 } from "../../../redacted-protos/generated/agent/v1/agent_redacted.js";
+import { AgentMode } from "../../../../proto/generated/agent/v1/agent_pb.js";
+import { fromRedactedRequestContext } from "../../../../proto/redacted/agent/v1/request_context_exec_redacted.js";
+import { fromRedactedUserMessage as fromRedactedUserMessage2 } from "../../../../proto/redacted/agent/v1/agent_redacted.js";
 import { PrivacyCapability } from "../../../redaction/classification.js";
 import { fromRedactedCoreMessage, toRedactedCoreMessages } from "../../../redaction/core-message.js";
 import { createLogger } from "../../../context/logger.js";

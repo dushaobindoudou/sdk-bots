@@ -1,4 +1,4 @@
-import { AgentMode } from "../../proto/generated/agent/v1/agent_pb.js";
+import { AgentMode } from "../../../proto/generated/agent/v1/agent_pb.js";
 
 export interface MetaAgentNotesConfig {
   readonly notesSessionId?: string | undefined;

@@ -1,15 +1,15 @@
 import { randomUUID } from "node:crypto";
 
-import { UserMessage } from "../../proto/generated/agent/v1/agent_pb.js";
+import { UserMessage } from "../../../proto/generated/agent/v1/agent_pb.js";
 import { Updates } from "../../agent-core/interaction-updates.js";
 import { createSpan } from "../../context/otel.js";
 import type { Context } from "../../context/core.js";
 import { createLogger } from "../../context/logger.js";
 import { PrivacyCapability } from "../../redaction/classification.js";
-import { fromRedactedRequestContext } from "../../redacted-protos/generated/agent/v1/request_context_exec_redacted.js";
-import { fromRedactedRepositoryIndexingInfo } from "../../redacted-protos/generated/agent/v1/repo_redacted.js";
-import { fromRedactedSelectedContext } from "../../redacted-protos/generated/agent/v1/selected_context_redacted.js";
-import { toRedactedInteractionUpdate } from "../../redacted-protos/generated/agent/v1/agent_redacted.js";
+import { fromRedactedRequestContext } from "../../../proto/redacted/agent/v1/request_context_exec_redacted.js";
+import { fromRedactedRepositoryIndexingInfo } from "../../../proto/redacted/agent/v1/repo_redacted.js";
+import { fromRedactedSelectedContext } from "../../../proto/redacted/agent/v1/selected_context_redacted.js";
+import { toRedactedInteractionUpdate } from "../../../proto/redacted/agent/v1/agent_redacted.js";
 import { getRedactedRequestContext } from "../utils/request-context.js";
 import { AgentConversationTurnHandle } from "../state.js";
 import { buildRequestContextOptions } from "./meta-agent-notes.js";

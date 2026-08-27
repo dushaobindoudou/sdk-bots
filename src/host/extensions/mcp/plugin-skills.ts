@@ -6,8 +6,8 @@ import { createBackendMarketplaceClient, normalizeEffectiveUserPluginsResponse }
 import { classifyCloneError } from "../../../packages/cursor-plugins/marketplace-cache.js";
 import { buildOriginTokenGitConfig } from "../../../packages/cursor-plugins/origin-git-auth.js";
 import { loadFromMarketplaceSource } from "../../../packages/cursor-plugins/loader.js";
-import { DashboardService } from "../../../packages/proto/generated/aiserver/v1/dashboard_connect.js";
-import { GetEffectiveUserPluginsRequest, GetMeRequest } from "../../../packages/proto/generated/aiserver/v1/dashboard_pb.js";
+import { DashboardService } from "../../../proto/generated/aiserver/v1/dashboard_connect.js";
+import { GetEffectiveUserPluginsRequest, GetMeRequest } from "../../../proto/generated/aiserver/v1/dashboard_pb.js";
 import { createSandCursorBackendClient, getSandInferenceBackendUrl } from "../../../shared/node/cursor-backend/cursor-inference.js";
 import { clampWorkflowDescription, clampWorkflowName, slugifyWorkflowName } from "../../../shared/workflow-model.js";
 import { getPluginSkillsDir, getPluginsRootDir, readPluginSkillsCache, writePluginSkillsCache, type PluginAuthBlock, type PluginSkillRecord, type PluginSkillsCache } from "./plugin-skills-cache.js";

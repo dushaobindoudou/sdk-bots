@@ -1,7 +1,7 @@
 import {
   ClientSideToolV2Call,
   ClientSideToolV2Result,
-} from "../../packages/proto/generated/aiserver/v1/tools_pb.js";
+} from "../../proto/generated/aiserver/v1/tools_pb.js";
 
 // The payload is the generated protobuf wire representation, not a hand-shaped
 // JSON substitute. Immutable renderer evidence:

@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { posix } from "node:path";
 import type { Context } from "../../packages/context/core.js";
-import { WriteArgs } from "../../packages/proto/generated/agent/v1/write_exec_pb.js";
+import { WriteArgs } from "../../proto/generated/agent/v1/write_exec_pb.js";
 import {
   shellExecutorResource,
   type ShellExecResult,

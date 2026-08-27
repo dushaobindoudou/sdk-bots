@@ -1,5 +1,5 @@
 import { isRootProjectDetails } from "../../constants/project-conversation.js";
-import { AgentMode } from "../../proto/generated/agent/v1/agent_pb.js";
+import { AgentMode } from "../../../proto/generated/agent/v1/agent_pb.js";
 import { AgentType } from "./agent-config.js";
 import type { Context } from "../../context/core.js";
 

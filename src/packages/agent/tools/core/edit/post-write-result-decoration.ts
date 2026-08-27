@@ -5,8 +5,8 @@ import { canvasDiagnosticsExecutorResource } from "../../../../agent-exec/canvas
 import { agentStoreConflictNoticeExecutorResource, conflictNoticeAck, conflictNoticeNoteDeferredEagerWrittenPaths, conflictNoticePeek, conflictNoticeRelease, conflictNoticeSyncAndPeek } from "../../../../agent-exec/agent-store-conflict-notice.js";
 import type { ResourceAccessor } from "../../../../agent-exec/resource-provider.js";
 import type { Executor, RemoteExecManager } from "../../../../agent-exec/remote.js";
-import { CanvasDiagnosticsArgs, type CanvasDiagnosticsResult } from "../../../../proto/generated/agent/v1/canvas_diagnostics_exec_pb.js";
-import { DiagnosticSeverity, type Diagnostic } from "../../../../proto/generated/agent/v1/diagnostics_exec_pb.js";
+import { CanvasDiagnosticsArgs, type CanvasDiagnosticsResult } from "../../../../../proto/generated/agent/v1/canvas_diagnostics_exec_pb.js";
+import { DiagnosticSeverity, type Diagnostic } from "../../../../../proto/generated/agent/v1/diagnostics_exec_pb.js";
 import { getConversationId } from "../../../utils/request-id.js";
 import { CANVAS_POST_EDIT_DIAGNOSTICS_TIMEOUT_MS } from "../../../utils/overridable-config.js";
 import { delay } from "../../../../utils/promise-extras.js";

@@ -18,10 +18,10 @@ import {
   GET_MCP_TOOLS_FAILURE_REASONS,
   reportMcpMetaToolFailure,
 } from "../../utils/mcp-metrics.js";
-import { McpStateExecArgs } from "../../../proto/generated/agent/v1/mcp_exec_pb.js";
-import { McpDescriptor, McpToolDescriptor, type McpMetaToolOptions } from "../../../proto/generated/agent/v1/mcp_pb.js";
-import { GetMcpToolsAgentResult, GetMcpToolsArgs, GetMcpToolsError, GetMcpToolsSuccess, GetMcpToolsToolCall } from "../../../proto/generated/agent/v1/get_mcp_tools_tool_pb.js";
-import { ToolCall } from "../../../proto/generated/agent/v1/agent_pb.js";
+import { McpStateExecArgs } from "../../../../proto/generated/agent/v1/mcp_exec_pb.js";
+import { McpDescriptor, McpToolDescriptor, type McpMetaToolOptions } from "../../../../proto/generated/agent/v1/mcp_pb.js";
+import { GetMcpToolsAgentResult, GetMcpToolsArgs, GetMcpToolsError, GetMcpToolsSuccess, GetMcpToolsToolCall } from "../../../../proto/generated/agent/v1/get_mcp_tools_tool_pb.js";
+import { ToolCall } from "../../../../proto/generated/agent/v1/agent_pb.js";
 
 const DEFAULT_GET_MCP_TOOLS_NAME = "GetMcpTools";
 const MCP_AUTH_TOOL_NAME = "mcp_auth";

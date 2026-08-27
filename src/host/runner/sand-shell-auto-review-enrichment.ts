@@ -2,7 +2,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { isAbsolute, resolve } from "node:path";
 
 import { readExecutorResource } from "../../packages/agent-exec/read.js";
-import { ReadArgs, type ReadResult } from "../../packages/proto/generated/agent/v1/read_exec_pb.js";
+import { ReadArgs, type ReadResult } from "../../proto/generated/agent/v1/read_exec_pb.js";
 
 export const SAND_SHELL_ENRICHMENT_MAX_CHARS = 8_000;
 export const SAND_SHELL_ENRICHMENT_MAX_LINES = 200;

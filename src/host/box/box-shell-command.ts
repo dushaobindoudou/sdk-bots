@@ -1,4 +1,4 @@
-import { ShellArgs, ShellCommandParsingResult, ShellCommandParsingResult_ExecutableCommand } from "../../packages/proto/generated/agent/v1/shell_exec_pb.js";
+import { ShellArgs, ShellCommandParsingResult, ShellCommandParsingResult_ExecutableCommand } from "../../proto/generated/agent/v1/shell_exec_pb.js";
 
 export interface HostShellArgsInput { command: string; name: string; workingDirectory: string; toolCallId: string }
 export type HostShellArgs = ShellArgs;

@@ -1,9 +1,9 @@
-import type { SimulatedMsgReason as SimulatedMsgReasonValue } from "../proto/generated/agent/v1/agent_pb.js";
+import type { SimulatedMsgReason as SimulatedMsgReasonValue } from "../../proto/generated/agent/v1/agent_pb.js";
 import type {
   SelectedContext,
   SelectedGitPRDiffSelection,
   SelectedPullRequest,
-} from "../proto/generated/agent/v1/selected_context_pb.js";
+} from "../../proto/generated/agent/v1/selected_context_pb.js";
 import { buildGitCommitsUserContent } from "./git-commit-processing.js";
 import { buildGitDiffUncommittedUserContent, buildGitDiffUserContent } from "./git-diff-processing.js";
 import { buildGitPullRequestsUserContent } from "./git-pr-processing.js";

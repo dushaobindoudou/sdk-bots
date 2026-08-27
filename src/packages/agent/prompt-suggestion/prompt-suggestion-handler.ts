@@ -1,7 +1,7 @@
 import { createLogger, createSpan, type Context } from "../../context/index.js";
 import { Updates } from "../../agent-core/interaction-updates.js";
 import { createCounter } from "../../metrics/index.js";
-import { PrivacyMode } from "../../proto/generated/aiserver/v1/privacy_mode_pb.js";
+import { PrivacyMode } from "../../../proto/generated/aiserver/v1/privacy_mode_pb.js";
 import { PrivacyCapability } from "../../redaction/classification.js";
 import { fromRedactedCoreMessages, toRedactedCoreMessages } from "../../redaction/core-message.js";
 import { promptSuggestionUserMessage, PROMPT_SUGGESTION_MAX_WORDS } from "../prompts/prompt-suggestion.js";

@@ -3,7 +3,7 @@ import type { PartialMessage } from "@bufbuild/protobuf";
 import {
   ShellHookApprovalRequirement,
   ShellHookApprovalRequirement_Kind,
-} from "../proto/generated/agent/v1/shell_exec_pb.js";
+} from "../../proto/generated/agent/v1/shell_exec_pb.js";
 
 interface ShellHookApprovalArgs {
   hookApprovalRequirement?: ShellHookApprovalRequirement | undefined;

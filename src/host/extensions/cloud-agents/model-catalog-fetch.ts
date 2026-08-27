@@ -1,5 +1,5 @@
-import { AiService } from "../../../packages/proto/generated/aiserver/v1/aiserver_connect.js";
-import { AvailableModelsRequest, AvailableModelsScope } from "../../../packages/proto/generated/aiserver/v1/aiserver_pb.js";
+import { AiService } from "../../../proto/generated/aiserver/v1/aiserver_connect.js";
+import { AvailableModelsRequest, AvailableModelsScope } from "../../../proto/generated/aiserver/v1/aiserver_pb.js";
 import { mapAvailableModels, type SandModelCatalogEntry } from "../../../shared/agents/model-catalog.js";
 import { createSandCursorBackendClient } from "../../../shared/node/cursor-backend/cursor-inference.js";
 

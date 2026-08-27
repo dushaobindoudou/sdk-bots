@@ -20,9 +20,9 @@ import {
   AwaitTaskComplete,
   AwaitTaskStillRunning,
   AwaitToolCall,
-} from "../../../proto/generated/agent/v1/await_tool_pb.js";
-import { ReadArgs } from "../../../proto/generated/agent/v1/read_exec_pb.js";
-import { LsArgs } from "../../../proto/generated/agent/v1/ls_exec_pb.js";
+} from "../../../../proto/generated/agent/v1/await_tool_pb.js";
+import { ReadArgs } from "../../../../proto/generated/agent/v1/read_exec_pb.js";
+import { LsArgs } from "../../../../proto/generated/agent/v1/ls_exec_pb.js";
 import {
   SubagentArgs,
   SubagentAwaitArgs,
@@ -31,8 +31,8 @@ import {
   SubagentAwaitNotFound,
   SubagentAwaitResult,
   SubagentAwaitStillRunning,
-} from "../../../proto/generated/agent/v1/subagent_exec_pb.js";
-import { ToolCall } from "../../../proto/generated/agent/v1/agent_pb.js";
+} from "../../../../proto/generated/agent/v1/subagent_exec_pb.js";
+import { ToolCall } from "../../../../proto/generated/agent/v1/agent_pb.js";
 import { ToolCallAbortedError, ToolCallArgParseError, createZodAgentTool, withSafeParsedArgs } from "../common.js";
 
 const DEFAULT_BLOCK_UNTIL_MS = 30_000;

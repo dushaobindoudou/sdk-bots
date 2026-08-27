@@ -1,5 +1,5 @@
-import { McpDescriptor, type McpDescriptor as McpDescriptorType } from "../../proto/generated/agent/v1/mcp_pb.js";
-import { AgentMode } from "../../proto/generated/agent/v1/agent_pb.js";
+import { McpDescriptor, type McpDescriptor as McpDescriptorType } from "../../../proto/generated/agent/v1/mcp_pb.js";
+import { AgentMode } from "../../../proto/generated/agent/v1/agent_pb.js";
 import type { Context } from "../../context/core.js";
 import { resolveProjectConversationContext } from "../utils/project-conversation.js";
 

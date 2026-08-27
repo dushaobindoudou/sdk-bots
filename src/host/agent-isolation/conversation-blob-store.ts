@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import type { DatabaseSync, StatementSync } from "node:sqlite";
-import { ConversationStateStructure } from "../../packages/proto/generated/agent/v1/agent_pb.js";
+import { ConversationStateStructure } from "../../proto/generated/agent/v1/agent_pb.js";
 import { openConversationBlobDb, readConversationBlobMigrationState, CONVERSATION_BLOB_ADOPTION_COMPLETE } from "./conversation-blob-db.js";
 import { collectReachableBlobHexIds } from "./conversation-blob-gc.js";
 import { verifyLegacyBlobRetirement } from "./legacy-blob-retirement.js";

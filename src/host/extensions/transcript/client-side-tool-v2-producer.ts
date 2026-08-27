@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import type {
   ClientSideToolV2Call,
   ClientSideToolV2Result,
-} from "../../../packages/proto/generated/aiserver/v1/tools_pb.js";
+} from "../../../proto/generated/aiserver/v1/tools_pb.js";
 import {
   CLIENT_SIDE_TOOL_V2_ACCOUNT_SLOT,
   CLIENT_SIDE_TOOL_V2_WIRE_VERSION,

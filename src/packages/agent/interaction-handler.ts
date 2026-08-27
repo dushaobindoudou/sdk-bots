@@ -2,10 +2,10 @@ import { createLogger, createSpan } from "../context/index.js";
 import { createCounter, createHistogram } from "../metrics/index.js";
 import { Updates } from "../agent-core/interaction-updates.js";
 import { InputTokenLimitError } from "../chat-inference/prompt-executor.js";
-import { EditArgs } from "../proto/generated/agent/v1/edit_tool_pb.js";
-import { ToolCall } from "../proto/generated/agent/v1/agent_pb.js";
-import { PrivacyMode } from "../proto/generated/aiserver/v1/privacy_mode_pb.js";
-import { toRedactedToolCall } from "../redacted-protos/generated/agent/v1/agent_redacted.js";
+import { EditArgs } from "../../proto/generated/agent/v1/edit_tool_pb.js";
+import { ToolCall } from "../../proto/generated/agent/v1/agent_pb.js";
+import { PrivacyMode } from "../../proto/generated/aiserver/v1/privacy_mode_pb.js";
+import { toRedactedToolCall } from "../../proto/redacted/agent/v1/agent_redacted.js";
 import { ToolCallAbortedError } from "./tools/common.js";
 import { AgentLoopError, checkForAgentSingleMessageLooping, SingleMessageLoopDetector } from "./loop-detection/agent-loop-detector.js";
 

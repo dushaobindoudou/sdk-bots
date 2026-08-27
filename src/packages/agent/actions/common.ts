@@ -1,4 +1,4 @@
-import { CursorRuleSource, type CursorRule } from "../../proto/generated/agent/v1/cursor_rules_pb.js";
+import { CursorRuleSource, type CursorRule } from "../../../proto/generated/agent/v1/cursor_rules_pb.js";
 import { fromRedactedCoreMessage } from "../../redaction/core-message.js";
 import { PrivacyCapability } from "../../redaction/classification.js";
 import { parseComposer2CloudTestingSectionsPlacementMetadata } from "../prompts/composer2-cloud-testing-sections.js";

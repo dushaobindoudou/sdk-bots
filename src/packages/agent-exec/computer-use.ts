@@ -7,7 +7,7 @@ import {
   createServerDeserializer,
   createServerSerializer
 } from "./serialization.js";
-import type { ComputerUseArgs, ComputerUseResult } from "../proto/generated/agent/v1/computer_use_tool_pb.js";
+import type { ComputerUseArgs, ComputerUseResult } from "../../proto/generated/agent/v1/computer_use_tool_pb.js";
 
 export interface ComputerUseActionLike {
   readonly action: {

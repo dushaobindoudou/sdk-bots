@@ -10,9 +10,9 @@ import {
   ExecClientStreamClose,
   ExecClientThrow,
   ExecServerMessage,
-} from "../proto/generated/agent/v1/exec_pb.js";
-import type { ExecServerControlMessage } from "../proto/generated/agent/v1/agent_service_pb.js";
-import type { HookAdditionalContext } from "../proto/generated/agent/v1/hook_additional_context_pb.js";
+} from "../../proto/generated/agent/v1/exec_pb.js";
+import type { ExecServerControlMessage } from "../../proto/generated/agent/v1/agent_service_pb.js";
+import type { HookAdditionalContext } from "../../proto/generated/agent/v1/hook_additional_context_pb.js";
 
 const logger = {
   name: "SimpleControlledExecManager",

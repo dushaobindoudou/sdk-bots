@@ -1,4 +1,4 @@
-import { DashboardService } from "../../../packages/proto/generated/aiserver/v1/dashboard_connect.js";
+import { DashboardService } from "../../../proto/generated/aiserver/v1/dashboard_connect.js";
 import {
   createAccountMcpWriter,
   fetchAccountMcpServers,

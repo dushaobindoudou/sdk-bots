@@ -1,11 +1,11 @@
 import path from "node:path";
-import { ToolCall } from "../../../packages/proto/generated/agent/v1/agent_pb.js";
+import { ToolCall } from "../../../proto/generated/agent/v1/agent_pb.js";
 import {
   SendMessageArgs,
   SendMessageAttachment,
   SendMessageText,
   type SendMessageToolCall,
-} from "../../../packages/proto/generated/agent/v1/send_message_tool_pb.js";
+} from "../../../proto/generated/agent/v1/send_message_tool_pb.js";
 import { isBoxRootPath } from "../../box/box-transfer.js";
 import { imageMimeFromPath } from "../../../shared/media/image-mime.js";
 import { summarizeWidget } from "../../../shared/sand-widgets.js";

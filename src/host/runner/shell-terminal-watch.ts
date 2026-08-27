@@ -13,9 +13,9 @@ import {
   ConversationStateStructure,
   ConversationTurnStructure,
   UserMessage,
-} from "../../packages/proto/generated/agent/v1/agent_pb.js";
+} from "../../proto/generated/agent/v1/agent_pb.js";
 import { readExecutorResource } from "../../packages/agent-exec/read.js";
-import { ReadArgs, type ReadResult } from "../../packages/proto/generated/agent/v1/read_exec_pb.js";
+import { ReadArgs, type ReadResult } from "../../proto/generated/agent/v1/read_exec_pb.js";
 import type { BlobStore } from "../../packages/agent-kv/blob-store.js";
 import {
   SandLocalToolPermissionDeniedError,

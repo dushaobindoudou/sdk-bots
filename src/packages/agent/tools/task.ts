@@ -5,14 +5,14 @@ import {
   TaskToolCallDelta,
   ToolCall,
   ToolCallDelta,
-} from "../../proto/generated/agent/v1/agent_pb.js";
+} from "../../../proto/generated/agent/v1/agent_pb.js";
 import type { Context } from "../../context/core.js";
 import { PrivacyCapability } from "../../redaction/classification.js";
 import type { ResourceAccessor } from "../../agent-exec/resource-provider.js";
 import type { RemoteExecManager } from "../../agent-exec/remote.js";
 import { createReadonlyResourceAccessor } from "../../agent-exec/readonly-resource-accessor.js";
 import { subagentRegistryResource } from "./subagent-registry.js";
-import { SubagentArgs } from "../../proto/generated/agent/v1/subagent_exec_pb.js";
+import { SubagentArgs } from "../../../proto/generated/agent/v1/subagent_exec_pb.js";
 import { parentRequestIdKey, requestModelNameKey } from "../utils/request-id.js";
 import { NoopConversationActionReceiver } from "../../agent-core/conversation-actions/remote.js";
 import { Responses } from "../../agent-core/interaction-queries.js";
@@ -22,7 +22,7 @@ import {
   fromRedactedConversationStateStructure,
   toRedactedConversationAction,
   toRedactedConversationStateStructure,
-} from "../../redacted-protos/generated/agent/v1/agent_redacted.js";
+} from "../../../proto/redacted/agent/v1/agent_redacted.js";
 import { createZodAgentTool, withSafeParsedArgs } from "./common.js";
 import { isPromptVisibleDescription } from "./core.js";
 import { getTaskToolName } from "./task-tool-name.js";

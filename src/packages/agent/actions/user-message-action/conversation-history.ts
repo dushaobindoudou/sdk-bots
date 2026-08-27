@@ -1,6 +1,6 @@
 import { PrivacyCapability } from "../../../redaction/classification.js";
 import { toRedactedCoreMessages } from "../../../redaction/core-message.js";
-import { fromRedactedConversationHistory } from "../../../redacted-protos/generated/agent/v1/agent_redacted.js";
+import { fromRedactedConversationHistory } from "../../../../proto/redacted/agent/v1/agent_redacted.js";
 
 type Any = any;
 

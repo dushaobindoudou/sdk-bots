@@ -7,12 +7,12 @@ import { createSpan } from "../../../context/otel.js";
 import type { ResourceAccessor, RemoteExecManager } from "../../../agent-exec/index.js";
 import { mcpExecutorResource } from "../../../agent-exec/mcp.js";
 import { smartModeClassifierExecutorResource } from "../../../agent-exec/smart-mode-classifier.js";
-import { McpArgs, McpPermissionDenied, McpRejected } from "../../../proto/generated/agent/v1/mcp_exec_pb.js";
-import { McpToolCall, McpToolError, McpToolResult } from "../../../proto/generated/agent/v1/mcp_tool_pb.js";
-import type { McpFileSystemOptions, McpMetaToolOptions } from "../../../proto/generated/agent/v1/mcp_pb.js";
-import { SmartModeApproval } from "../../../proto/generated/agent/v1/utils_pb.js";
-import { SmartModeClassifierArgs, SmartModeClassifierDecision, SmartModeRiskTarget, type SmartModeClassifierConversationMessage } from "../../../proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
-import type { RequestContext } from "../../../proto/generated/agent/v1/request_context_exec_pb.js";
+import { McpArgs, McpPermissionDenied, McpRejected } from "../../../../proto/generated/agent/v1/mcp_exec_pb.js";
+import { McpToolCall, McpToolError, McpToolResult } from "../../../../proto/generated/agent/v1/mcp_tool_pb.js";
+import type { McpFileSystemOptions, McpMetaToolOptions } from "../../../../proto/generated/agent/v1/mcp_pb.js";
+import { SmartModeApproval } from "../../../../proto/generated/agent/v1/utils_pb.js";
+import { SmartModeClassifierArgs, SmartModeClassifierDecision, SmartModeRiskTarget, type SmartModeClassifierConversationMessage } from "../../../../proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
+import type { RequestContext } from "../../../../proto/generated/agent/v1/request_context_exec_pb.js";
 import { AgentType } from "../../utils/agent-config.js";
 import { getConversationId } from "../../utils/request-id.js";
 import { getAgentEventTracker } from "../../utils/event-tracking.js";
@@ -50,7 +50,7 @@ import {
   renderMcpToolResult,
 } from "./mcp-result-boundary.js";
 import { checkMcpToolDefinitionRead, validateMcpToolOnMcpToolDescriptors } from "./mcp-execution-guards.js";
-import type { HookAdditionalContext } from "../../../proto/generated/agent/v1/hook_additional_context_pb.js";
+import type { HookAdditionalContext } from "../../../../proto/generated/agent/v1/hook_additional_context_pb.js";
 import {
   CALL_MCP_TOOL_FAILURE_REASONS,
   emitCallMcpToolMetrics,

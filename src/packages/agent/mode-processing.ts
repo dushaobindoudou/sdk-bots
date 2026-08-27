@@ -1,5 +1,5 @@
 import { createLogger } from "../context/index.js";
-import { AgentMode } from "../proto/generated/agent/v1/agent_pb.js";
+import { AgentMode } from "../../proto/generated/agent/v1/agent_pb.js";
 import { isWorktreesPath } from "../utils/path-utils.js";
 import { buildAntiAskQuestionSystemReminder } from "./prompts/anti-ask-question-copy.js";
 import { SwitchModeReminderSnippet } from "./prompts/deprecated-do-not-use/shared.js";

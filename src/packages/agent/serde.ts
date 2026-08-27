@@ -11,8 +11,8 @@ import {
   ShellCommand,
   ShellOutput,
   UserMessage,
-} from "../proto/generated/agent/v1/agent_pb.js";
-import { TodoItem } from "../proto/generated/agent/v1/todo_tool_pb.js";
+} from "../../proto/generated/agent/v1/agent_pb.js";
+import { TodoItem } from "../../proto/generated/agent/v1/todo_tool_pb.js";
 import {
   ProtoSerde,
   fromHex,

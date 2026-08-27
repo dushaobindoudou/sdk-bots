@@ -2,7 +2,7 @@ import type { Context } from "../../context/core.js";
 import { createKey } from "../../context/core.js";
 import { createLogger } from "../../context/logger.js";
 import type { Executor } from "../../agent-exec/remote.js";
-import { SmartModeClassifierDecision, type SmartModeClassifierArgs, type SmartModeClassifierResult } from "../../proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
+import { SmartModeClassifierDecision, type SmartModeClassifierArgs, type SmartModeClassifierResult } from "../../../proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
 import { withTimeout } from "../../utils/promise-extras.js";
 import { getAgentEventTracker } from "./event-tracking.js";
 import { parseSmartModeClassifierFailureMetadata } from "./smart-mode-classifier-error-metadata.js";

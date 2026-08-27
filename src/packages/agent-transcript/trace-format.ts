@@ -1,4 +1,4 @@
-import { ConversationMessage_MessageType, type ConversationMessage } from "../proto/generated/aiserver/v1/chat_pb.js";
+import { ConversationMessage_MessageType, type ConversationMessage } from "../../proto/generated/aiserver/v1/chat_pb.js";
 
 export enum HistoryVisibilityMode { INTERNAL = "INTERNAL", EXTERNAL = "EXTERNAL", NO_PREAMBLE = "NO_PREAMBLE" }
 type ToolResult = ConversationMessage["toolResults"][number];

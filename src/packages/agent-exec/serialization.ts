@@ -1,4 +1,4 @@
-import { ExecClientMessage, ExecServerMessage } from "../proto/generated/agent/v1/exec_pb.js";
+import { ExecClientMessage, ExecServerMessage } from "../../proto/generated/agent/v1/exec_pb.js";
 
 export type Serializer<T, Message> = (id: number, value: T) => Message;
 export type Deserializer<T, Message> = (message: Message) => { id: number; args: T } | undefined;

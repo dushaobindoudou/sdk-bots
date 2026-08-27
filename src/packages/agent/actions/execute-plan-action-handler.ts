@@ -7,19 +7,19 @@ import {
   ProjectDetails,
   SimulatedMsgReason,
   UserMessage,
-} from "../../proto/generated/agent/v1/agent_pb.js";
-import { TodoItem, TodoStatus } from "../../proto/generated/agent/v1/todo_tool_pb.js";
-import { SelectedCodeSelection, SelectedContext } from "../../proto/generated/agent/v1/selected_context_pb.js";
-import { Position, Range } from "../../proto/generated/agent/v1/utils_pb.js";
-import { fromRedactedRequestContext } from "../../redacted-protos/generated/agent/v1/request_context_exec_redacted.js";
+} from "../../../proto/generated/agent/v1/agent_pb.js";
+import { TodoItem, TodoStatus } from "../../../proto/generated/agent/v1/todo_tool_pb.js";
+import { SelectedCodeSelection, SelectedContext } from "../../../proto/generated/agent/v1/selected_context_pb.js";
+import { Position, Range } from "../../../proto/generated/agent/v1/utils_pb.js";
+import { fromRedactedRequestContext } from "../../../proto/redacted/agent/v1/request_context_exec_redacted.js";
 import { fromRedactedCoreMessage, toRedactedCoreMessages } from "../../redaction/core-message.js";
 import { createRedactedString } from "../../redaction/factory.js";
 import { DataClassification, PrivacyCapability } from "../../redaction/classification.js";
 import { createLogger } from "../../context/logger.js";
 import { createSpan } from "../../context/otel.js";
 import { Updates } from "../../agent-core/interaction-updates.js";
-import { toRedactedInteractionUpdate } from "../../redacted-protos/generated/agent/v1/agent_redacted.js";
-import { toRedactedTodoItem } from "../../redacted-protos/generated/agent/v1/todo_tool_redacted.js";
+import { toRedactedInteractionUpdate } from "../../../proto/redacted/agent/v1/agent_redacted.js";
+import { toRedactedTodoItem } from "../../../proto/redacted/agent/v1/todo_tool_redacted.js";
 import { FileOperationLockManager } from "../tools/core/file-operation-lock-manager.js";
 import { extractToolInfo } from "../prompts/system.js";
 import { getBrowserToolNames } from "../common.js";

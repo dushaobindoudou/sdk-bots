@@ -5,8 +5,8 @@ import {
 import { computerUseExecutorResource } from "../../packages/agent-exec/computer-use.js";
 import { shellExecutorResource } from "../../packages/agent-exec/shell.js";
 import { buildHostShellArgs } from "../box/box-shell-command.js";
-import type { ComputerUseArgs } from "../../packages/proto/generated/agent/v1/computer_use_tool_pb.js";
-import type { ShellArgs } from "../../packages/proto/generated/agent/v1/shell_exec_pb.js";
+import type { ComputerUseArgs } from "../../proto/generated/agent/v1/computer_use_tool_pb.js";
+import type { ShellArgs } from "../../proto/generated/agent/v1/shell_exec_pb.js";
 import { isNoMonitorComputerUseExecutor } from "../ports/box.js";
 import { mergeTurnUsage, type TurnUsage } from "./turn-usage.js";
 

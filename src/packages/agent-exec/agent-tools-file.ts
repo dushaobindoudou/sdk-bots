@@ -2,9 +2,9 @@ import { randomUUID } from "node:crypto";
 import path from "node:path";
 
 import type { Context } from "../context/core.js";
-import { McpTextContent, McpToolResultContentItem } from "../proto/generated/agent/v1/mcp_exec_pb.js";
-import { OutputLocation, type OutputLocation as OutputLocationMessage } from "../proto/generated/agent/v1/utils_pb.js";
-import { WriteArgs } from "../proto/generated/agent/v1/write_exec_pb.js";
+import { McpTextContent, McpToolResultContentItem } from "../../proto/generated/agent/v1/mcp_exec_pb.js";
+import { OutputLocation, type OutputLocation as OutputLocationMessage } from "../../proto/generated/agent/v1/utils_pb.js";
+import { WriteArgs } from "../../proto/generated/agent/v1/write_exec_pb.js";
 import type { WriteExecutor } from "./write.js";
 
 const AGENT_TOOLS_DIR = "agent-tools";

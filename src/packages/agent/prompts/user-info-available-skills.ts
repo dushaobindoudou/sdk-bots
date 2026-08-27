@@ -1,7 +1,7 @@
 import path from "node:path";
 
-import type { AgentSkill } from "../../proto/generated/agent/v1/agent_skills_pb.js";
-import type { CursorRule } from "../../proto/generated/agent/v1/cursor_rules_pb.js";
+import type { AgentSkill } from "../../../proto/generated/agent/v1/agent_skills_pb.js";
+import type { CursorRule } from "../../../proto/generated/agent/v1/cursor_rules_pb.js";
 import type { PromptNode } from "../../prompt-jsx/jsx-runtime.js";
 import { getFirstNonEmptyLine } from "../utils/common.js";
 import { AgentType } from "../utils/agent-config.js";

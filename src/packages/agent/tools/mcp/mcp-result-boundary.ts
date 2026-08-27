@@ -3,9 +3,9 @@ import {
   McpTextContent,
   McpToolResultContentItem,
   type McpResult,
-} from "../../../proto/generated/agent/v1/mcp_exec_pb.js";
-import { McpToolCall, McpToolResult } from "../../../proto/generated/agent/v1/mcp_tool_pb.js";
-import { ToolCall } from "../../../proto/generated/agent/v1/agent_pb.js";
+} from "../../../../proto/generated/agent/v1/mcp_exec_pb.js";
+import { McpToolCall, McpToolResult } from "../../../../proto/generated/agent/v1/mcp_tool_pb.js";
+import { ToolCall } from "../../../../proto/generated/agent/v1/agent_pb.js";
 import {
   ASK_MODE_MODEL_ERROR,
   CustomToolCallError,

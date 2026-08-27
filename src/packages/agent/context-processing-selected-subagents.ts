@@ -1,4 +1,4 @@
-import type { SelectedSubagent } from "../proto/generated/agent/v1/selected_context_pb.js";
+import type { SelectedSubagent } from "../../proto/generated/agent/v1/selected_context_pb.js";
 
 export interface SelectedSubagentsTextContent {
   readonly type: "text";

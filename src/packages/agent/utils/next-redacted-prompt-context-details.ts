@@ -6,7 +6,7 @@ import {
   fromRedactedPromptTokenBreakdownSnapshot,
   toRedactedPromptContextUsageTree,
   toRedactedPromptTokenBreakdownSnapshot,
-} from "../../redacted-protos/generated/agent/v1/agent_redacted.js";
+} from "../../../proto/redacted/agent/v1/agent_redacted.js";
 import { buildPromptContextUsageTree } from "./prompt-context-usage-tree.js";
 import { buildPromptTokenBreakdownSnapshot } from "./prompt-token-breakdown.js";
 

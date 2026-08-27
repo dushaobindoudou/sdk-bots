@@ -11,18 +11,18 @@ import {
   ToolCall,
   type ConversationStep as ConversationStepValue,
   type SubagentPersistedState as SubagentPersistedStateValue,
-} from "../../proto/generated/agent/v1/agent_pb.js";
+} from "../../../proto/generated/agent/v1/agent_pb.js";
 import {
   ClientContinuationConfig,
   ForceBackgroundSubagentArgs,
   ForceBackgroundSubagentStatus,
   SubagentArgs,
   type SubagentResult,
-} from "../../proto/generated/agent/v1/subagent_exec_pb.js";
+} from "../../../proto/generated/agent/v1/subagent_exec_pb.js";
 import type { Context } from "../../context/core.js";
 import { PrivacyCapability } from "../../redaction/classification.js";
 import type { PrivacyMode } from "../../redaction/privacy-mode.js";
-import { fromRedactedSelectedContext } from "../../redacted-protos/generated/agent/v1/selected_context_redacted.js";
+import { fromRedactedSelectedContext } from "../../../proto/redacted/agent/v1/selected_context_redacted.js";
 import type { ResourceAccessor } from "../../agent-exec/resource-provider.js";
 import type { RemoteExecManager } from "../../agent-exec/remote.js";
 import { forceBackgroundSubagentExecutorResource } from "../../agent-exec/subagent-control.js";

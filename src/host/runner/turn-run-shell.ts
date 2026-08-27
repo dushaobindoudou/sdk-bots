@@ -35,7 +35,7 @@ import type { AgentProfilePromptSnapshot } from "./sand-agent-profile-prompt.js"
 import {
   ConversationAction,
   ResumeAction,
-} from "../../packages/proto/generated/agent/v1/agent_pb.js";
+} from "../../proto/generated/agent/v1/agent_pb.js";
 import type { BlobStore } from "../../packages/agent-kv/blob-store.js";
 import {
   createTurnSettle,

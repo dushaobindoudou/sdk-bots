@@ -1,5 +1,5 @@
 import type { MethodInfoUnary } from "@bufbuild/protobuf";
-import { DashboardService } from "../../../packages/proto/generated/aiserver/v1/dashboard_connect.js";
+import { DashboardService } from "../../../proto/generated/aiserver/v1/dashboard_connect.js";
 import {
   RecordSandAuditEventsRequest,
   type RecordSandAuditEventsResponse,
@@ -8,7 +8,7 @@ import {
   SandAuditEvent_ComputerUseSession,
   SandAuditEvent_McpToolCall,
   SandAuditEvent_ShellCommand
-} from "../../../packages/proto/generated/aiserver/v1/dashboard_pb.js";
+} from "../../../proto/generated/aiserver/v1/dashboard_pb.js";
 import { createSandCursorBackendClient } from "../../../shared/node/cursor-backend/cursor-inference.js";
 import type { AuditEvent } from "./action-audit-service.js";
 

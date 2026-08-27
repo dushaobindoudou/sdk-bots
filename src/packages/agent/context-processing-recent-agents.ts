@@ -1,4 +1,4 @@
-import type { RecentAgent } from "../proto/generated/agent/v1/selected_context_pb.js";
+import type { RecentAgent } from "../../proto/generated/agent/v1/selected_context_pb.js";
 
 export interface RecentAgentsTextContent {
   readonly type: "text";

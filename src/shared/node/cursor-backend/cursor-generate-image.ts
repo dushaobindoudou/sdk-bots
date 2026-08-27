@@ -1,5 +1,5 @@
-import { AiService } from "../../../packages/proto/generated/aiserver/v1/aiserver_connect.js";
-import { GenerateImageReferenceImage, RunGenerateImageRequest } from "../../../packages/proto/generated/aiserver/v1/aiserver_pb.js";
+import { AiService } from "../../../proto/generated/aiserver/v1/aiserver_connect.js";
+import { GenerateImageReferenceImage, RunGenerateImageRequest } from "../../../proto/generated/aiserver/v1/aiserver_pb.js";
 import { createSandCursorBackendClient, type SandInferenceOptions } from "./cursor-inference.js";
 
 export class SandGenerateImageError extends Error {}

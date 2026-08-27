@@ -1,7 +1,7 @@
 import { createClient, type Interceptor } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-node";
 
-import { DashboardService } from "../../../packages/proto/generated/aiserver/v1/dashboard_connect.js";
+import { DashboardService } from "../../../proto/generated/aiserver/v1/dashboard_connect.js";
 import { createCursorChecksum, getSandInferenceBackendUrl } from "../cursor-backend/cursor-inference.js";
 import { getSandBackendClientHeaders } from "../sand-client-metadata.js";
 

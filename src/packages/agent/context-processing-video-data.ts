@@ -3,13 +3,13 @@ import path from "node:path";
 import type { Context } from "../context/core.js";
 import { createLogger } from "../context/logger.js";
 import { writeExecutorResource } from "../agent-exec/write.js";
-import { WriteArgs } from "../proto/generated/agent/v1/write_exec_pb.js";
+import { WriteArgs } from "../../proto/generated/agent/v1/write_exec_pb.js";
 import {
   SelectedVideo,
   SelectedVideo_SignedUrl,
   type SelectedVideo as SelectedVideoValue,
-} from "../proto/generated/agent/v1/selected_context_pb.js";
-import type { PrivacyMode } from "../proto/generated/aiserver/v1/privacy_mode_pb.js";
+} from "../../proto/generated/agent/v1/selected_context_pb.js";
+import type { PrivacyMode } from "../../proto/generated/aiserver/v1/privacy_mode_pb.js";
 import {
   hydrateSelectedAttachmentData,
   type AttachmentBlobStore,

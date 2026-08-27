@@ -3,7 +3,7 @@
  * immutable host artifact. Mac/Windows evidence:
  * host-main.cjs:554541-554563, 554942-555095, and 555136-555166.
  */
-import type { CursorRule } from "../../proto/generated/agent/v1/cursor_rules_pb.js";
+import type { CursorRule } from "../../../proto/generated/agent/v1/cursor_rules_pb.js";
 import { jsx } from "../../prompt-jsx/jsx-runtime.js";
 import { buildAntiAskQuestionUserRule } from "./anti-ask-question-copy.js";
 import { getComposerGitUserRules } from "./user-info-git-prompt-sections.js";

@@ -13,8 +13,8 @@ import {
   RequestedModel_ModelParameterValue,
   SubagentStartRequestQuery,
   SubagentStopRequestQuery,
-} from "../../../proto/generated/agent/v1/agent_pb.js";
-import { ExecuteHookArgs, ExecuteHookRequest } from "../../../proto/generated/agent/v1/exec_pb.js";
+} from "../../../../proto/generated/agent/v1/agent_pb.js";
+import { ExecuteHookArgs, ExecuteHookRequest } from "../../../../proto/generated/agent/v1/exec_pb.js";
 import { getAgentEventTracker } from "../../utils/event-tracking.js";
 import { getConversationId, getRequestId } from "../../utils/request-id.js";
 import { isHookStepConfigured } from "../../utils/common.js";

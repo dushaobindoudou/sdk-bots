@@ -1,11 +1,11 @@
 import { isMessage, type FieldInfo, type Message } from "@bufbuild/protobuf";
 
-import { ConversationStateStructure } from "../../packages/proto/generated/agent/v1/agent_pb.js";
+import { ConversationStateStructure } from "../../proto/generated/agent/v1/agent_pb.js";
 import {
   BLOB_REFERENCE_MESSAGE_TYPE_BY_NAME,
   getBlobReferenceMessageMetadata,
   isProtoBlobReferenceTypeName
-} from "../../packages/proto/generated/agent/v1/blob-reference-metadata.js";
+} from "../../proto/generated/agent/v1/blob-reference-metadata.js";
 
 export const EDGES_NOT_WALKED_SO_REFERENTS_COLLECT = new Set([
   "agent.v1.UserMessage.conversation_state_blob_id",

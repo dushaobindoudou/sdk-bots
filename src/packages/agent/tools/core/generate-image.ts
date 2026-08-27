@@ -1,15 +1,15 @@
 import { Buffer } from "node:buffer";
 import { basename, extname, join } from "node:path";
-import { ToolCall } from "../../../proto/generated/agent/v1/agent_pb.js";
+import { ToolCall } from "../../../../proto/generated/agent/v1/agent_pb.js";
 import {
   GenerateImageArgs,
   GenerateImageError,
   GenerateImageResult,
   GenerateImageSuccess,
   GenerateImageToolCall,
-} from "../../../proto/generated/agent/v1/generate_image_tool_pb.js";
-import { ReadArgs, type ReadResult } from "../../../proto/generated/agent/v1/read_exec_pb.js";
-import { WriteArgs, type WriteResult } from "../../../proto/generated/agent/v1/write_exec_pb.js";
+} from "../../../../proto/generated/agent/v1/generate_image_tool_pb.js";
+import { ReadArgs, type ReadResult } from "../../../../proto/generated/agent/v1/read_exec_pb.js";
+import { WriteArgs, type WriteResult } from "../../../../proto/generated/agent/v1/write_exec_pb.js";
 import type { Context } from "../../../context/core.js";
 import { getAbortReasonInfo } from "../../../context/abort-reason.js";
 import { createSpan } from "../../../context/otel.js";

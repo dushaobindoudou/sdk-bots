@@ -2,7 +2,7 @@ import type { Context } from "../../packages/context/core.js";
 import type { BlobStore } from "../../packages/agent-kv/blob-store.js";
 import {
   ConversationStateStructure,
-} from "../../packages/proto/generated/agent/v1/agent_pb.js";
+} from "../../proto/generated/agent/v1/agent_pb.js";
 import {
   buildAgentForRun,
   createTurnLocalResourceProjection,

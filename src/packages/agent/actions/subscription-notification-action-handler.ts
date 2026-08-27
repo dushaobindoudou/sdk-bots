@@ -1,4 +1,4 @@
-import { createRedactedUserMessageAction } from "../../redacted-protos/generated/agent/v1/agent_redacted.js";
+import { createRedactedUserMessageAction } from "../../../proto/redacted/agent/v1/agent_redacted.js";
 
 interface SubscriptionNotificationAction {
   readonly _privacyMode: unknown;

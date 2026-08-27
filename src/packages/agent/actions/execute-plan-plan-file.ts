@@ -2,8 +2,8 @@ import type { Context } from "../../context/core.js";
 import { createLogger } from "../../context/logger.js";
 import { readExecutorResource } from "../../agent-exec/read.js";
 import { writeExecutorResource } from "../../agent-exec/write.js";
-import { ReadArgs } from "../../proto/generated/agent/v1/read_exec_pb.js";
-import { WriteArgs } from "../../proto/generated/agent/v1/write_exec_pb.js";
+import { ReadArgs } from "../../../proto/generated/agent/v1/read_exec_pb.js";
+import { WriteArgs } from "../../../proto/generated/agent/v1/write_exec_pb.js";
 import { PrivacyCapability } from "../../redaction/classification.js";
 import { getRequestPathModule } from "../utils/request-path.js";
 

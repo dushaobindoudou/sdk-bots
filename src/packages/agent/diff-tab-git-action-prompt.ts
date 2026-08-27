@@ -1,13 +1,13 @@
 import {
   SimulatedMsgReason,
   type SimulatedMsgReason as SimulatedMsgReasonValue,
-} from "../proto/generated/agent/v1/agent_pb.js";
+} from "../../proto/generated/agent/v1/agent_pb.js";
 import type {
   SelectedAgenticGitAction,
   SelectedAgenticGitActionCommitParams,
   SelectedAgenticGitFileWithStatus,
   SelectedContext,
-} from "../proto/generated/agent/v1/selected_context_pb.js";
+} from "../../proto/generated/agent/v1/selected_context_pb.js";
 
 const MAX_FILE_PATHS_IN_PROMPT = 30;
 

@@ -15,7 +15,7 @@ import {
 import type {
   ConversationAction,
   ConversationStateStructure,
-} from "../../packages/proto/generated/agent/v1/agent_pb.js";
+} from "../../proto/generated/agent/v1/agent_pb.js";
 
 /**
  * The exact generated-action-to-Agent stream boundary, kept inactive until

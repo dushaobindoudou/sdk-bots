@@ -1,4 +1,4 @@
-import { EventData } from "../proto/generated/aiserver/v1/analytics_pb.js";
+import { EventData } from "../../proto/generated/aiserver/v1/analytics_pb.js";
 
 export type AnalyticsEventProperties = Readonly<Record<string, unknown>>;
 

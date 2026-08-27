@@ -6,8 +6,8 @@ import { createHistogram } from "../metrics/index.js";
 import { getBlobId, type BlobStore } from "../agent-kv/blob-store.js";
 import { asyncMapValues } from "../utils/promise-extras.js";
 import { writeExecutorResource } from "../agent-exec/write.js";
-import { WriteArgs } from "../proto/generated/agent/v1/write_exec_pb.js";
-import { AgentMode, type SimulatedMsgReason as SimulatedMsgReasonValue } from "../proto/generated/agent/v1/agent_pb.js";
+import { WriteArgs } from "../../proto/generated/agent/v1/write_exec_pb.js";
+import { AgentMode, type SimulatedMsgReason as SimulatedMsgReasonValue } from "../../proto/generated/agent/v1/agent_pb.js";
 import {
   InvocationContext,
   SelectedDocument,
@@ -18,8 +18,8 @@ import {
   type SelectedDocument as SelectedDocumentValue,
   type SelectedImage as SelectedImageValue,
   type SelectedVideo as SelectedVideoValue,
-} from "../proto/generated/agent/v1/selected_context_pb.js";
-import { BackgroundComposerSource } from "../proto/generated/aiserver/v1/background_composer_pb.js";
+} from "../../proto/generated/agent/v1/selected_context_pb.js";
+import { BackgroundComposerSource } from "../../proto/generated/aiserver/v1/background_composer_pb.js";
 import type { PrivacyMode } from "../redaction/privacy-mode.js";
 import { AgentType } from "./utils/agent-config.js";
 import { getFilenameWithoutExtension, getSkillSourceFromPath } from "./utils/common.js";

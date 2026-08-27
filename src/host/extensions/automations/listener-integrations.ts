@@ -1,6 +1,6 @@
 import type { MethodInfoUnary } from "@bufbuild/protobuf";
 import { countListenerPlatforms, type ListenerPlatform } from "../../automations/listener-integrations.js";
-import { DashboardService } from "../../../packages/proto/generated/aiserver/v1/dashboard_connect.js";
+import { DashboardService } from "../../../proto/generated/aiserver/v1/dashboard_connect.js";
 import {
   GetScmConnectionStatusRequest,
   type GetScmConnectionStatusResponse,
@@ -8,7 +8,7 @@ import {
   type GetSlackInstallUrlResponse,
   GetSlackUserSettingsRequest,
   type GetSlackUserSettingsResponse
-} from "../../../packages/proto/generated/aiserver/v1/dashboard_pb.js";
+} from "../../../proto/generated/aiserver/v1/dashboard_pb.js";
 import { createSandCursorBackendClient } from "../../../shared/node/cursor-backend/cursor-inference.js";
 export const DASHBOARD_INTEGRATIONS_URL = "https://cursor.com/dashboard?tab=integrations";
 export const LISTENER_INTEGRATIONS = [{ platform: "slack" as const }, { platform: "github" as const }];

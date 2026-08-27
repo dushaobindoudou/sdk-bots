@@ -1,4 +1,4 @@
-import type { SelectedBrowser } from "../proto/generated/agent/v1/selected_context_pb.js";
+import type { SelectedBrowser } from "../../proto/generated/agent/v1/selected_context_pb.js";
 
 export interface SelectedBrowsersTextContent {
   readonly type: "text";

@@ -16,12 +16,12 @@ import { createCounter, createHistogram } from "../metrics/index.js";
 import {
   AgentMode,
   PreCompactRequestQuery,
-} from "../proto/generated/agent/v1/agent_pb.js";
+} from "../../proto/generated/agent/v1/agent_pb.js";
 import {
   ExecuteHookArgs,
   ExecuteHookRequest,
   type ExecuteHookResult,
-} from "../proto/generated/agent/v1/exec_pb.js";
+} from "../../proto/generated/agent/v1/exec_pb.js";
 import { PrivacyCapability } from "../redaction/classification.js";
 import {
   fromRedactedCoreMessage,
@@ -33,7 +33,7 @@ import type { RedactedString } from "../redaction/types.js";
 import {
   createRedactedConversationSummaryArchive,
   toRedactedInteractionUpdate,
-} from "../redacted-protos/generated/agent/v1/agent_redacted.js";
+} from "../../proto/redacted/agent/v1/agent_redacted.js";
 import {
   coreMessageSerde,
   createRedactedCoreMessageSerde,

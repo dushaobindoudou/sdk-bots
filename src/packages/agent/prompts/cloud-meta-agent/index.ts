@@ -1,4 +1,4 @@
-import { BackgroundComposerSource } from "../../../proto/generated/aiserver/v1/background_composer_pb.js";
+import { BackgroundComposerSource } from "../../../../proto/generated/aiserver/v1/background_composer_pb.js";
 import {
   CURSOR_SUBSCRIPTIONS_MCP_SERVER_NAME,
   NAMED_AGENT_STORE_SELF_PATH,

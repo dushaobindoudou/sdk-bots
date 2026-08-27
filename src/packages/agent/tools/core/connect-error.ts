@@ -1,6 +1,6 @@
 import { Code, ConnectError } from "@connectrpc/connect";
 
-import { ErrorDetails, ErrorDetails_Error } from "../../../proto/generated/aiserver/v1/utils_pb.js";
+import { ErrorDetails, ErrorDetails_Error } from "../../../../proto/generated/aiserver/v1/utils_pb.js";
 import {
   CustomToolCallError,
   RetryableToolEnvironmentOrchestrationError,

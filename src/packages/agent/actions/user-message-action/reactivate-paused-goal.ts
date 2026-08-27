@@ -1,5 +1,5 @@
-import { GoalStatus } from "../../../proto/generated/agent/v1/goal_tool_pb.js";
-import type { GoalState } from "../../../proto/generated/agent/v1/agent_pb.js";
+import { GoalStatus } from "../../../../proto/generated/agent/v1/goal_tool_pb.js";
+import type { GoalState } from "../../../../proto/generated/agent/v1/agent_pb.js";
 import type { Context } from "../../../context/core.js";
 import { goalClockOnActivation } from "../../../agent-core/goal-continuation.js";
 

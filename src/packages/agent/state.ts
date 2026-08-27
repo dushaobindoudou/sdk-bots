@@ -35,9 +35,9 @@ import {
   SubagentRunStatus,
   ThinkingMessage,
   UserMessage,
-} from "../proto/generated/agent/v1/agent_pb.js";
-import { SelectedContext } from "../proto/generated/agent/v1/selected_context_pb.js";
-import { TodoItem } from "../proto/generated/agent/v1/todo_tool_pb.js";
+} from "../../proto/generated/agent/v1/agent_pb.js";
+import { SelectedContext } from "../../proto/generated/agent/v1/selected_context_pb.js";
+import { TodoItem } from "../../proto/generated/agent/v1/todo_tool_pb.js";
 import {
   fromRedactedConversationPlan,
   fromRedactedConversationStep,
@@ -64,8 +64,8 @@ import {
   toRedactedShellOutput,
   toRedactedSubagentPersistedState,
   toRedactedUserMessage,
-} from "../redacted-protos/generated/agent/v1/agent_redacted.js";
-import { fromRedactedTodoItem, toRedactedTodoItem } from "../redacted-protos/generated/agent/v1/todo_tool_redacted.js";
+} from "../../proto/redacted/agent/v1/agent_redacted.js";
+import { fromRedactedTodoItem, toRedactedTodoItem } from "../../proto/redacted/agent/v1/todo_tool_redacted.js";
 import { DataClassification, PrivacyCapability } from "../redaction/classification.js";
 import { createRedactedString } from "../redaction/factory.js";
 import { fromRedactedCoreMessage, toRedactedCoreMessage } from "../redaction/core-message.js";
@@ -74,8 +74,8 @@ import type { Context as OperationContext } from "../context/core.js";
 import { createLogger } from "../context/logger.js";
 import { createSpan, withSuppressedChildSpans } from "../context/otel.js";
 import { recordCompletedSpanIfParented } from "../context/otel.js";
-import type { SubagentType } from "../proto/generated/agent/v1/subagents_pb.js";
-import type { GitRepoInfo, RequestContext } from "../proto/generated/agent/v1/request_context_exec_pb.js";
+import type { SubagentType } from "../../proto/generated/agent/v1/subagents_pb.js";
+import type { GitRepoInfo, RequestContext } from "../../proto/generated/agent/v1/request_context_exec_pb.js";
 import { isEqual } from "./common.js";
 import { createCounter, createHistogram } from "../metrics/index.js";
 import { asyncMapValues } from "../utils/promise-extras.js";

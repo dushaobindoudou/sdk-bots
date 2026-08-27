@@ -5,12 +5,12 @@ import { basename, dirname, join } from "node:path";
 import { packPluginArtifact } from "../../../packages/cursor-plugins/tarball.js";
 import { restoreSkillsFromPluginDir } from "../../../packages/cursor-plugins/skill-plugin-restore.js";
 import { synthesizeSkillPluginDir } from "../../../packages/cursor-plugins/skill-plugin-synthesizer.js";
-import { DashboardService } from "../../../packages/proto/generated/aiserver/v1/dashboard_connect.js";
+import { DashboardService } from "../../../proto/generated/aiserver/v1/dashboard_connect.js";
 import {
   GetTeamsRequest,
   PublishPluginRequest,
   UnpublishPluginRequest,
-} from "../../../packages/proto/generated/aiserver/v1/dashboard_pb.js";
+} from "../../../proto/generated/aiserver/v1/dashboard_pb.js";
 import { errorLogTag } from "../../../shared/errors.js";
 import {
   createSandCursorBackendClient,

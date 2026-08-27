@@ -15,9 +15,9 @@ import {
   LoadMcpServersRequest,
   PingRequest,
   UpdateEnvironmentVariablesRequest
-} from "../../packages/proto/generated/agent/v1/control_service_pb.js";
-import { ControlService } from "../../packages/proto/generated/agent/v1/control_service_connect.js";
-import { ExecService } from "../../packages/proto/generated/agent/v1/exec_service_connect.js";
+} from "../../proto/generated/agent/v1/control_service_pb.js";
+import { ControlService } from "../../proto/generated/agent/v1/control_service_connect.js";
+import { ExecService } from "../../proto/generated/agent/v1/exec_service_connect.js";
 import {
   noMonitorComputerUseExecutor
 } from "../ports/box.js";

@@ -41,7 +41,7 @@ import {
   McpDescriptor,
   McpMetaToolOptions,
   McpToolDescriptor,
-} from "../../../packages/proto/generated/agent/v1/mcp_pb.js";
+} from "../../../proto/generated/agent/v1/mcp_pb.js";
 import {
   createComputerTool,
   createScreenshotTool,
@@ -127,7 +127,7 @@ import type {
   SandAutoReviewExpiryPolicy,
   SandAutoReviewMode,
 } from "../sand-auto-review.js";
-import type { RequestContext } from "../../../packages/proto/generated/agent/v1/request_context_exec_pb.js";
+import type { RequestContext } from "../../../proto/generated/agent/v1/request_context_exec_pb.js";
 import { SAND_AUTO_REVIEW_CLASSIFIER_MAX_ATTEMPTS } from "../sand-auto-review-classifier-run.js";
 import {
   createSandMultitaskTodoTool,

@@ -1,7 +1,7 @@
 import {
   AnalyticsEvent as AnalyticsEventMessage,
   TrackEventsRequest,
-} from "../proto/generated/aiserver/v1/analytics_pb.js";
+} from "../../proto/generated/aiserver/v1/analytics_pb.js";
 import { toEventData, type AnalyticsEventProperties } from "./to-event-data.js";
 
 const DEFAULT_BUFFER_LIMIT = 200;

@@ -1,5 +1,5 @@
 import type { Context } from "../../context/core.js";
-import type { AgentMode } from "../../proto/generated/agent/v1/agent_pb.js";
+import type { AgentMode } from "../../../proto/generated/agent/v1/agent_pb.js";
 import type { FileOperationLockManager } from "./core/file-operation-lock-manager.js";
 import type { ToolSetHandle } from "./core.js";
 

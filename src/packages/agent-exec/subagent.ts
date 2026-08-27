@@ -1,11 +1,11 @@
 import type { Context } from "../context/core.js";
-import type { SubagentBackgroundReason } from "../proto/generated/agent/v1/agent_pb.js";
+import type { SubagentBackgroundReason } from "../../proto/generated/agent/v1/agent_pb.js";
 import {
   SubagentError,
   SubagentResult,
   SubagentSuccess,
   type SubagentArgs,
-} from "../proto/generated/agent/v1/subagent_exec_pb.js";
+} from "../../proto/generated/agent/v1/subagent_exec_pb.js";
 import { SimpleControlledExecHandler } from "./controlled.js";
 import { ExecutorResource, type Executor, type ExecutorOptions, type RemoteExecManager } from "./remote.js";
 import { createResource, type ControlledExecManager } from "./resource-provider.js";

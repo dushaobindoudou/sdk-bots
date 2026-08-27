@@ -1,5 +1,5 @@
 import { Value } from "@bufbuild/protobuf";
-import { McpDescriptor, McpMetaToolOptions, McpToolDescriptor, type McpDescriptor as McpDescriptorType } from "../../proto/generated/agent/v1/mcp_pb.js";
+import { McpDescriptor, McpMetaToolOptions, McpToolDescriptor, type McpDescriptor as McpDescriptorType } from "../../../proto/generated/agent/v1/mcp_pb.js";
 import { CUSTOM_USER_TOOLS_PROVIDER_ID } from "../../agent-exec/mcp.js";
 
 export interface CustomUserMcpTool {

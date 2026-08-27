@@ -4,7 +4,7 @@ import type { RemoteExecManager } from "../../packages/agent-exec/remote.js";
 import type {
   ExecClientMessage,
   ExecServerMessage
-} from "../../packages/proto/generated/agent/v1/exec_pb.js";
+} from "../../proto/generated/agent/v1/exec_pb.js";
 
 export interface BoxEndpoint {
   readonly host: string;

@@ -1,5 +1,5 @@
 import { AGENT_STORE_AUTOMATION_MOUNT_NAME, AGENT_STORE_TEAM_MOUNT_NAME, AGENT_STORE_USER_MOUNT_NAME, NAMED_AGENT_HOME_STORE_MOUNT_NAME } from "../../constants/agent-store-ids.js";
-import { MountedAgentStoreKind, type MountedAgentStore } from "../../proto/generated/agent/v1/request_context_exec_pb.js";
+import { MountedAgentStoreKind, type MountedAgentStore } from "../../../proto/generated/agent/v1/request_context_exec_pb.js";
 import { jsx, jsxs } from "../../prompt-jsx/jsx-runtime.js";
 import type { PromptNode } from "../../prompt-jsx/jsx-runtime.js";
 

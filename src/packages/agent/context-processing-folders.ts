@@ -1,4 +1,4 @@
-import type { LsDirectoryTreeNode } from "../proto/generated/agent/v1/ls_exec_pb.js";
+import type { LsDirectoryTreeNode } from "../../proto/generated/agent/v1/ls_exec_pb.js";
 import { renderDirectoryTreeWithinBudget } from "./tools/core/ls/formatters.js";
 
 export interface SelectedFolderForPrompt {

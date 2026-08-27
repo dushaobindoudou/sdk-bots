@@ -4,7 +4,7 @@ import {
   McpResult,
   McpStateExecArgs,
   McpStateExecResult
-} from "../../../packages/proto/generated/agent/v1/mcp_exec_pb.js";
+} from "../../../proto/generated/agent/v1/mcp_exec_pb.js";
 import { mcpExecutorResource, mcpStateExecutorResource } from "../../../packages/agent-exec/mcp.js";
 import type { ResourceAccessor } from "../../../packages/agent-exec/resource-provider.js";
 import type { RemoteExecManager } from "../../../packages/agent-exec/remote.js";

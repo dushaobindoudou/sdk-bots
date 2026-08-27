@@ -23,7 +23,7 @@ import {
   Trigger,
   UpdateAutomationRequest,
   Workflow,
-} from "../../../packages/proto/generated/aiserver/v1/automations_pb.js";
+} from "../../../proto/generated/aiserver/v1/automations_pb.js";
 import { expandCronAlias, splitScheduleTimeZone } from "../../../shared/automation-schedule.js";
 import {
   isGithubCiEventKind,

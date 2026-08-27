@@ -4,7 +4,7 @@ import {
   SelectedPullRequest,
   type SelectedGitPRDiffSelection as SelectedGitPRDiffSelectionMessage,
   type SelectedPullRequest as SelectedPullRequestMessage,
-} from "../proto/generated/agent/v1/selected_context_pb.js";
+} from "../../proto/generated/agent/v1/selected_context_pb.js";
 
 export interface PrHydrationBlobStore {
   getBlob(ctx: Context, blobId: Uint8Array): Promise<Uint8Array | undefined>;

@@ -1,6 +1,6 @@
 import { Value, type JsonValue } from "@bufbuild/protobuf";
-import { McpStateExecResult, McpStateServer, McpStateSuccess } from "../../packages/proto/generated/agent/v1/mcp_exec_pb.js";
-import { McpToolDefinition } from "../../packages/proto/generated/agent/v1/mcp_pb.js";
+import { McpStateExecResult, McpStateServer, McpStateSuccess } from "../../proto/generated/agent/v1/mcp_exec_pb.js";
+import { McpToolDefinition } from "../../proto/generated/agent/v1/mcp_pb.js";
 
 export interface SandMcpTool { providerIdentifier: string; name: string; toolName: string; description?: string; inputSchema?: JsonValue }
 export interface SandMcpProvider { getTools(ctx: unknown): Promise<readonly SandMcpTool[]> }

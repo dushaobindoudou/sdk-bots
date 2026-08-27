@@ -1,4 +1,4 @@
-import { AgentMode } from "../../proto/generated/agent/v1/agent_pb.js";
+import { AgentMode } from "../../../proto/generated/agent/v1/agent_pb.js";
 import { BackgroundSummarizationMode } from "../../agent-summarization/background-summarization.js";
 import { RedactedUpdates } from "../../agent-core/redacted-interaction-updates.js";
 import { createLogger, type Context } from "../../context/index.js";
@@ -9,7 +9,7 @@ import {
   createRedactedConversationTokenDetails,
   fromRedactedPromptTokenBreakdownSnapshot,
   toRedactedPromptTokenBreakdownSnapshot,
-} from "../../redacted-protos/generated/agent/v1/agent_redacted.js";
+} from "../../../proto/redacted/agent/v1/agent_redacted.js";
 import { FileOperationLockManager } from "../tools/core/file-operation-lock-manager.js";
 import { extractAutomationTriggerContext } from "./common.js";
 import { buildRequestContextOptions } from "./meta-agent-notes.js";

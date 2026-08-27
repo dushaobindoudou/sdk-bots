@@ -4,7 +4,7 @@ import {
   McpSuccess,
   McpTextContent,
   McpToolResultContentItem,
-} from "../../../packages/proto/generated/agent/v1/mcp_exec_pb.js";
+} from "../../../proto/generated/agent/v1/mcp_exec_pb.js";
 import type {
   McpContentItem,
   McpResultFactory,

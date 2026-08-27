@@ -1,4 +1,4 @@
-import { SubagentType, SubagentTypeCustom } from "../packages/proto/generated/agent/v1/subagents_pb.js";
+import { SubagentType, SubagentTypeCustom } from "../proto/generated/agent/v1/subagents_pb.js";
 import { createUpdateTodosTool } from "../packages/agent/tools/core/todo/todo.js";
 
 export const EXECUTOR_SUBAGENT_TYPE = "executor";

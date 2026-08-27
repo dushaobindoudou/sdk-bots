@@ -2,52 +2,52 @@ import type { PartialMessage } from "@bufbuild/protobuf";
 import {
   InteractionQuery,
   InteractionResponse,
-} from "../proto/generated/agent/v1/agent_pb.js";
+} from "../../proto/generated/agent/v1/agent_pb.js";
 import {
   ConnectScmRequestResponse,
   ConnectScmRequestResponse_Approved,
   ConnectScmRequestResponse_Failed,
   ConnectScmRequestResponse_Rejected,
-} from "../proto/generated/agent/v1/connect_scm_tool_pb.js";
+} from "../../proto/generated/agent/v1/connect_scm_tool_pb.js";
 import {
   CreatePlanRequestResponse,
   type CreatePlanResult,
-} from "../proto/generated/agent/v1/create_plan_tool_pb.js";
+} from "../../proto/generated/agent/v1/create_plan_tool_pb.js";
 import {
   GenerateImageRequestResponse,
   GenerateImageRequestResponse_Approved,
   GenerateImageRequestResponse_Rejected,
-} from "../proto/generated/agent/v1/generate_image_tool_pb.js";
+} from "../../proto/generated/agent/v1/generate_image_tool_pb.js";
 import {
   McpAuthRequestQuery,
   McpAuthRequestResponse,
   McpAuthRequestResponse_Approved,
   McpAuthRequestResponse_Rejected,
   type McpAuthArgs,
-} from "../proto/generated/agent/v1/mcp_auth_tool_pb.js";
-import type { PrManagementResult } from "../proto/generated/agent/v1/pr_management_tool_pb.js";
-import type { ReplaceEnvResult } from "../proto/generated/agent/v1/replace_env_tool_pb.js";
-import type { SetupVmEnvironmentResult } from "../proto/generated/agent/v1/setup_vm_environment_tool_pb.js";
+} from "../../proto/generated/agent/v1/mcp_auth_tool_pb.js";
+import type { PrManagementResult } from "../../proto/generated/agent/v1/pr_management_tool_pb.js";
+import type { ReplaceEnvResult } from "../../proto/generated/agent/v1/replace_env_tool_pb.js";
+import type { SetupVmEnvironmentResult } from "../../proto/generated/agent/v1/setup_vm_environment_tool_pb.js";
 import {
   SwitchModeRequestResponse,
   SwitchModeRequestResponse_Approved,
   SwitchModeRequestResponse_Rejected,
-} from "../proto/generated/agent/v1/switch_mode_tool_pb.js";
+} from "../../proto/generated/agent/v1/switch_mode_tool_pb.js";
 import {
   WebFetchRequestQuery,
   WebFetchRequestResponse,
   WebFetchRequestResponse_Approved,
   WebFetchRequestResponse_Rejected,
   type WebFetchArgs,
-} from "../proto/generated/agent/v1/web_fetch_tool_pb.js";
+} from "../../proto/generated/agent/v1/web_fetch_tool_pb.js";
 import {
   WebSearchRequestQuery,
   WebSearchRequestResponse,
   WebSearchRequestResponse_Approved,
   WebSearchRequestResponse_Rejected,
   type WebSearchArgs,
-} from "../proto/generated/agent/v1/web_search_tool_pb.js";
-import type { AskQuestionResult } from "../proto/generated/agent/v1/ask_question_tool_pb.js";
+} from "../../proto/generated/agent/v1/web_search_tool_pb.js";
+import type { AskQuestionResult } from "../../proto/generated/agent/v1/ask_question_tool_pb.js";
 
 export interface InteractionQueryListener<Context = unknown> {
   query(context: Context, query: InteractionQuery): Promise<InteractionResponse>;

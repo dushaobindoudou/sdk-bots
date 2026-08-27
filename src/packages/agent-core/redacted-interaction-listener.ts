@@ -2,7 +2,7 @@ import type {
   InteractionQuery,
   InteractionResponse,
   InteractionUpdate,
-} from "../proto/generated/agent/v1/agent_pb.js";
+} from "../../proto/generated/agent/v1/agent_pb.js";
 import {
   fromRedactedInteractionQuery,
   fromRedactedInteractionResponse,
@@ -10,7 +10,7 @@ import {
   toRedactedInteractionQuery,
   toRedactedInteractionResponse,
   toRedactedInteractionUpdate,
-} from "../redacted-protos/generated/agent/v1/agent_redacted.js";
+} from "../../proto/redacted/agent/v1/agent_redacted.js";
 import { PrivacyCapability } from "../redaction/classification.js";
 import type { PrivacyMode } from "../redaction/privacy-mode.js";
 

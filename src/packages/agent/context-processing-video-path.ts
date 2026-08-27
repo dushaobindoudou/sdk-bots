@@ -4,7 +4,7 @@ import type { Context } from "../context/core.js";
 import {
   SelectedVideo,
   type SelectedVideo as SelectedVideoValue,
-} from "../proto/generated/agent/v1/selected_context_pb.js";
+} from "../../proto/generated/agent/v1/selected_context_pb.js";
 import {
   resolveTrustedPathOnlyAttachmentPath,
   type AttachmentPathRequestContext,

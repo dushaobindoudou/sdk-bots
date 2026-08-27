@@ -1,4 +1,4 @@
-import { CursorRuleSource, type CursorRule } from "../../proto/generated/agent/v1/cursor_rules_pb.js";
+import { CursorRuleSource, type CursorRule } from "../../../proto/generated/agent/v1/cursor_rules_pb.js";
 import { filterByAgentEnvironment } from "../utils/environment-filtering.js";
 import { isFileScopedCursorRule } from "../utils/cursor-rule-matching.js";
 import { AgentType } from "../utils/agent-config.js";

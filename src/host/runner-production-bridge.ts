@@ -24,7 +24,7 @@ import type { AwaitToolOptions } from "../packages/agent/tools/core/await.js";
 import type { WebFetchToolDependencies } from "../packages/agent/tools/core/web-fetch.js";
 import type { WebSearchToolDependencies } from "../packages/agent/tools/core/web-search.js";
 import type { ShellSmartModeApprovalState } from "../packages/agent/tools/core/shell/create-shell-tool.js";
-import type { RequestContext } from "../packages/proto/generated/agent/v1/request_context_exec_pb.js";
+import type { RequestContext } from "../proto/generated/agent/v1/request_context_exec_pb.js";
 
 export type ProductionTurnCancelThisRun = (reason: {
   readonly intentional: boolean;

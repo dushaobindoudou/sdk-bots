@@ -15,10 +15,10 @@ import {
   SubagentExecutionEnvironment,
   SubagentPersistedState,
   TargetMachine,
-} from "../../proto/generated/agent/v1/agent_pb.js";
-import type { SelectedContext } from "../../proto/generated/agent/v1/selected_context_pb.js";
+} from "../../../proto/generated/agent/v1/agent_pb.js";
+import type { SelectedContext } from "../../../proto/generated/agent/v1/selected_context_pb.js";
 import type { Context } from "../../context/core.js";
-import { CustomSubagentPermissionMode } from "../../proto/generated/agent/v1/subagents_pb.js";
+import { CustomSubagentPermissionMode } from "../../../proto/generated/agent/v1/subagents_pb.js";
 import { ToolCallArgParseError } from "./common.js";
 import {
   canonicalSubagentComposerSlug,

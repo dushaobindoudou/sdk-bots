@@ -1,4 +1,4 @@
-import { ToolCall } from "../../proto/generated/agent/v1/agent_pb.js";
+import { ToolCall } from "../../../proto/generated/agent/v1/agent_pb.js";
 import { isSubagentExcludedPlatformCommunicationToolName } from "../automations/platform-communication-tools.js";
 import { isForcedStaticContext } from "./core.js";
 

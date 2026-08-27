@@ -11,7 +11,7 @@ import {
   ComputerUseArgs,
   ScreenshotAction,
   type ComputerUseResult,
-} from "../../../packages/proto/generated/agent/v1/computer_use_tool_pb.js";
+} from "../../../proto/generated/agent/v1/computer_use_tool_pb.js";
 import { AgentWorkerPool } from "../../agent-isolation/agent-worker-pool.js";
 import { WorkerBlobStore } from "../../agent-isolation/worker-blob-store.js";
 import { deriveOutlineFromConversationState, type ConversationState } from "../../runner/conversation-outline.js";

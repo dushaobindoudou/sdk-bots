@@ -3,7 +3,7 @@ import type { Context } from "../context/core.js";
 import {
   SelectedImage,
   type SelectedImage as SelectedImageValue,
-} from "../proto/generated/agent/v1/selected_context_pb.js";
+} from "../../proto/generated/agent/v1/selected_context_pb.js";
 
 export interface SelectedImageBlobStore<StoreContext = Context> {
   getBlob(ctx: StoreContext, blobId: Uint8Array): Promise<Uint8Array | undefined>;

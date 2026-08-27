@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { isAskQuestionAutoAnswerReason } from "../../../../constants/ask-question.js";
-import type { AskQuestionResult } from "../../../../proto/generated/agent/v1/ask_question_tool_pb.js";
+import type { AskQuestionResult } from "../../../../../proto/generated/agent/v1/ask_question_tool_pb.js";
 
 const FIRST_ASK_QUESTION_CLIENT_ERROR_MESSAGE = "Tool call failed";
 const FIRST_ASK_QUESTION_MODEL_ERROR_MESSAGE =

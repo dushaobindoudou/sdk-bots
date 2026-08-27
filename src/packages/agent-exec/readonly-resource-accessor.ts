@@ -2,24 +2,24 @@ import {
   BackgroundShellSpawnResult,
   WriteShellStdinError,
   WriteShellStdinResult,
-} from "../proto/generated/agent/v1/background_shell_exec_pb.js";
+} from "../../proto/generated/agent/v1/background_shell_exec_pb.js";
 import {
   DeletePermissionDenied,
   DeleteResult,
-} from "../proto/generated/agent/v1/delete_exec_pb.js";
+} from "../../proto/generated/agent/v1/delete_exec_pb.js";
 import {
   McpPermissionDenied,
   McpResult,
-} from "../proto/generated/agent/v1/mcp_exec_pb.js";
+} from "../../proto/generated/agent/v1/mcp_exec_pb.js";
 import {
   ShellPermissionDenied,
   ShellResult,
   ShellStream,
-} from "../proto/generated/agent/v1/shell_exec_pb.js";
+} from "../../proto/generated/agent/v1/shell_exec_pb.js";
 import {
   WritePermissionDenied,
   WriteResult,
-} from "../proto/generated/agent/v1/write_exec_pb.js";
+} from "../../proto/generated/agent/v1/write_exec_pb.js";
 import {
   backgroundShellExecutorResource,
   writeBackgroundShellInputExecutorResource,

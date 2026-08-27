@@ -2,7 +2,7 @@ import { Code, ConnectError } from "@connectrpc/connect";
 
 import { createLogger } from "../../context/index.js";
 import { createCounter, createHistogram } from "../../metrics/index.js";
-import { CustomErrorDetails, ErrorDetails, ErrorDetails_Error } from "../../proto/generated/aiserver/v1/utils_pb.js";
+import { CustomErrorDetails, ErrorDetails, ErrorDetails_Error } from "../../../proto/generated/aiserver/v1/utils_pb.js";
 import { getAgentEventTracker } from "../utils/event-tracking.js";
 import { SingleMessageLoopDetector as BaseSingleMessageLoopDetector } from "./single-message-loop-detector.js";
 

@@ -1,5 +1,5 @@
-import type { SimulatedMsgReason as SimulatedMsgReasonValue } from "../proto/generated/agent/v1/agent_pb.js";
-import type { SelectedContext } from "../proto/generated/agent/v1/selected_context_pb.js";
+import type { SimulatedMsgReason as SimulatedMsgReasonValue } from "../../proto/generated/agent/v1/agent_pb.js";
+import type { SelectedContext } from "../../proto/generated/agent/v1/selected_context_pb.js";
 import { synthesizeDiffTabGitActionPrompt } from "./diff-tab-git-action-prompt.js";
 import { synthesizeMultitaskActionPrompt } from "./multitask-action-prompt.js";
 import { getTaskToolName, type TaskToolModelInfo } from "./tools/task-tool-name.js";

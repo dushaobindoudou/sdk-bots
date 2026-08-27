@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import type { LsDirectoryTreeNode } from "../../../../proto/generated/agent/v1/ls_exec_pb.js";
+import type { LsDirectoryTreeNode } from "../../../../../proto/generated/agent/v1/ls_exec_pb.js";
 
 const LS_CHARACTER_BUDGET = 10_000;
 

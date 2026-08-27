@@ -1,5 +1,5 @@
-import { AnalyticsService } from "../../../packages/proto/generated/aiserver/v1/analytics_connect.js";
-import type { TrackEventsRequest } from "../../../packages/proto/generated/aiserver/v1/analytics_pb.js";
+import { AnalyticsService } from "../../../proto/generated/aiserver/v1/analytics_connect.js";
+import type { TrackEventsRequest } from "../../../proto/generated/aiserver/v1/analytics_pb.js";
 import { createSandCursorBackendClient, getSandInferenceBackendUrl } from "../cursor-backend/cursor-inference.js";
 import { getSandClientVersion } from "../sand-client-metadata.js";
 import { getSandVariant } from "../sand-variant.js";

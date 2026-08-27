@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 
 import type { Context } from "../../context/core.js";
 import { createLogger } from "../../context/logger.js";
-import type { AskQuestionResult } from "../../proto/generated/agent/v1/ask_question_tool_pb.js";
+import type { AskQuestionResult } from "../../../proto/generated/agent/v1/ask_question_tool_pb.js";
 import type { PrivacyMode } from "../../redaction/privacy-mode.js";
 import { PrivacyCapability } from "../../redaction/classification.js";
 import { toRedactedCoreMessages } from "../../redaction/core-message.js";
@@ -11,8 +11,8 @@ import {
   createRedactedAskQuestionArgs,
   createRedactedAskQuestionToolCall,
   fromRedactedAskQuestionResult,
-} from "../../redacted-protos/generated/agent/v1/ask_question_tool_redacted.js";
-import { createRedactedToolCall } from "../../redacted-protos/generated/agent/v1/agent_redacted.js";
+} from "../../../proto/redacted/agent/v1/ask_question_tool_redacted.js";
+import { createRedactedToolCall } from "../../../proto/redacted/agent/v1/agent_redacted.js";
 import {
   formatAskQuestionResultAsString,
   shouldReceiptAskQuestionResult,

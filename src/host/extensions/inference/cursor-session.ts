@@ -1,7 +1,7 @@
 import { join } from "node:path";
 
 import { SAND_COMPUTER_USE_MODEL_SELECTION, SAND_COMPUTER_USE_SUBAGENT_MODEL_ID, isSandAgentModelSelection, type SandAgentModelSelection } from "../../../shared/agents/sand-agent-model.js";
-import { type InferenceReason } from "../../../packages/proto/generated/aiserver/v1/inference_pb.js";
+import { type InferenceReason } from "../../../proto/generated/aiserver/v1/inference_pb.js";
 import { createMockPromptExecutor } from "../../../packages/chat-inference/mock-prompt-executor.js";
 import {
   SAND_RUN_PRIVACY_MODE_FALLBACK,
@@ -16,7 +16,7 @@ import type { SummarizationPromptSession } from "../../../packages/agent-summari
 import { SandSettingsStore } from "../../../shared/node/settings/sand-settings-store.js";
 import { getSandRootDir } from "../../../shared/sand-paths.js";
 import { createProviderPromptSession } from "./provider-session.js";
-import { InferenceService } from "../../../packages/proto/generated/aiserver/v1/inference_connect.js";
+import { InferenceService } from "../../../proto/generated/aiserver/v1/inference_connect.js";
 import { createProtoSessionProvider } from "../../../packages/chat-inference-proto/client.js";
 import { imageResizingMiddleware } from "../../../packages/chat-inference/middleware/image-resizing-middleware.js";
 import { createSandCursorBackendClient } from "../../../shared/node/cursor-backend/cursor-inference.js";

@@ -9,7 +9,7 @@ import {
   SmartModeClassifierDecision,
   type SmartModeClassifierConversationMessage,
   SmartModeRiskTarget,
-} from "../../packages/proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
+} from "../../proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
 
 export const SAND_AUTO_REVIEW_BLOCK_REASON = "Blocked by Auto-review";
 export const SAND_AUTO_REVIEW_CLASSIFIER_MAX_ATTEMPTS = 1;

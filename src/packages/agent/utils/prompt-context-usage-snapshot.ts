@@ -6,10 +6,10 @@ import {
   setBlobReadableFromCloudMirror,
 } from "../../agent-kv/typed-blob-store.js";
 import { PrivacyCapability } from "../../redaction/classification.js";
-import { fromRedactedPromptContextUsageTree } from "../../redacted-protos/generated/agent/v1/agent_redacted.js";
-import { PrivacyMode, type PrivacyMode as PrivacyModeValue } from "../../proto/generated/aiserver/v1/privacy_mode_pb.js";
-import { PromptContextUsageSnapshot } from "../../proto/generated/agent/v1/agent_pb.js";
-import type { PromptContextUsageTree } from "../../proto/generated/agent/v1/agent_pb.js";
+import { fromRedactedPromptContextUsageTree } from "../../../proto/redacted/agent/v1/agent_redacted.js";
+import { PrivacyMode, type PrivacyMode as PrivacyModeValue } from "../../../proto/generated/aiserver/v1/privacy_mode_pb.js";
+import { PromptContextUsageSnapshot } from "../../../proto/generated/agent/v1/agent_pb.js";
+import type { PromptContextUsageTree } from "../../../proto/generated/agent/v1/agent_pb.js";
 
 interface RedactedPromptContextUsageTree {
   readonly _privacyMode: PrivacyModeValue;

@@ -9,7 +9,7 @@ import {
   type InferenceImageDescriptionsInfo,
   type InferenceResponseInfo,
   type InferenceStreamResponse,
-} from "../proto/generated/aiserver/v1/inference_pb.js";
+} from "../../proto/generated/aiserver/v1/inference_pb.js";
 import {
   buildStreamRequest,
   protoStreamErrorToError,

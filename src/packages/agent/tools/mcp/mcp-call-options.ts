@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { McpDescriptor, type McpFileSystemOptions, type McpMetaToolOptions } from "../../../proto/generated/agent/v1/mcp_pb.js";
+import { McpDescriptor, type McpFileSystemOptions, type McpMetaToolOptions } from "../../../../proto/generated/agent/v1/mcp_pb.js";
 import { parseArgumentsLeniently } from "./dynamic-tool-argument-repair.js";
 
 export const MCP_AUTH_VIRTUAL_TOOL_NAME = "mcp_auth";

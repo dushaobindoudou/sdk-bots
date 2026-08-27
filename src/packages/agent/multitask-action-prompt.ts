@@ -1,7 +1,7 @@
 import {
   SimulatedMsgReason,
   type SimulatedMsgReason as SimulatedMsgReasonValue,
-} from "../proto/generated/agent/v1/agent_pb.js";
+} from "../../proto/generated/agent/v1/agent_pb.js";
 
 interface MultitaskActionPromptOptions {
   readonly taskToolName?: string;

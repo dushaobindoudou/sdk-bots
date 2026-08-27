@@ -22,11 +22,11 @@ import type { RedactedString } from "../../packages/redaction/types.js";
 import {
   toRedactedConversationAction,
   toRedactedConversationStateStructure,
-} from "../../packages/redacted-protos/generated/agent/v1/agent_redacted.js";
+} from "../../proto/redacted/agent/v1/agent_redacted.js";
 import {
   ConversationStateStructure,
-} from "../../packages/proto/generated/agent/v1/agent_pb.js";
-import type { ConversationAction } from "../../packages/proto/generated/agent/v1/agent_pb.js";
+} from "../../proto/generated/agent/v1/agent_pb.js";
+import type { ConversationAction } from "../../proto/generated/agent/v1/agent_pb.js";
 import { RESUME_TURN_ACTION } from "./turn-run-shell.js";
 import {
   SAND_BOX_SHELL_TOOL_NAME,
@@ -73,25 +73,25 @@ import {
 import type {
   BackgroundShellSpawnArgs,
   BackgroundShellSpawnResult,
-} from "../../packages/proto/generated/agent/v1/background_shell_exec_pb.js";
+} from "../../proto/generated/agent/v1/background_shell_exec_pb.js";
 import type {
   RequestContextArgs,
   RequestContextResult,
-} from "../../packages/proto/generated/agent/v1/request_context_exec_pb.js";
+} from "../../proto/generated/agent/v1/request_context_exec_pb.js";
 import type {
   ShellArgs,
   ShellStream,
-} from "../../packages/proto/generated/agent/v1/shell_exec_pb.js";
+} from "../../proto/generated/agent/v1/shell_exec_pb.js";
 import type {
   SmartModeClassifierArgs,
   SmartModeClassifierResult,
-} from "../../packages/proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
+} from "../../proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
 import type {
   McpArgs,
   McpResult,
   McpStateExecArgs,
   McpStateExecResult,
-} from "../../packages/proto/generated/agent/v1/mcp_exec_pb.js";
+} from "../../proto/generated/agent/v1/mcp_exec_pb.js";
 import {
   SandSubagentHostAdapter,
   SandRequestContextExecutor,
@@ -101,7 +101,7 @@ import {
   ForwardingInteractionListener,
   type ForwardedUpdate,
 } from "./agent-adapters.js";
-import type { AgentSkill } from "../../packages/proto/generated/agent/v1/agent_skills_pb.js";
+import type { AgentSkill } from "../../proto/generated/agent/v1/agent_skills_pb.js";
 import type {
   SubagentSession,
 } from "./subagent-runtime.js";
@@ -137,7 +137,7 @@ import type {
   SandAutoReviewExpiryPolicy,
   SandAutoReviewMode,
 } from "./sand-auto-review.js";
-import type { SmartModeClassifierConversationMessage } from "../../packages/proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
+import type { SmartModeClassifierConversationMessage } from "../../proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
 
 export const SAND_AGENT_MAX_STEPS = 5_000;
 

@@ -1,7 +1,7 @@
 import { PrivacyCapability } from "../redaction/classification.js";
 import type { Context } from "../context/core.js";
 import { createSpan } from "../context/otel.js";
-import { fromRedactedConversationStateStructure } from "../redacted-protos/generated/agent/v1/agent_redacted.js";
+import { fromRedactedConversationStateStructure } from "../../proto/redacted/agent/v1/agent_redacted.js";
 
 /**
  * Action cases whose state restore must retain the agent-type transition

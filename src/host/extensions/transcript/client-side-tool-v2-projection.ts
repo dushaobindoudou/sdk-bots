@@ -1,6 +1,6 @@
-import type { ToolCall } from "../../../packages/proto/generated/agent/v1/agent_pb.js";
-import { GenerateImageResult } from "../../../packages/proto/generated/agent/v1/generate_image_tool_pb.js";
-import { RecordScreenArgs, RecordScreenResult } from "../../../packages/proto/generated/agent/v1/record_screen_exec_pb.js";
+import type { ToolCall } from "../../../proto/generated/agent/v1/agent_pb.js";
+import { GenerateImageResult } from "../../../proto/generated/agent/v1/generate_image_tool_pb.js";
+import { RecordScreenArgs, RecordScreenResult } from "../../../proto/generated/agent/v1/record_screen_exec_pb.js";
 import { Struct } from "@bufbuild/protobuf";
 import {
   AskQuestionParams,
@@ -41,7 +41,7 @@ import {
   WebSearchParams,
   WebSearchResult2,
   WebSearchResult_WebReference,
-} from "../../../packages/proto/generated/aiserver/v1/tools_pb.js";
+} from "../../../proto/generated/aiserver/v1/tools_pb.js";
 
 // Generated-message evidence is present in both immutable shipped processes:
 // renderer index-UbX-y3il.js offsets 3097937/3102316 and host-main.cjs

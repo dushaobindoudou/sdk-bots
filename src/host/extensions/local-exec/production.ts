@@ -1,5 +1,5 @@
 import { RemoteResourceAccessor } from "../../../packages/agent-exec/resource-provider.js";
-import { ExecClientControlMessage, ExecClientMessage } from "../../../packages/proto/generated/agent/v1/exec_pb.js";
+import { ExecClientControlMessage, ExecClientMessage } from "../../../proto/generated/agent/v1/exec_pb.js";
 import type { JsonValue } from "@bufbuild/protobuf";
 import type { GatewayLocalExecCodec, GatewayLocalExecManager } from "./gateway-local-exec-sand-box.js";
 

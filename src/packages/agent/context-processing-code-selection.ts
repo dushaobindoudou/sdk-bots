@@ -3,7 +3,7 @@ import path from "node:path";
 import type { Context } from "../context/core.js";
 import { createLogger } from "../context/logger.js";
 import { writeExecutorResource } from "../agent-exec/write.js";
-import { WriteArgs } from "../proto/generated/agent/v1/write_exec_pb.js";
+import { WriteArgs } from "../../proto/generated/agent/v1/write_exec_pb.js";
 import type { AttachmentPathRequestContext } from "./context-processing-path-trust.js";
 import { sanitizeFilename } from "../utils/path-matchers.js";
 

@@ -22,7 +22,7 @@ import {
   UserMessageAppendedUpdate,
   type FeedbackRequestCategory,
   type FeedbackRequestCategoryGroup,
-} from "../proto/generated/agent/v1/agent_pb.js";
+} from "../../proto/generated/agent/v1/agent_pb.js";
 
 export interface TurnUsage {
   readonly inputTokens: number;

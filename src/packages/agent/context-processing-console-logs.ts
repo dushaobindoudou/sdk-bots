@@ -1,4 +1,4 @@
-import type { SelectedConsoleLog } from "../proto/generated/agent/v1/selected_context_pb.js";
+import type { SelectedConsoleLog } from "../../proto/generated/agent/v1/selected_context_pb.js";
 
 export interface ConsoleLogsTextContent {
   readonly type: "text";

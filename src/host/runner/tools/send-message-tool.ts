@@ -5,7 +5,7 @@ import {
   SendMessageResult,
   SendMessageSuccess,
   SendMessageToolCall,
-} from "../../../packages/proto/generated/agent/v1/send_message_tool_pb.js";
+} from "../../../proto/generated/agent/v1/send_message_tool_pb.js";
 import type { Context } from "../../../packages/context/core.js";
 import { createStringResult } from "../../../packages/chat-inference/prompt-executor.js";
 import { createZodAgentTool, withSafeParsedArgs } from "../../../packages/agent/tools/common.js";

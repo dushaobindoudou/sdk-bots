@@ -6,7 +6,7 @@ import { extractToolMetadataMap, getDirectDynamicToolNames, getExecutableTools }
 import { executeDeferredToolCall } from "../../tool-stream-executor.js";
 import { PrivacyCapability } from "../../../redaction/classification.js";
 import { toRedactedCoreMessages } from "../../../redaction/core-message.js";
-import { fromRedactedRequestContext } from "../../../redacted-protos/generated/agent/v1/request_context_exec_redacted.js";
+import { fromRedactedRequestContext } from "../../../../proto/redacted/agent/v1/request_context_exec_redacted.js";
 import { toUnredactedInteractionListener } from "../../../agent-core/redacted-interaction-listener.js";
 import { createSpan } from "../../../context/otel.js";
 import type { Context } from "../../../context/core.js";

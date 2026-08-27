@@ -5,7 +5,7 @@ import {
   buildHostShellArgs,
   type HostShellArgsInput,
 } from "../box/box-shell-command.js";
-import type { ShellArgs, ShellResult } from "../../packages/proto/generated/agent/v1/shell_exec_pb.js";
+import type { ShellArgs, ShellResult } from "../../proto/generated/agent/v1/shell_exec_pb.js";
 import type { ActionAuditor } from "./site-visit-tracking.js";
 
 export function mcpAuditStatus(result: any): "ok" | "error" {

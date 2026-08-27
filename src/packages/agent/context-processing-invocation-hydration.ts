@@ -1,5 +1,5 @@
 import type { Context } from "../context/core.js";
-import { InvocationContext, type InvocationContext as InvocationContextMessage } from "../proto/generated/agent/v1/selected_context_pb.js";
+import { InvocationContext, type InvocationContext as InvocationContextMessage } from "../../proto/generated/agent/v1/selected_context_pb.js";
 
 export interface InvocationContextBlobStore {
   getBlob(ctx: Context, blobId: Uint8Array): Promise<Uint8Array | undefined>;

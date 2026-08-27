@@ -3,8 +3,8 @@
  * Mac/Windows evidence: src/app/dist/host/host-main.cjs:554778-554788.
  * Region SHA-256: ff004b0dc41d8e72985f60ab6566dda8bb6b816216b186824f694dac20589818
  */
-import { AgentMode } from "../../proto/generated/agent/v1/agent_pb.js";
-import type { GitRepoInfo, RequestContextEnv } from "../../proto/generated/agent/v1/request_context_exec_pb.js";
+import { AgentMode } from "../../../proto/generated/agent/v1/agent_pb.js";
+import type { GitRepoInfo, RequestContextEnv } from "../../../proto/generated/agent/v1/request_context_exec_pb.js";
 import { jsx, jsxs, Fragment } from "../../prompt-jsx/jsx-runtime.js";
 import type { PromptNode } from "../../prompt-jsx/jsx-runtime.js";
 import { isWorktreesPath } from "../../utils/path-utils.js";

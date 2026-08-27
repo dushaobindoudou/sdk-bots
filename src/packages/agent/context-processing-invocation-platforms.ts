@@ -1,7 +1,7 @@
 import type {
   InvocationContext,
   InvocationContext_IdeState_ViewedPullRequest,
-} from "../proto/generated/agent/v1/selected_context_pb.js";
+} from "../../proto/generated/agent/v1/selected_context_pb.js";
 import { formatSlackSenderLine } from "./utils/slack-sender-line.js";
 import { extractTerminalId } from "../utils/path-matchers.js";
 

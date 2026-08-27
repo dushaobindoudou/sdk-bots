@@ -1,5 +1,5 @@
-import { AgentMode } from "../../proto/generated/agent/v1/agent_pb.js";
-import type { McpDescriptor, McpFileSystemOptions, McpMetaToolOptions } from "../../proto/generated/agent/v1/mcp_pb.js";
+import { AgentMode } from "../../../proto/generated/agent/v1/agent_pb.js";
+import type { McpDescriptor, McpFileSystemOptions, McpMetaToolOptions } from "../../../proto/generated/agent/v1/mcp_pb.js";
 import { McpFileSystemInstructions } from "../prompts/deprecated-do-not-use/shared.js";
 import { MCP_AUTH_INSTRUCTION } from "./mcp-auth-instruction.js";
 

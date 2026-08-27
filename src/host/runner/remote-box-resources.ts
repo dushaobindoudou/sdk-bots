@@ -19,17 +19,17 @@ import type { Context } from "../../packages/context/core.js";
 import type {
   BackgroundShellSpawnArgs,
   BackgroundShellSpawnResult,
-} from "../../packages/proto/generated/agent/v1/background_shell_exec_pb.js";
+} from "../../proto/generated/agent/v1/background_shell_exec_pb.js";
 import type {
   ComputerUseArgs,
   ComputerUseResult,
-} from "../../packages/proto/generated/agent/v1/computer_use_tool_pb.js";
-import type { ReadArgs, ReadResult } from "../../packages/proto/generated/agent/v1/read_exec_pb.js";
-import type { ShellArgs, ShellResult, ShellStream } from "../../packages/proto/generated/agent/v1/shell_exec_pb.js";
+} from "../../proto/generated/agent/v1/computer_use_tool_pb.js";
+import type { ReadArgs, ReadResult } from "../../proto/generated/agent/v1/read_exec_pb.js";
+import type { ShellArgs, ShellResult, ShellStream } from "../../proto/generated/agent/v1/shell_exec_pb.js";
 import type {
   SmartModeClassifierArgs,
   SmartModeClassifierResult,
-} from "../../packages/proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
+} from "../../proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
 import {
   boxAgentWindowIndex,
   boxIsPreparing,

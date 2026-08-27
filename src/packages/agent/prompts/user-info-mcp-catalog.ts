@@ -7,8 +7,8 @@
  * helpers intentionally do not add auth, disabled-server, description, or
  * truncation policy; those belong to the snapshot/discovery owners.
  */
-import { McpDescriptor } from "../../proto/generated/agent/v1/mcp_pb.js";
-import type { McpDescriptor as McpDescriptorType } from "../../proto/generated/agent/v1/mcp_pb.js";
+import { McpDescriptor } from "../../../proto/generated/agent/v1/mcp_pb.js";
+import type { McpDescriptor as McpDescriptorType } from "../../../proto/generated/agent/v1/mcp_pb.js";
 import { jsx, jsxs, Fragment } from "../../prompt-jsx/jsx-runtime.js";
 import type { PromptNode } from "../../prompt-jsx/jsx-runtime.js";
 

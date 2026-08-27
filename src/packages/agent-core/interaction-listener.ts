@@ -1,27 +1,27 @@
 import {
   AskQuestionRejected,
   AskQuestionResult,
-} from "../proto/generated/agent/v1/ask_question_tool_pb.js";
+} from "../../proto/generated/agent/v1/ask_question_tool_pb.js";
 import {
   CreatePlanResult,
   CreatePlanSuccess,
-} from "../proto/generated/agent/v1/create_plan_tool_pb.js";
+} from "../../proto/generated/agent/v1/create_plan_tool_pb.js";
 import type {
   InteractionQuery,
   InteractionResponse,
-} from "../proto/generated/agent/v1/agent_pb.js";
+} from "../../proto/generated/agent/v1/agent_pb.js";
 import {
   PrManagementError,
   PrManagementResult,
-} from "../proto/generated/agent/v1/pr_management_tool_pb.js";
+} from "../../proto/generated/agent/v1/pr_management_tool_pb.js";
 import {
   ReplaceEnvFailure,
   ReplaceEnvResult,
-} from "../proto/generated/agent/v1/replace_env_tool_pb.js";
+} from "../../proto/generated/agent/v1/replace_env_tool_pb.js";
 import {
   SetupVmEnvironmentResult,
   SetupVmEnvironmentSuccess,
-} from "../proto/generated/agent/v1/setup_vm_environment_tool_pb.js";
+} from "../../proto/generated/agent/v1/setup_vm_environment_tool_pb.js";
 import { Responses } from "./interaction-queries.js";
 
 export interface InteractionListenerContext {

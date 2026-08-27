@@ -1,4 +1,4 @@
-import type { HookAdditionalContext } from "../proto/generated/agent/v1/hook_additional_context_pb.js";
+import type { HookAdditionalContext } from "../../proto/generated/agent/v1/hook_additional_context_pb.js";
 
 export function appendHookAdditionalContexts(
   collector: HookAdditionalContext[] | undefined,

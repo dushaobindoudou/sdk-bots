@@ -1,4 +1,4 @@
-import type { HookAdditionalContext } from "../proto/generated/agent/v1/hook_additional_context_pb.js";
+import type { HookAdditionalContext } from "../../proto/generated/agent/v1/hook_additional_context_pb.js";
 import { sanitizeSystemReminderContent } from "../hooks/sanitize-system-reminder.js";
 
 export function renderHookAdditionalContextContents(

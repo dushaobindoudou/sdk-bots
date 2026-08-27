@@ -4,7 +4,7 @@ import type { RemoteExecManager } from "../../packages/agent-exec/remote.js";
 import type { ResourceAccessor } from "../../packages/agent-exec/resource-provider.js";
 import { tryExtractSandAutoReviewClassifierConversationContext } from "../../packages/agent/smart-mode-classifier-context.js";
 import { withToolExecutionTimeoutSuspended } from "../../packages/agent/tools/tool-timeout-suspension.js";
-import { SmartModeRiskTarget, type SmartModeClassifierConversationMessage } from "../../packages/proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
+import { SmartModeRiskTarget, type SmartModeClassifierConversationMessage } from "../../proto/generated/agent/v1/smart_mode_classifier_exec_pb.js";
 import { fingerprintSandAutoReviewTarget, type SandAutoReviewController, type SandAutoReviewMode } from "./sand-auto-review.js";
 import type { AutoReviewClassifierDecision } from "./sand-auto-review-classifier-run.js";
 import { runSandAutoReviewClassifier } from "./sand-auto-review-classifier-run.js";

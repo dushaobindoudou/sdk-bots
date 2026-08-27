@@ -3,14 +3,14 @@ import { createCounter } from "../../../../metrics/index.js";
 import type { ResourceAccessor } from "../../../../agent-exec/resource-provider.js";
 import type { RemoteExecManager } from "../../../../agent-exec/remote.js";
 import { writeExecutorResource, type WriteExecutor } from "../../../../agent-exec/write.js";
-import { WriteArgs, type WriteResult } from "../../../../proto/generated/agent/v1/write_exec_pb.js";
+import { WriteArgs, type WriteResult } from "../../../../../proto/generated/agent/v1/write_exec_pb.js";
 import { WORKTREE_GUARD_ERROR } from "../../../../utils/path-utils.js";
 import { ToolCallError, ToolCallUnexpectedEnvironmentError, CustomToolCallError } from "../../common.js";
 import { ToolErrorClassification } from "../../core.js";
 import { generateSeededUuid } from "../../common.js";
 import { decoratePostWriteResultForModel, type PostWriteDecorationOptions } from "./post-write-result-decoration.js";
 import { assertPlanModeAllowsFileEdit } from "./plan-mode-file-policy.js";
-import type { HookAdditionalContext } from "../../../../proto/generated/agent/v1/hook_additional_context_pb.js";
+import type { HookAdditionalContext } from "../../../../../proto/generated/agent/v1/hook_additional_context_pb.js";
 
 const editCommonPerformWriteCounter = createCounter("agent.tools.edit_common.perform_write.total", {
   description: "Total performWrite operations",

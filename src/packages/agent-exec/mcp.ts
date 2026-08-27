@@ -17,7 +17,7 @@ import type {
   McpStateExecResult,
   ReadMcpResourceExecArgs,
   ReadMcpResourceExecResult
-} from "../proto/generated/agent/v1/mcp_exec_pb.js";
+} from "../../proto/generated/agent/v1/mcp_exec_pb.js";
 
 export const CURSOR_PLAYWRIGHT_PROVIDER_ID = "cursor-browser-extension";
 export const CURSOR_IDE_BROWSER_PROVIDER_ID = "cursor-ide-browser";

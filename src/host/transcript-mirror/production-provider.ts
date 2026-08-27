@@ -5,7 +5,7 @@ import {
   ConversationStep,
   ConversationTurnStructure,
   UserMessage,
-} from "../../packages/proto/generated/agent/v1/agent_pb.js";
+} from "../../proto/generated/agent/v1/agent_pb.js";
 import {
   createGeneratedTranscriptOccurrenceCodec,
   type GeneratedTranscriptOccurrenceBindings,

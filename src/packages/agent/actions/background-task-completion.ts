@@ -4,7 +4,7 @@ import {
   BackgroundTaskKind,
   BackgroundTaskNotificationContext,
   BackgroundTaskStatus,
-} from "../../proto/generated/agent/v1/agent_pb.js";
+} from "../../../proto/generated/agent/v1/agent_pb.js";
 import { SYSTEM_NOTIFICATION_TAG } from "../../constants/system-notification.js";
 import { META_PARENT_COMPLETION_CLOSE_TAG, META_PARENT_COMPLETION_OPEN_TAG, META_PARENT_COMPLETION_SYSTEM_REMINDER } from "../utils/meta-parent-completion-protocol.js";
 import { escapePromptXmlText } from "../utils/prompt-xml-escape.js";

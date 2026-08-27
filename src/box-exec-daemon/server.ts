@@ -7,23 +7,23 @@ import path from "node:path";
 import { connectNodeAdapter } from "@connectrpc/connect-node";
 import { MethodKind, type ServiceType } from "@bufbuild/protobuf";
 
-import { ControlService } from "../packages/proto/generated/agent/v1/control_service_connect.js";
-import { ExecService } from "../packages/proto/generated/agent/v1/exec_service_connect.js";
+import { ControlService } from "../proto/generated/agent/v1/control_service_connect.js";
+import { ExecService } from "../proto/generated/agent/v1/exec_service_connect.js";
 import {
   GetCapabilitiesResponse,
   LoadMcpServersResponse,
   PingResponse,
   UpdateEnvironmentVariablesResponse,
   type UpdateEnvironmentVariablesRequest,
-} from "../packages/proto/generated/agent/v1/control_service_pb.js";
+} from "../proto/generated/agent/v1/control_service_pb.js";
 import {
   ExecClientControlMessage,
   ExecClientMessage,
   ExecClientStreamClose,
   ExecClientThrow,
   type ExecServerMessage,
-} from "../packages/proto/generated/agent/v1/exec_pb.js";
-import { ExecStreamElement } from "../packages/proto/generated/agent/v1/exec_service_pb.js";
+} from "../proto/generated/agent/v1/exec_pb.js";
+import { ExecStreamElement } from "../proto/generated/agent/v1/exec_service_pb.js";
 import {
   BackgroundShellSpawnError,
   BackgroundShellSpawnResult,
@@ -33,7 +33,7 @@ import {
   WriteShellStdinSuccess,
   type BackgroundShellSpawnArgs,
   type WriteShellStdinArgs,
-} from "../packages/proto/generated/agent/v1/background_shell_exec_pb.js";
+} from "../proto/generated/agent/v1/background_shell_exec_pb.js";
 import {
   ReadError,
   ReadFileNotFound,
@@ -43,7 +43,7 @@ import {
   ReadResult,
   ReadSuccess,
   type ReadArgs,
-} from "../packages/proto/generated/agent/v1/read_exec_pb.js";
+} from "../proto/generated/agent/v1/read_exec_pb.js";
 import {
   ShellFailure,
   ShellResult,
@@ -56,7 +56,7 @@ import {
   ShellSuccess,
   ShellTimeout,
   type ShellArgs,
-} from "../packages/proto/generated/agent/v1/shell_exec_pb.js";
+} from "../proto/generated/agent/v1/shell_exec_pb.js";
 
 // Recovered generated descriptors predate `satisfies ServiceType` and therefore
 // widen MethodKind during TypeScript reconstruction. Re-declaring only the
