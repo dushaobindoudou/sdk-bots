@@ -218,6 +218,13 @@
     .bubble.user .mention { color: var(--user-ink); text-decoration: underline; }
     .bubble .time { font-size: 10px; color: var(--muted); margin-top: 4px; opacity: 0; transition: opacity 0.15s; }
     .bubble:hover .time { opacity: 0.9; }
+    .note { align-self: center; max-width: 84%; margin: 3px 0; font-size: 12px; color: var(--muted); text-align: center; }
+    .note summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 3px 12px; border-radius: 999px; border: 1px dashed var(--line); max-width: 100%; }
+    .note summary::-webkit-details-marker { display: none; }
+    .note summary .nv { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .note summary::after { content: "▸"; font-size: 10px; opacity: 0.6; }
+    .note[open] summary::after { content: "▾"; }
+    .note .full { margin: 6px auto 0; padding: 8px 12px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); white-space: pre-wrap; overflow-wrap: anywhere; text-align: left; }
     .bubble.pending { opacity: 0.6; }
     .typing { align-self: flex-start; display: none; align-items: center; gap: 5px; padding: 10px 14px; color: var(--muted); font-size: 12px; }
     .typing.show { display: flex; }
@@ -743,6 +750,14 @@
       section("群聊", groups, "群");
       section("Bots", bots, "B");
     }
+    function isStatusNote(text) {
+      const t = text.trim();
+      if (t.length === 0 || t.length > 120) return false;
+      const head = t.slice(0, 24);
+      if (/^(已回复|已从|回复已|消息已发出|消息已送达|The turn is complete|Response delivered)/i.test(head)) return true;
+      if (/(已发出|已发送|已回复)/.test(head) && t.length < 60) return true;
+      return /(正在|暂时不可用|尝试用|尝试其他|换个方式|trying to|attempting to|searching for)/i.test(t) && !/[。！？!?]{1}.+[。！？!?]/.test(t.slice(0, -1));
+    }
     function addBubble(entry, agentId) {
       if (!entry?.id || state.seen.has(entry.id)) return;
       const text = entryText(entry).trim();
@@ -763,6 +778,23 @@
       state.seen.add(entry.id);
       const empty = $("log").querySelector(".empty");
       if (empty) empty.remove();
+      if (role !== "user" && isStatusNote(text)) {
+        const d = document.createElement("details");
+        d.className = "note";
+        d.dataset.entryId = entry.id;
+        const s = document.createElement("summary");
+        const nv = document.createElement("span");
+        nv.className = "nv";
+        nv.textContent = (entry.author?.name || "bot") + " · " + text.replace(/\s+/g, " ");
+        s.append(nv);
+        const full = document.createElement("div");
+        full.className = "full";
+        full.textContent = text;
+        d.append(s, full);
+        $("log").appendChild(d);
+        $("log").scrollTop = $("log").scrollHeight;
+        return;
+      }
       const div = document.createElement("div");
       div.className = "bubble " + role;
       div.dataset.entryId = entry.id;
