@@ -109,13 +109,21 @@ Generated (gitignored): `dist/box-exec-daemon/main.cjs`, `dist/host-workers/*.cj
 | `SAND_AGENT_MOCK_RESPONSE` | mock inference script |
 | `SAND_BOX_EXEC_DAEMON_ENTRY` | daemon bundle path |
 | `SAND_USE_EXISTING_BOX_EXEC_DAEMON` | `1` = do not spawn the daemon |
+| `SAND_BOX_EXEC_DAEMON_HOST` | host connects here (default `127.0.0.1`; non-loopback = remote box, no local spawn) |
+| `SAND_BOX_EXEC_DAEMON_BIND_HOST` | daemon listen address (default loopback; `0.0.0.0` to accept remote clients) |
+| `SAND_BOX_EXEC_DAEMON_PORT` | daemon port (default `1337`) |
+| `SAND_BOX_EXEC_DAEMON_AUTH_TOKEN` | daemon bearer token (default `local`) |
+| `SAND_LOCAL_EXEC_GATEWAY_URL` | standalone `multibot-host --local-exec-daemon` attach URL |
+| `SAND_LOCAL_EXEC_ADVERTISE_HOST` | host written into the local-exec connection file (defaults to loopback when the gateway binds `0.0.0.0`) |
 
 ## Layout
 
 - `src/sdk` — `SdkBotsClient` + `startHost()` (public entry)
 - `src/bootstrap` — headless CLI bootstrap + shared host composition (`composition.ts`)
-- `src/host` — gateway, group chat, box daemon, inference (recovered runtime)
-- `src/lib` — recovered library shelf (agent tools, shell-exec, chat-inference, …)
+- `src/host` — gateway, group chat, inference (recovered runtime)
+- `src/lib` — recovered library shelf (agent tools, `agent-exec`, chat-inference, …)
+- `src/box-exec-daemon` — sandbox process for Shell/Read/Write (the remote computer **is** this box; bind/connect via `SAND_BOX_EXEC_DAEMON_*`)
+- `src/host/local-exec` — in-process ExternalShell/ExternalRead provider backed by the same box daemon (also `multibot-host --local-exec-daemon` for a standalone SSE attach)
 - `src/proto` — generated protobuf closures (`generated/` + `redacted/`; machine-owned, never hand-edit)
 - `src/shared` — shared kernel: contracts (`host-extensions`), path policy (`sand-paths`), backend clients
 - `test/unit` — no host; `test/integration` — isolated host per case

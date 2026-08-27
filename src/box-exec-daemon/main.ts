@@ -5,8 +5,10 @@ import { startBoxExecDaemon } from "./server.js";
 export async function runBoxExecDaemonEntrypoint(): Promise<void> {
   const workspaceRoot = path.resolve(process.env.SAND_BOX_WORKSPACE_ROOT ?? process.cwd());
   const portText = process.env.SAND_BOX_EXEC_DAEMON_PORT;
+  const bindHost = process.env.SAND_BOX_EXEC_DAEMON_BIND_HOST?.trim();
   const handle = await startBoxExecDaemon({
     workspaceRoot,
+    ...(bindHost == null || bindHost.length === 0 ? {} : { host: bindHost }),
     ...(portText == null ? {} : { port: Number.parseInt(portText, 10) }),
     ...(process.env.SAND_BOX_TERMINALS_DIRECTORY == null ? {} : { terminalsDirectory: process.env.SAND_BOX_TERMINALS_DIRECTORY }),
     ...(process.env.SAND_BOX_EXEC_DAEMON_AUTH_TOKEN == null ? {} : { authToken: process.env.SAND_BOX_EXEC_DAEMON_AUTH_TOKEN }),

@@ -6,9 +6,12 @@
  * HTTP gateway.
  *
  * Usage:  node dist/bootstrap/index.js   (or: npm run dev)
+ *         node dist/bootstrap/index.js --local-exec-daemon
  * Env:    SAND_DATA_ROOT (data dir; defaults to ~/.sdk-bots - never ~/.cursor),
  *         SAND_GATEWAY_TOKEN (auth), SAND_HOST_PORT (port), SAND_GATEWAY_BIND_HOST,
- *         SAND_BOX_EXEC_DAEMON_ENTRY (bundled loopback exec-daemon path)
+ *         SAND_BOX_EXEC_DAEMON_ENTRY (bundled loopback exec-daemon path),
+ *         SAND_BOX_EXEC_DAEMON_HOST (connect host; non-loopback = remote box),
+ *         SAND_LOCAL_EXEC_GATEWAY_URL (standalone --local-exec-daemon attach URL)
  */
 
 import { existsSync } from "node:fs";
@@ -17,6 +20,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { startHeadlessHost } from "./composition.js";
+import { runLocalExecDaemon } from "../host/local-exec/local-exec-daemon.js";
 
 // SDK defaults: isolate the data root from any real Cursor/Grok Bot install
 // (host-paths would otherwise fall back to ~/.cursor/<variant>).
@@ -44,7 +48,18 @@ process.env.SAND_OPENROUTER_MODEL ??= "auto";
   }
 }
 
-startHeadlessHost().catch((error) => {
-  process.stderr.write("[sdk-bots] fatal: " + String(error) + "\n");
-  process.exitCode = 1;
-});
+if (process.argv.includes("--local-exec-daemon")) {
+  runLocalExecDaemon({ publishDiscovery: false }).then((handle) => {
+    const shutdown = () => { void handle.close().finally(() => process.exit(0)); };
+    process.once("SIGINT", shutdown);
+    process.once("SIGTERM", shutdown);
+  }).catch((error) => {
+    process.stderr.write("[sdk-bots] local-exec-daemon fatal: " + String(error) + "\n");
+    process.exitCode = 1;
+  });
+} else {
+  startHeadlessHost().catch((error) => {
+    process.stderr.write("[sdk-bots] fatal: " + String(error) + "\n");
+    process.exitCode = 1;
+  });
+}

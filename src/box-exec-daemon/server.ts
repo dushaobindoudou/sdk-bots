@@ -45,6 +45,15 @@ import {
   type ReadArgs,
 } from "../proto/generated/agent/v1/read_exec_pb.js";
 import {
+  WriteError,
+  WriteNoSpace,
+  WritePermissionDenied,
+  WriteRejected,
+  WriteResult,
+  WriteSuccess,
+  type WriteArgs,
+} from "../proto/generated/agent/v1/write_exec_pb.js";
+import {
   ShellFailure,
   ShellResult,
   ShellSpawnError,
@@ -242,6 +251,9 @@ class BoxExecRuntime {
         case "writeShellStdinArgs":
           yield client(request.id, request.execId, { case: "writeShellStdinResult", value: await this.writeStdin(request.message.value) });
           break;
+        case "writeArgs":
+          yield client(request.id, request.execId, { case: "writeResult", value: await this.write(request.message.value) });
+          break;
         default:
           yield thrown(request.id, `Unsupported ExecServerMessage case: ${request.message.case ?? "unset"}`, "BOX_EXEC_UNSUPPORTED");
       }
@@ -285,6 +297,48 @@ class BoxExecRuntime {
       if (code === "EACCES" || code === "EPERM") return new ReadResult({ result: { case: "permissionDenied", value: new ReadPermissionDenied({ path: args.path }) } });
       if (code === "EISDIR" || code === "EINVAL" || code === "ENAMETOOLONG") return new ReadResult({ result: { case: "invalidFile", value: new ReadInvalidFile({ path: args.path, reason: errorText(error) }) } });
       return new ReadResult({ result: { case: "error", value: new ReadError({ path: args.path, error: errorText(error) }) } });
+    }
+  }
+
+  async write(args: WriteArgs): Promise<WriteResult> {
+    try {
+      const target = this.resolvePath(args.path);
+      const parent = path.dirname(target);
+      await mkdir(parent, { recursive: true });
+      const parentCanonical = await realpath(parent);
+      this.assertRealPathAllowed(parentCanonical, args.path);
+      try {
+        const existing = await lstat(target);
+        if (existing.isSymbolicLink()) throw new PathRejectedError(`Symbolic-link writes are not permitted: ${args.path}`);
+        if (existing.isDirectory()) {
+          return new WriteResult({ result: { case: "error", value: new WriteError({ path: args.path, error: "Path is a directory" }) } });
+        }
+      } catch (error) {
+        if (error instanceof PathRejectedError) throw error;
+        const code = typeof error === "object" && error != null && "code" in error ? String(error.code) : undefined;
+        if (code !== "ENOENT") throw error;
+      }
+      const payload = args.fileBytes.byteLength > 0
+        ? Buffer.from(args.fileBytes)
+        : Buffer.from(args.fileText, args.encodingHint === "latin1" ? "latin1" : "utf8");
+      await writeFile(target, payload);
+      const canonical = await realpath(target);
+      this.assertRealPathAllowed(canonical, args.path);
+      const text = payload.toString("utf8");
+      return new WriteResult({ result: { case: "success", value: new WriteSuccess({
+        path: args.path,
+        linesCreated: text.length === 0 ? 0 : text.split("\n").length,
+        fileSize: payload.byteLength,
+        ...(args.returnFileContentAfterWrite ? { fileContentAfterWrite: text } : {}),
+      }) } });
+    } catch (error) {
+      if (error instanceof PathRejectedError) return new WriteResult({ result: { case: "rejected", value: new WriteRejected({ path: args.path, reason: error.message }) } });
+      const code = typeof error === "object" && error != null && "code" in error ? String(error.code) : undefined;
+      if (code === "EACCES" || code === "EPERM" || code === "EROFS") {
+        return new WriteResult({ result: { case: "permissionDenied", value: new WritePermissionDenied({ path: args.path, directory: path.dirname(args.path), operation: "write", error: errorText(error) }) } });
+      }
+      if (code === "ENOSPC" || code === "EDQUOT") return new WriteResult({ result: { case: "noSpace", value: new WriteNoSpace({ path: args.path }) } });
+      return new WriteResult({ result: { case: "error", value: new WriteError({ path: args.path, error: errorText(error) }) } });
     }
   }
 

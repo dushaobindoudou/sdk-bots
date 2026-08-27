@@ -5,6 +5,7 @@ import path from "node:path";
 
 import { createContext } from "../../lib/context/core.js";
 import { pingBoxClassified } from "./box-remote-accessor.js";
+import { boxExecPingHost } from "./box-exec-endpoint.js";
 import type { ErasedProductionBoxGeneratedPorts } from "./production.js";
 import { DEFAULT_AUTH_TOKEN, EXEC_DAEMON_PORT } from "./loopback-sand-box.js";
 
@@ -22,7 +23,8 @@ export interface OwnedBoxExecDaemon {
 export interface BoxExecDaemonProcessOptions {
   readonly entryPath: string;
   readonly generated: ErasedProductionBoxGeneratedPorts;
-  readonly host?: "127.0.0.1";
+  readonly host?: string;
+  readonly bindHost?: string;
   readonly port?: number;
   readonly authToken?: string;
   readonly workspaceRoot: string;
@@ -65,11 +67,13 @@ async function delay(milliseconds: number): Promise<void> {
 
 export async function startBoxExecDaemonProcess(options: BoxExecDaemonProcessOptions): Promise<OwnedBoxExecDaemon> {
   const host = options.host ?? "127.0.0.1";
+  const bindHost = options.bindHost ?? host;
+  const pingHost = boxExecPingHost({ host, bindHost });
   const port = options.port ?? EXEC_DAEMON_PORT;
   const authToken = options.authToken ?? DEFAULT_AUTH_TOKEN;
   const log = options.log ?? console;
-  if (await portAcceptsConnections(host, port)) {
-    throw new Error(`refusing contaminated box exec-daemon startup: ${host}:${port} is already bound`);
+  if (await portAcceptsConnections(pingHost, port)) {
+    throw new Error(`refusing contaminated box exec-daemon startup: ${pingHost}:${port} is already bound`);
   }
   await access(options.entryPath);
   await mkdir(options.workspaceRoot, { recursive: true });
@@ -78,6 +82,7 @@ export async function startBoxExecDaemonProcess(options: BoxExecDaemonProcessOpt
     cwd: path.dirname(options.entryPath),
     env: {
       ...(options.env ?? process.env),
+      SAND_BOX_EXEC_DAEMON_BIND_HOST: bindHost,
       SAND_BOX_EXEC_DAEMON_PORT: String(port),
       SAND_BOX_EXEC_DAEMON_AUTH_TOKEN: authToken,
       SAND_BOX_WORKSPACE_ROOT: options.workspaceRoot,
@@ -94,13 +99,13 @@ export async function startBoxExecDaemonProcess(options: BoxExecDaemonProcessOpt
     const deadline = Date.now() + (options.startTimeoutMs ?? BOX_EXEC_DAEMON_START_TIMEOUT_MS);
     while (Date.now() < deadline) {
       const result = await Promise.race([
-        pingBoxClassified(createContext(), { host, port, authToken }, options.generated, 500),
+        pingBoxClassified(createContext(), { host: pingHost, port, authToken }, options.generated, 500),
         exited.then(status => { throw new Error(`box exec-daemon exited before readiness: ${JSON.stringify(status)}`); }),
       ]);
       if (result.outcome === "ok") return;
       await delay(100);
     }
-    throw new Error(`box exec-daemon did not answer authenticated generated Ping at ${host}:${port}`);
+    throw new Error(`box exec-daemon did not answer authenticated generated Ping at ${pingHost}:${port}`);
   })();
 
   try {
@@ -130,8 +135,8 @@ export async function startBoxExecDaemonProcess(options: BoxExecDaemonProcessOpt
         await exited;
         throw new Error(`box exec-daemon pid ${child.pid} required forced shutdown`);
       }
-      if (await portAcceptsConnections(host, port)) {
-        throw new Error(`box exec-daemon shutdown left ${host}:${port} bound`);
+      if (await portAcceptsConnections(pingHost, port)) {
+        throw new Error(`box exec-daemon shutdown left ${pingHost}:${port} bound`);
       }
     },
   };

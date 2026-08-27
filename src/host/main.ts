@@ -16,6 +16,8 @@ import {
   startBoxExecDaemonProcess,
   type OwnedBoxExecDaemon,
 } from "./box/exec-daemon-process.js";
+import { isStandaloneBoxExecDaemon, resolveBoxExecEndpoint, shouldSpawnLocalBoxExecDaemon } from "./box/box-exec-endpoint.js";
+import { writeLocalExecDaemonConnection } from "./local-exec/local-exec-daemon-protocol.js";
 
 export const BOX_COPY_IN_ARG = "--box-copy-in";
 export const BOX_COPY_IN_EXIT_FAILED = 1;
@@ -134,7 +136,8 @@ export interface HostProductionPorts extends ProductionSandHostPorts {
 export function createProductionHostMainDependencies(
   ports: HostProductionPorts
 ): HostMainDependencies {
-  const useExistingBoxExecDaemon = process.env.SAND_USE_EXISTING_BOX_EXEC_DAEMON === "1";
+  const spawnLocalBoxExecDaemon = shouldSpawnLocalBoxExecDaemon();
+  const boxEndpoint = resolveBoxExecEndpoint();
   return {
     executeBoxCopyInFromEnv: ports.executeBoxCopyInFromEnv,
     installProcessCrashGuards: options => installProcessCrashGuards(options),
@@ -143,19 +146,23 @@ export function createProductionHostMainDependencies(
       reporter as Parameters<typeof pinHostDiagnosticsReporter>[0]
     ),
     acquireHostLock,
-    ...(useExistingBoxExecDaemon ? {} : { startBoxExecDaemon: () => startBoxExecDaemonProcess({
+    ...(spawnLocalBoxExecDaemon ? { startBoxExecDaemon: () => startBoxExecDaemonProcess({
         entryPath: process.env.SAND_BOX_EXEC_DAEMON_ENTRY ?? resolveBoxExecDaemonEntry(),
         generated: ports.extensionHost.boxGenerated,
+        host: boxEndpoint.host,
+        bindHost: boxEndpoint.bindHost,
+        port: boxEndpoint.port,
+        authToken: boxEndpoint.authToken,
         workspaceRoot: path.join(getSandRootDir(), "box-workspace"),
         terminalsDirectory: path.join(getSandRootDir(), "box-terminals"),
         ...(ports.log === undefined ? {} : { log: ports.log }),
-      }) }),
+      }) } : {}),
     getSandRootDir,
     createHost: () => createProductionSandHost({
       ...ports,
       extensionHost: {
         ...ports.extensionHost,
-        standaloneBoxExecDaemon: !useExistingBoxExecDaemon,
+        standaloneBoxExecDaemon: isStandaloneBoxExecDaemon(),
       },
     }),
     resolveGatewayServerConfig,
@@ -262,6 +269,13 @@ export async function main(
       ...(gatewayConfig.authToken === undefined
         ? {}
         : { token: gatewayConfig.authToken })
+    });
+
+    const advertisedHost = process.env.SAND_LOCAL_EXEC_ADVERTISE_HOST?.trim()
+      || (gatewayConfig.host === "0.0.0.0" || gatewayConfig.host === "::" ? "127.0.0.1" : gatewayConfig.host);
+    await writeLocalExecDaemonConnection({
+      baseUrl: `${scheme}://${advertisedHost}:${gateway.port}`,
+      ...(gatewayConfig.authToken === undefined ? {} : { token: gatewayConfig.authToken }),
     });
 
     log.log(

@@ -6,7 +6,7 @@ import {
   type BoxEnvironmentControlClient,
   type BoxEnvironmentUpdate
 } from "./box-env.js";
-import { uploadFileViaExecDaemon, type FileTransferAccessor } from "./box-file-transfer.js";
+import { uploadFileViaExecDaemon, readFileBytesViaExecDaemon, type FileTransferAccessor } from "./box-file-transfer.js";
 import { applySharedDesktop, createSandBox } from "./box-factory.js";
 import {
   loadBoxMcpServersViaTransport,
@@ -65,6 +65,7 @@ export interface ProductionBoxProviderOptions<
   readonly telemetry: LoopbackTelemetry;
   readonly protectedBoxPaths: readonly string[];
   readonly host?: string;
+  readonly port?: number;
   readonly authToken?: string;
   /**
    * The shipped co-resident image owns fork desktops and the 1339 router. The
@@ -161,6 +162,7 @@ export function createProductionBoxInner<
 
   const loopback = createSandBox<Accessor>({
     ...(options.host === undefined ? {} : { host: options.host }),
+    ...(options.port === undefined ? {} : { port: options.port }),
     ...(options.authToken === undefined ? {} : { authToken: options.authToken }),
     telemetry: options.telemetry,
     protectedBoxPaths: options.protectedBoxPaths,
@@ -203,6 +205,9 @@ export function createProductionBoxInner<
       },
       async uploadFile(ctx, accessor, path, data): Promise<void> {
         await uploadFileViaExecDaemon(ctx, accessor, path, data);
+      },
+      async downloadFile(ctx, accessor, path): Promise<Buffer> {
+        return Buffer.from(await readFileBytesViaExecDaemon(ctx, accessor, path));
       }
     }
   });

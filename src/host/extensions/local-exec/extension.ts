@@ -1,3 +1,4 @@
+import { attachInProcessBoxComputer } from "../../local-exec/in-process-attach.js";
 import { createIdleWatchdogPolicy, realClock } from "../../../shared/scheduling.js";
 import { defineHostExtension } from "../../../shared/host-extensions.js";
 import { SAND_LOCAL_EXEC_RESPONSE_TIMEOUT_MS } from "../../../shared/local-exec-gateway.js";
@@ -15,6 +16,8 @@ export function createLocalExecExtension<Client = unknown, Accessor = unknown>(c
     start: (context) => {
       const gate = context.deps[HostExtensions.LocalToolPermission] as GatewayLocalToolGate; const logs = (context.deps[HostExtensions.Telemetry] as { readonly logs: LocalExecLogs }).logs;
       const bridge = new SandLocalExecBridge({ clock: realClock, responseWatchdog: createIdleWatchdogPolicy(realClock, { name: "sand-local-exec-response", idleMs: SAND_LOCAL_EXEC_RESPONSE_TIMEOUT_MS }), blockedReason: () => gate.blockedReason(), report: { refused: (report) => logs.reportLocalExecRefused(report), provider: (report) => logs.reportLocalExecProvider(report) } });
+      const boxComputer = attachInProcessBoxComputer(bridge);
+      context.onStop(() => boxComputer.close());
       const offRetirement = context.host.events.on("local-tool-permission.approval-retired", (payload) => { if (typeof payload === "object" && payload != null && typeof (payload as { approvalId?: unknown }).approvalId === "string") bridge.retireApproval((payload as { approvalId: string }).approvalId); }); context.onStop(offRetirement);
       const options = { gate, codec, reportFailure: (report: unknown) => logs.reportLocalExecFailed(report) };
       return { box: new GatewayLocalExecSandBox(bridge, options), userComputers: createBridgeUserComputers(bridge, options), registerProvider: (send: (frame: LocalExecBridgeFrame) => void) => bridge.registerProvider(send), submitResponses: (batch: Parameters<SandLocalExecBridge["submitResponses"]>[0]) => bridge.submitResponses(batch), checkLiveComputerForAsk: (agentId?: string) => bridge.checkLiveComputerForAsk(agentId) };

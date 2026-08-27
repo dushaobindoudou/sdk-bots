@@ -4,7 +4,10 @@
 
 Architecture pass over the recovered runtime; breaking for anyone importing internals.
 
-- Deleted `node-agent-coordinator` (desktop coordinator remnant, unreachable from every entry) and 192 dead files (34 local-exec, 32 shell-exec, 32 shared strays, …)
+- Pruned code with **zero importers** from the headless entries (`sdk` / `bootstrap` / `host`), tests, or computed loaders — not “junk in the original desktop product”:
+  - `node-agent-coordinator` (24 files): Electron coordinator process with its own `main.ts`; never a package `bin` / export. The still-used `shared/rpc/coordinator.ts` is only transcript-window types for the gateway.
+  - 192-file island prune: desktop `packages/local-exec` + `packages/shell-exec` (seatbelt/bash islands), unused self-summary/compaction handlers, unused `agent-store-sync` internals, desktop shared strays (window-chrome, VNC, deep-link, …). Headless `host/local-exec` is restored: the box exec-daemon is the user computer (in-process provider + optional `--local-exec-daemon`), including a remote box via `SAND_BOX_EXEC_DAEMON_HOST`.
+  - Live Shell/Read/Write and ExternalShell/ExternalRead go through `box-exec-daemon` + `lib/agent-exec`. The local-exec **bridge** (`host/extensions/local-exec`) registers the box as the live computer when the host starts.
 - Strict layering restored: `sdk → bootstrap → host → {lib, proto, shared}`; the `shared → host` reverse edges are gone (`host-paths` sank into `shared/sand-paths`, provider-routing glue moved into the host inference extension)
 - `internal/` (2 contract files, 118 imports) merged into `shared/` — one honest base layer
 - Generated protobuf closures split out to `src/proto/` (`generated/` + `redacted/`) — machine-owned code is no longer shelved beside authored libraries
