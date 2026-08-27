@@ -169,6 +169,18 @@
     }
     header.chat-head h2 { margin: 0; font-size: 15px; }
     header.chat-head small { color: var(--muted); display: block; margin-top: 2px; }
+    .title-row { display: flex; align-items: center; gap: 10px; }
+    .member-btn {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 2px 10px;
+      font-size: 12px;
+      flex: none;
+    }
+    .member-btn:hover { color: var(--accent); border-color: var(--accent); }
+    .member-btn.active-edit { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
     .tabs { display: flex; gap: 2px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 9px; padding: 2px; flex: none; }
     .tabs button {
       border: 0; background: transparent; color: var(--muted);
@@ -389,7 +401,10 @@
   <main>
     <header class="chat-head">
       <div>
-        <h2 id="title">选择会话</h2>
+        <div class="title-row">
+          <h2 id="title">选择会话</h2>
+          <button class="member-btn" id="memberBtn" type="button" style="display:none">成员 0</button>
+        </div>
         <small id="subtitle">从左侧选择一个 bot 或群，或新建一个</small>
       </div>
       <div class="tabs" id="tabs">
@@ -457,6 +472,17 @@
     <div class="dialog-actions">
       <button type="button" class="ghost" id="groupCancel">取消</button>
       <button type="button" class="go" id="groupOk">创建</button>
+    </div>
+  </dialog>
+
+  <dialog id="memberDlg">
+    <h3>管理群成员</h3>
+    <div id="memberDlgGroup" style="font-size:12px;color:var(--muted);margin:-6px 0 4px"></div>
+    <label>勾选要加入的 bot（取消勾选即移出群聊）</label>
+    <div class="members" id="memberEditList"></div>
+    <div class="dialog-actions">
+      <button type="button" class="ghost" id="memberCancel">取消</button>
+      <button type="button" class="go" id="memberOk">保存</button>
     </div>
   </dialog>
 
@@ -764,7 +790,14 @@
       state.seen = new Set();
       const agent = state.agents.find((a) => a.id === id);
       $("title").textContent = agent?.name || "会话";
-      $("subtitle").textContent = agent?.isGroup ? "群聊 · 输入 @ 点名成员" : "单 bot 对话";
+      const members = agent?.isGroup ? currentMembers() : [];
+      const memberBtn = $("memberBtn");
+      memberBtn.style.display = agent?.isGroup ? "" : "none";
+      memberBtn.textContent = "成员 " + members.length;
+      memberBtn.classList.remove("active-edit");
+      $("subtitle").textContent = agent?.isGroup
+        ? `群聊 · ${members.length} 名成员 · ${members.map((m) => m.name).join("、") || "还没有成员"}`
+        : "单 bot 对话";
       $("input").placeholder = agent?.isGroup ? "@研究员 问一件事，或不加 @ 让全员回复" : "说点什么…";
       $("nudge").checked = false;
       $("nudge").closest("label").style.display = agent?.isGroup ? "none" : "";
@@ -903,6 +936,55 @@
         await refresh();
         const id = created?.agent?.id || created?.id;
         if (id) await select(id);
+      } catch (e) { showError(e); }
+    });
+
+    /* ---------- group member management ---------- */
+    $("memberBtn").addEventListener("click", () => {
+      const group = currentAgent();
+      if (!group?.isGroup) return;
+      const current = new Set(group.memberIds || []);
+      $("memberDlgGroup").textContent = group.name || "";
+      const list = $("memberEditList");
+      list.innerHTML = "";
+      const bots = state.agents.filter((a) => !a.isGroup);
+      if (bots.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "还没有任何 bot，先在左下角新建一个";
+        list.append(empty);
+      }
+      for (const bot of bots) {
+        const label = document.createElement("label");
+        const box = document.createElement("input");
+        box.type = "checkbox";
+        box.value = bot.id;
+        box.checked = current.has(bot.id);
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = bot.name || bot.id.slice(0, 8);
+        const desc = document.createElement("span");
+        desc.style.cssText = "font-size:11px;color:var(--muted);margin-left:auto";
+        desc.textContent = bot.description || "";
+        label.append(box, nameSpan, desc);
+        list.append(label);
+      }
+      $("memberDlg").showModal();
+    });
+    $("memberCancel").addEventListener("click", () => $("memberDlg").close());
+    $("memberOk").addEventListener("click", async () => {
+      const group = currentAgent();
+      if (!group?.isGroup) { $("memberDlg").close(); return; }
+      const memberIds = [...$("memberEditList").querySelectorAll("input:checked")].map((el) => el.value);
+      if (memberIds.length === 0) {
+        showError(new Error("群聊至少保留一名成员；要解散整个群请在左侧删除该群。"));
+        return;
+      }
+      showError("");
+      try {
+        await api("setGroupMembers", { id: group.id, memberAgentIds: memberIds });
+        $("memberDlg").close();
+        await refresh();
+        await select(group.id);
       } catch (e) { showError(e); }
     });
 

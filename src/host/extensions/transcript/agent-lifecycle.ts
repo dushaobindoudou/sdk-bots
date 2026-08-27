@@ -18,6 +18,11 @@ import {
   introductionFailedTrayKey,
 } from "../../../shared/agents/onboarding.js";
 import { sandErrorDetail } from "../../ports/telemetry.js";
+import {
+  GROUP_CONFIG_VERSION,
+  readSandGroupConfig,
+  writeSandGroupConfig,
+} from "../../groups/group-store.js";
 import { SandAgentDb } from "../session/agent-db.js";
 import { checkpointSandAgentDb } from "../../storage/store-db.js";
 import { publishTranscriptMutation } from "../../transcript-mutation-events.js";
@@ -380,6 +385,18 @@ export class AgentLifecycle {
       this.tm.boxHandoff.boxHandoffs.delete(id);
       this.tm.boxHandoff.awaitingSink.clear(id);
       this.tm.roster.emitAsyncTasksForAgent(id);
+    }
+    // Prune deleted bots from surviving groups so rosters never carry
+    // dangling member ids (a deleted member used to linger in group.json).
+    const survivingAgents = await this.tm.sessionStore.listAgents();
+    for (const agent of survivingAgents) {
+      if (!agent.isGroup) continue;
+      const groupDir = this.tm.sessionStore.getAgentDir(agent.id);
+      const groupConfig = readSandGroupConfig(groupDir);
+      if (groupConfig?.memberIds == null) continue;
+      const kept = groupConfig.memberIds.filter((memberId) => !ids.has(memberId));
+      if (kept.length === groupConfig.memberIds.length) continue;
+      writeSandGroupConfig(groupDir, { version: GROUP_CONFIG_VERSION, memberIds: kept });
     }
     if (!deletingActive || active == null) {
       await this.tm.roster.emitAgents();
