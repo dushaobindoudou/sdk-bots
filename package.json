@@ -42,7 +42,7 @@
     "multibot-host": "dist/bootstrap/index.js"
   },
   "scripts": {
-    "build": "node scripts/clean-dist.mjs && npm run build:daemon && npm run build:workers && tsc -p tsconfig.build.json && tsc -p tsconfig.types.json",
+    "build": "node scripts/clean-dist.mjs && npm run build:daemon && npm run build:workers && tsc -p tsconfig.build.json && tsc -p tsconfig.types.json && node scripts/copy-static-assets.mjs",
     "typecheck": "tsc -p tsconfig.json",
     "build:daemon": "node scripts/build-box-exec-daemon.mjs",
     "build:workers": "node scripts/build-host-workers.mjs",

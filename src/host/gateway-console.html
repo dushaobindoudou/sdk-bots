@@ -6,256 +6,434 @@
   <title>sdk-bots</title>
   <style>
     :root {
-      --ink: #1b211c;
-      --muted: #5c675e;
-      --line: #d5dcd4;
-      --paper: #f3f1ea;
-      --panel: #fffdf8;
-      --sidebar: #243028;
-      --sidebar-ink: #e8eee6;
-      --sidebar-dim: #9aab9c;
-      --brass: #c4a35a;
-      --go: #2f6f4e;
-      --go-ink: #f4fff6;
-      --user: #eef2ea;
-      --bot: #fff7e6;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --panel-2: #f1f3f5;
+      --ink: #191c1f;
+      --muted: #66707a;
+      --line: #e3e6ea;
+      --line-2: #d3d8de;
+      --accent: #4f46e5;
+      --accent-ink: #ffffff;
+      --accent-soft: #eef0fe;
+      --user-bubble: #4f46e5;
+      --user-ink: #ffffff;
+      --bot-bubble: #ffffff;
+      --ok: #12805c;
+      --warn: #9a6700;
+      --err: #c9352f;
+      --warn-soft: #fff4d6;
+      --err-soft: #fdeceb;
+      --shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 4px 16px rgba(16, 24, 40, 0.06);
+      --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+      color-scheme: light;
+    }
+    [data-theme="dark"] {
+      --bg: #101214;
+      --panel: #171a1d;
+      --panel-2: #1e2226;
+      --ink: #e7eaed;
+      --muted: #8b959e;
+      --line: #262b30;
+      --line-2: #33393f;
+      --accent: #6e6bff;
+      --accent-ink: #ffffff;
+      --accent-soft: #23233d;
+      --user-bubble: #6e6bff;
+      --user-ink: #ffffff;
+      --bot-bubble: #1e2226;
+      --ok: #3dd68c;
+      --warn: #e0a941;
+      --err: #ff7b72;
+      --warn-soft: #33290f;
+      --err-soft: #3a1d1b;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.35);
+      color-scheme: dark;
     }
     * { box-sizing: border-box; }
     html, body { height: 100%; margin: 0; }
     body {
-      font: 14px/1.45 ui-sans-serif, system-ui, "PingFang SC", "Noto Sans SC", sans-serif;
+      font: 14px/1.5 ui-sans-serif, system-ui, "PingFang SC", "Noto Sans SC", sans-serif;
       color: var(--ink);
-      background: var(--paper);
+      background: var(--bg);
       display: grid;
-      grid-template-columns: 260px 1fr;
+      grid-template-columns: 264px 1fr;
+      overflow: hidden;
     }
+    button { font: inherit; cursor: pointer; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 6px; border: 2px solid transparent; background-clip: content-box; }
+
+    /* ---------- sidebar ---------- */
     aside {
-      background: var(--sidebar);
-      color: var(--sidebar-ink);
+      background: var(--panel);
+      border-right: 1px solid var(--line);
       display: flex;
       flex-direction: column;
-      min-height: 100%;
+      min-height: 0;
     }
     .brand {
-      padding: 18px 16px 12px;
-      border-bottom: 1px solid #334038;
+      padding: 14px 14px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .brand h1 {
-      margin: 0;
-      font-size: 13px;
-      letter-spacing: 0.14em;
+    .brand .logo {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), #9b8cff);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 12px;
+      flex: none;
+    }
+    .brand h1 { margin: 0; font-size: 14px; font-weight: 650; letter-spacing: 0.01em; flex: 1; }
+    .icon-btn {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--muted);
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      flex: none;
+      font-size: 14px;
+    }
+    .icon-btn:hover { color: var(--ink); border-color: var(--line-2); background: var(--panel-2); }
+    .conn { display: flex; align-items: center; gap: 6px; padding: 0 16px 10px; color: var(--muted); font-size: 12px; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); flex: none; }
+    .dot.off { background: var(--err); }
+    .dot.busy { background: var(--warn); }
+    .roster { flex: 1; overflow: auto; padding: 4px 8px 8px; min-height: 0; }
+    .section-label {
+      font-size: 11px;
+      color: var(--muted);
       text-transform: uppercase;
-      color: var(--brass);
-      font-weight: 600;
+      letter-spacing: 0.08em;
+      padding: 10px 8px 4px;
     }
-    .brand p { margin: 6px 0 0; color: var(--sidebar-dim); font-size: 12px; }
-    .roster { flex: 1; overflow: auto; padding: 8px; }
     .item {
       width: 100%;
       text-align: left;
       border: 0;
       background: transparent;
       color: inherit;
-      padding: 10px 10px;
+      padding: 8px 10px;
       border-radius: 8px;
-      cursor: pointer;
       display: flex;
-      gap: 8px;
       align-items: center;
+      gap: 8px;
     }
-    .item:hover { background: #2e3a32; }
-    .item.active { background: #3a4a3e; }
-    .tag {
-      font-size: 10px;
-      letter-spacing: 0.08em;
-      border: 1px solid #6d7c6e;
-      color: var(--brass);
-      padding: 1px 5px;
-      border-radius: 999px;
+    .item:hover { background: var(--panel-2); }
+    .item.active { background: var(--accent-soft); color: var(--accent); }
+    .item.active b { color: var(--accent); }
+    .item .glyph {
+      width: 26px; height: 26px;
+      border-radius: 7px;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      color: var(--muted);
       flex: none;
     }
-    .item b { font-weight: 600; }
-    .item span { display: block; color: var(--sidebar-dim); font-size: 12px; }
-    .side-actions {
-      padding: 12px;
-      display: grid;
-      gap: 8px;
-      border-top: 1px solid #334038;
-    }
-    .side-actions button, .composer button, .dialog-actions button {
-      font: inherit;
-      cursor: pointer;
+    .item.active .glyph { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+    .item .meta { min-width: 0; flex: 1; }
+    .item b { display: block; font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item span { display: block; font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .side-actions { padding: 10px; border-top: 1px solid var(--line); display: grid; gap: 8px; }
+    .ghost {
+      border: 1px dashed var(--line-2);
+      background: transparent;
+      color: var(--muted);
+      padding: 7px 10px;
       border-radius: 8px;
-      border: 1px solid transparent;
-      padding: 8px 10px;
+      font-size: 13px;
     }
-    .ghost { background: #2e3a32; color: var(--sidebar-ink); }
-    .ghost:hover { background: #3a4a3e; }
-    main { display: flex; flex-direction: column; min-width: 0; }
+    .ghost:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* ---------- main ---------- */
+    main { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
     header.chat-head {
-      padding: 16px 20px;
+      padding: 12px 20px;
       border-bottom: 1px solid var(--line);
       background: var(--panel);
       display: flex;
       justify-content: space-between;
+      align-items: center;
       gap: 12px;
-      align-items: baseline;
     }
-    header.chat-head h2 { margin: 0; font-size: 16px; }
-    header.chat-head small { color: var(--muted); }
+    header.chat-head h2 { margin: 0; font-size: 15px; }
+    header.chat-head small { color: var(--muted); display: block; margin-top: 2px; }
+    .tabs { display: flex; gap: 2px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 9px; padding: 2px; flex: none; }
+    .tabs button {
+      border: 0; background: transparent; color: var(--muted);
+      padding: 5px 14px; border-radius: 7px; font-size: 13px;
+    }
+    .tabs button.active { background: var(--panel); color: var(--ink); font-weight: 600; box-shadow: var(--shadow); }
+
+    .view { flex: 1; display: none; min-height: 0; }
+    .view.active { display: flex; flex-direction: column; }
+
+    /* ---------- chat ---------- */
     .log {
       flex: 1;
       overflow: auto;
       padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
-    .empty { margin: auto; color: var(--muted); text-align: center; max-width: 28ch; }
+    .empty { margin: auto; color: var(--muted); text-align: center; max-width: 30ch; font-size: 13px; }
     .bubble {
-      max-width: 68ch;
-      padding: 10px 12px;
-      border-radius: 12px;
+      max-width: min(72ch, 86%);
+      padding: 9px 13px;
+      border-radius: 14px;
       border: 1px solid var(--line);
-      background: var(--panel);
+      background: var(--bot-bubble);
+      box-shadow: var(--shadow);
     }
-    .bubble.user { align-self: flex-end; background: var(--user); }
-    .bubble.bot { align-self: flex-start; background: var(--bot); }
-    .bubble .who { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .bubble.user { align-self: flex-end; background: var(--user-bubble); border-color: transparent; color: var(--user-ink); }
+    .bubble.bot { align-self: flex-start; }
+    .bubble .who { font-size: 11px; color: var(--muted); margin-bottom: 3px; }
+    .bubble.user .who { color: var(--user-ink); opacity: 0.75; }
+    .bubble .body { white-space: pre-wrap; overflow-wrap: anywhere; }
+    .bubble .mention { color: var(--accent); font-weight: 600; }
+    .bubble.user .mention { color: var(--user-ink); text-decoration: underline; }
+    .bubble .time { font-size: 10px; color: var(--muted); margin-top: 4px; opacity: 0; transition: opacity 0.15s; }
+    .bubble:hover .time { opacity: 0.9; }
+    .bubble.pending { opacity: 0.6; }
+    .typing { align-self: flex-start; display: none; align-items: center; gap: 5px; padding: 10px 14px; color: var(--muted); font-size: 12px; }
+    .typing.show { display: flex; }
+    .typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: blink 1.2s infinite; }
+    .typing i:nth-child(2) { animation-delay: 0.2s; }
+    .typing i:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink { 0%, 60%, 100% { opacity: 0.25; } 30% { opacity: 1; } }
+
     .composer {
       border-top: 1px solid var(--line);
       background: var(--panel);
-      padding: 12px 16px 16px;
+      padding: 12px 16px;
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 8px;
       position: relative;
+      align-items: end;
     }
-    .pills {
-      grid-column: 1 / -1;
-      display: none;
-      flex-wrap: wrap;
-      gap: 6px;
+    textarea#input {
+      font: inherit;
+      padding: 10px 12px;
+      border: 1px solid var(--line-2);
+      border-radius: 10px;
+      background: var(--bg);
+      color: var(--ink);
+      resize: none;
+      min-height: 44px;
+      max-height: 160px;
+      outline: none;
     }
+    textarea#input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+    .go {
+      border: 0;
+      background: var(--accent);
+      color: var(--accent-ink);
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 10px;
+    }
+    .go:hover:not(:disabled) { filter: brightness(1.08); }
+    .go:disabled { opacity: 0.45; cursor: not-allowed; }
+    .pills { grid-column: 1 / -1; display: none; flex-wrap: wrap; gap: 6px; }
     .pills.show { display: flex; }
     .pill {
-      font: inherit;
       font-size: 12px;
-      cursor: pointer;
       border: 1px solid var(--line);
-      background: #fff;
-      color: var(--ink);
+      background: var(--panel);
+      color: var(--muted);
       border-radius: 999px;
       padding: 3px 10px;
     }
-    .pill:hover { border-color: var(--go); color: var(--go); }
+    .pill:hover { border-color: var(--accent); color: var(--accent); }
+    .hint-line { grid-column: 1 / -1; font-size: 11px; color: var(--muted); display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+    .hint-line label { display: flex; gap: 5px; align-items: center; cursor: pointer; }
+
     .mention-menu {
       display: none;
       position: absolute;
-      left: 16px;
-      right: 88px;
-      bottom: calc(100% - 4px);
-      background: #fff;
+      left: 16px; right: 96px;
+      bottom: calc(100% - 6px);
+      background: var(--panel);
       border: 1px solid var(--line);
       border-radius: 10px;
-      box-shadow: 0 8px 24px rgba(27, 33, 28, 0.12);
-      overflow: hidden;
+      box-shadow: var(--shadow);
+      overflow-y: auto;
       z-index: 5;
       max-height: 220px;
-      overflow-y: auto;
     }
     .mention-menu.show { display: block; }
     .mention-menu button {
-      display: block;
-      width: 100%;
-      text-align: left;
-      border: 0;
-      background: transparent;
-      font: inherit;
-      padding: 8px 12px;
-      cursor: pointer;
+      display: block; width: 100%;
+      border: 0; background: transparent; color: var(--ink);
+      padding: 8px 12px; text-align: left;
     }
-    .mention-menu button:hover, .mention-menu button.active { background: var(--user); }
-    .mention-menu b { font-weight: 600; }
-    .mention-menu small { color: var(--muted); margin-left: 8px; }
-    .bubble .mention { color: #7a5a1e; font-weight: 600; }
-    textarea {
-      font: inherit;
-      resize: none;
-      min-height: 64px;
-      padding: 10px 12px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: #fff;
-      color: inherit;
+    .mention-menu button .hint { color: var(--muted); font-size: 11px; margin-left: 8px; }
+    .mention-menu button:hover, .mention-menu button.sel { background: var(--accent-soft); }
+
+    /* ---------- logs view ---------- */
+    .logs-toolbar {
+      display: flex; gap: 8px; align-items: center;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+      flex-wrap: wrap;
     }
-    .go { background: var(--go); color: var(--go-ink); padding: 0 18px; }
-    .go:disabled { opacity: 0.55; cursor: wait; }
-    .hint {
-      grid-column: 1 / -1;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      color: var(--muted);
-      font-size: 12px;
+    .seg { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    .seg button { border: 0; background: var(--panel); color: var(--muted); padding: 5px 12px; font-size: 12px; }
+    .seg button.on { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+    #logSearch {
+      font: inherit; font-size: 12px; padding: 5px 10px;
+      border: 1px solid var(--line); border-radius: 8px;
+      background: var(--panel); color: var(--ink); outline: none; width: 200px;
     }
+    #logSearch:focus { border-color: var(--accent); }
+    .logs-toolbar .spacer { flex: 1; }
+    .logs-toolbar .count { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .tool-btn {
+      border: 1px solid var(--line); background: var(--panel); color: var(--muted);
+      border-radius: 8px; padding: 5px 12px; font-size: 12px;
+    }
+    .tool-btn:hover { color: var(--ink); border-color: var(--line-2); }
+    .tool-btn.on { color: var(--accent); border-color: var(--accent); }
+    .logs-body { flex: 1; overflow: auto; padding: 10px 14px 18px; font: 12px/1.65 var(--mono); background: var(--bg); }
+    .lrow { display: grid; grid-template-columns: 78px 46px 1fr; gap: 10px; padding: 1px 6px; border-radius: 5px; }
+    .lrow:hover { background: var(--panel); }
+    .lrow .ts { color: var(--muted); }
+    .lrow .lv { font-weight: 700; }
+    .lrow .lv.info { color: var(--accent); }
+    .lrow .lv.log { color: var(--muted); }
+    .lrow .lv.warn { color: var(--warn); }
+    .lrow .lv.error { color: var(--err); }
+    .lrow.warn { background: var(--warn-soft); }
+    .lrow.error { background: var(--err-soft); }
+    .lrow .tx { white-space: pre-wrap; overflow-wrap: anywhere; }
+    .logs-empty { color: var(--muted); text-align: center; padding: 40px 0; font-family: inherit; }
+    .autoscroll-off {
+      position: sticky; bottom: 8px; margin: 8px auto 0; display: block;
+      border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+      border-radius: 999px; padding: 6px 14px; font-size: 12px; box-shadow: var(--shadow);
+    }
+
+    /* ---------- misc ---------- */
     dialog {
       border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 16px;
-      width: min(420px, 92vw);
+      border-radius: 14px;
+      padding: 18px;
+      width: min(430px, 92vw);
       background: var(--panel);
-      color: inherit;
+      color: var(--ink);
+      box-shadow: var(--shadow);
     }
-    dialog::backdrop { background: rgba(27, 33, 28, 0.35); }
+    dialog::backdrop { background: rgba(10, 14, 18, 0.45); }
     dialog h3 { margin: 0 0 12px; font-size: 15px; }
-    dialog label { display: block; font-size: 12px; color: var(--muted); margin: 8px 0 4px; }
+    dialog label { display: block; font-size: 12px; color: var(--muted); margin: 10px 0 4px; }
     dialog input[type="text"] {
       width: 100%;
       font: inherit;
-      padding: 8px 10px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
+      padding: 9px 11px;
+      border: 1px solid var(--line-2);
+      border-radius: 9px;
+      background: var(--bg);
+      color: var(--ink);
+      outline: none;
     }
+    dialog input[type="text"]:focus { border-color: var(--accent); }
     .members { max-height: 180px; overflow: auto; display: grid; gap: 6px; margin: 8px 0 12px; }
     .members label { color: var(--ink); display: flex; gap: 8px; align-items: center; }
-    .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }
-    .err { color: #9b2c2c; font-size: 12px; padding: 0 20px 8px; }
+    .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+    .err-banner {
+      display: none;
+      margin: 8px 16px 0;
+      padding: 8px 12px;
+      border-radius: 9px;
+      background: var(--err-soft);
+      color: var(--err);
+      font-size: 12px;
+      border: 1px solid var(--err);
+    }
+    .err-banner.show { display: block; }
+    @media (max-width: 720px) {
+      body { grid-template-columns: 1fr; }
+      aside { display: none; }
+    }
   </style>
 </head>
 <body>
   <aside>
     <div class="brand">
+      <div class="logo">SB</div>
       <h1>sdk-bots</h1>
-      <p id="status">连接中…</p>
+      <button class="icon-btn" id="themeBtn" title="切换浅色 / 暗黑" aria-label="切换主题">◐</button>
     </div>
+    <div class="conn"><span class="dot" id="connDot"></span><span id="status">连接中…</span></div>
     <div class="roster" id="roster"></div>
     <div class="side-actions">
-      <button class="ghost" id="newBot">新建 bot</button>
-      <button class="ghost" id="newGroup">新建群聊</button>
+      <button class="ghost" id="newBot">＋ 新建 bot</button>
+      <button class="ghost" id="newGroup">＋ 新建群聊</button>
     </div>
   </aside>
+
   <main>
     <header class="chat-head">
       <div>
-        <h2 id="title">选一个 bot 或群</h2>
-        <small id="subtitle">发一条消息试试</small>
+        <h2 id="title">选择会话</h2>
+        <small id="subtitle">从左侧选择一个 bot 或群，或新建一个</small>
+      </div>
+      <div class="tabs" id="tabs">
+        <button data-view="chat" class="active" type="button">聊天</button>
+        <button data-view="logs" type="button">日志</button>
       </div>
     </header>
-    <div class="log" id="log">
-      <div class="empty">左边选一个会话。免费模型大概 10–30 秒回一条。</div>
-    </div>
-    <div class="err" id="err"></div>
-    <form class="composer" id="form">
-      <div class="mention-menu" id="mentionMenu"></div>
-      <textarea id="input" placeholder="说点什么…" disabled></textarea>
-      <button class="go" id="send" disabled>发送</button>
-      <div class="pills" id="pills"></div>
-      <label class="hint">
-        <input type="checkbox" id="nudge" />
-        提醒模型只用 SendMessage 回复（需要工具时请关掉）
-      </label>
-    </form>
+
+    <section class="view active" id="view-chat">
+      <div class="log" id="log">
+        <div class="empty">还没有会话。左侧新建一个 bot 或群聊，免费模型大约 10–30 秒回复。</div>
+      </div>
+      <div class="typing" id="typing"><i></i><i></i><i></i></div>
+      <div class="err-banner" id="err"></div>
+      <form class="composer" id="form">
+        <div class="mention-menu" id="mentionMenu"></div>
+        <textarea id="input" placeholder="说点什么…" rows="1" disabled></textarea>
+        <button class="go" id="send" disabled>发送</button>
+        <div class="pills" id="pills"></div>
+        <div class="hint-line">
+          <label><input type="checkbox" id="nudge" /> 提醒模型只用 SendMessage 回复</label>
+          <span>Enter 发送 · Shift+Enter 换行 · @ 提及</span>
+        </div>
+      </form>
+    </section>
+
+    <section class="view" id="view-logs">
+      <div class="logs-toolbar">
+        <div class="seg" id="lvSeg">
+          <button data-lv="all" class="on" type="button">全部</button>
+          <button data-lv="info" type="button">info</button>
+          <button data-lv="warn" type="button">warn</button>
+          <button data-lv="error" type="button">error</button>
+        </div>
+        <input type="text" id="logSearch" placeholder="过滤文本…" />
+        <button class="tool-btn" id="pauseBtn" type="button">⏸ 暂停滚动</button>
+        <button class="tool-btn" id="clearBtn" type="button">清屏</button>
+        <div class="spacer"></div>
+        <span class="count" id="logCount">0 条</span>
+      </div>
+      <div class="logs-body" id="logsBody">
+        <div class="logs-empty">暂无日志。发起一次对话后，这里会实时滚动显示运行日志。</div>
+      </div>
+    </section>
   </main>
 
   <dialog id="botDlg">
@@ -265,7 +443,7 @@
     <label>简介</label>
     <input id="botDesc" type="text" placeholder="它擅长做什么" />
     <div class="dialog-actions">
-      <button type="button" class="ghost" id="botCancel" style="background:#eee;color:inherit;border-color:var(--line)">取消</button>
+      <button type="button" class="ghost" id="botCancel">取消</button>
       <button type="button" class="go" id="botOk">创建</button>
     </div>
   </dialog>
@@ -277,33 +455,84 @@
     <label>成员</label>
     <div class="members" id="memberList"></div>
     <div class="dialog-actions">
-      <button type="button" class="ghost" id="groupCancel" style="background:#eee;color:inherit;border-color:var(--line)">取消</button>
+      <button type="button" class="ghost" id="groupCancel">取消</button>
       <button type="button" class="go" id="groupOk">创建</button>
     </div>
   </dialog>
 
   <script>
     /*__BOOT__*/
+    "use strict";
     const TOKEN = window.SDK_BOTS_TOKEN || "";
     const $ = (id) => document.getElementById(id);
-    const state = { agents: [], current: null, seen: new Set(), mention: { open: false, items: [], index: 0, start: -1 }, sending: false };
+    const state = {
+      agents: [], current: null, seen: new Set(),
+      mention: { open: false, items: [], index: 0, start: -1 },
+      sending: false, sseConnected: false,
+      logs: { entries: [], paused: false, follow: true, level: "all", search: "" },
+    };
 
-    function currentAgent() {
-      return state.agents.find((a) => a.id === state.current) || null;
+    /* ---------- theme (light / dark) ---------- */
+    const THEME_KEY = "sdkbots-theme";
+    function applyTheme(theme) {
+      document.documentElement.dataset.theme = theme;
+      $("themeBtn").textContent = theme === "dark" ? "☀" : "☾";
+      try { localStorage.setItem(THEME_KEY, theme); } catch {}
+    }
+    (function initTheme() {
+      let saved = null;
+      try { saved = localStorage.getItem(THEME_KEY); } catch {}
+      applyTheme(saved === "dark" || saved === "light"
+        ? saved
+        : (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+    })();
+    $("themeBtn").addEventListener("click", () => {
+      applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+    });
+
+    /* ---------- view tabs ---------- */
+    $("tabs").addEventListener("click", (ev) => {
+      const btn = ev.target.closest("button[data-view]");
+      if (!btn) return;
+      for (const b of $("tabs").querySelectorAll("button")) b.classList.toggle("active", b === btn);
+      $("view-chat").classList.toggle("active", btn.dataset.view === "chat");
+      $("view-logs").classList.toggle("active", btn.dataset.view === "logs");
+      if (btn.dataset.view === "logs") startLogs();
+    });
+
+    /* ---------- api ---------- */
+    function headers(extra = {}) {
+      return { "content-type": "application/json", ...(TOKEN ? { authorization: "Bearer " + TOKEN } : {}), ...extra };
+    }
+    async function api(method, args = {}) {
+      const res = await fetch("/api/" + method, { method: "POST", headers: headers(), body: JSON.stringify(args) });
+      const text = await res.text();
+      let json = null;
+      try { json = text ? JSON.parse(text) : null; } catch { throw new Error(text.slice(0, 200)); }
+      if (!res.ok || (json && json.error)) throw new Error(typeof json?.error === "string" ? json.error : JSON.stringify(json?.error || text).slice(0, 200));
+      return json;
+    }
+    function showError(e) {
+      const el = $("err");
+      if (!e) { el.classList.remove("show"); return; }
+      el.textContent = String(e.message || e);
+      el.classList.add("show");
+      clearTimeout(showError._t);
+      showError._t = setTimeout(() => el.classList.remove("show"), 6000);
     }
 
+    /* ---------- mention helpers ---------- */
+    function currentAgent() { return state.agents.find((a) => a.id === state.current) || null; }
     function currentMembers() {
       const agent = currentAgent();
       if (!agent?.isGroup) return [];
       return (agent.memberIds || []).map((id) => state.agents.find((a) => a.id === id)).filter(Boolean);
     }
-
     function mentionNames() {
       const names = state.agents.map((a) => a.name).filter(Boolean);
       names.push("所有人", "全员", "大家", "everyone", "all");
       return [...new Set(names)].sort((a, b) => b.length - a.length);
     }
-
     function mentionCandidates() {
       const agent = currentAgent();
       if (agent?.isGroup) {
@@ -312,11 +541,26 @@
           { name: "所有人", hint: "全员回复" },
         ];
       }
-      return state.agents
-        .filter((a) => a.id !== state.current && a.name)
-        .map((a) => ({ name: a.name, hint: a.isGroup ? "群" : "bot" }));
+      return state.agents.filter((a) => a.id !== state.current && a.name).map((a) => ({ name: a.name, hint: a.isGroup ? "群" : "bot" }));
     }
-
+    function escapeRegExp(value) {
+      return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+    function fillMentionedText(el, text, names) {
+      if (!names.length) { el.textContent = text; return; }
+      const pattern = new RegExp("([@＠][ \\t]*(?:" + names.map(escapeRegExp).join("|") + "))", "gi");
+      let last = 0, match;
+      while ((match = pattern.exec(text))) {
+        if (match.index > last) el.append(text.slice(last, match.index));
+        const span = document.createElement("span");
+        span.className = "mention";
+        span.textContent = match[0];
+        el.append(span);
+        last = match.index + match[0].length;
+      }
+      if (last < text.length) el.append(text.slice(last));
+      if (last === 0) el.textContent = text;
+    }
     function mentionedAgents(text) {
       const normalized = String(text).replaceAll("＠", "@").toLowerCase();
       const hits = [];
@@ -342,86 +586,46 @@
       }
       return hits;
     }
-
-    function escapeRegExp(value) {
-      return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    }
-
-    function fillMentionedText(el, text, names) {
-      if (!names.length) {
-        el.textContent = text;
-        return;
-      }
-      const pattern = new RegExp("([@＠][ \\t]*(?:" + names.map(escapeRegExp).join("|") + "))", "gi");
-      let last = 0;
-      let match;
-      while ((match = pattern.exec(text))) {
-        if (match.index > last) el.append(text.slice(last, match.index));
-        const span = document.createElement("span");
-        span.className = "mention";
-        span.textContent = match[0];
-        el.append(span);
-        last = match.index + match[0].length;
-      }
-      if (last < text.length) el.append(text.slice(last));
-      if (last === 0) el.textContent = text;
-    }
-
     function mentionQueryAtCaret(text, caret) {
       const before = text.slice(0, caret);
       const at = Math.max(before.lastIndexOf("@"), before.lastIndexOf("＠"));
       if (at < 0) return null;
-      const between = before.slice(at + 1);
-      if (between.length > 24 || !/^[ \t]*[^\s@]*$/.test(between)) return null;
-      return { start: at, query: between.trimStart().toLowerCase() };
+      if (at > 0 && !/[\s（(【\[，。,.!?！？@]/.test(before[at - 1])) return null;
+      const query = before.slice(at + 1).replace(/^\s+/, "");
+      if (/[\n\r]/.test(query)) return null;
+      return { start: at, query: query.toLowerCase() };
     }
-
     function closeMentionMenu() {
-      state.mention = { open: false, items: [], index: 0, start: -1 };
+      state.mention.open = false;
       $("mentionMenu").classList.remove("show");
-      $("mentionMenu").innerHTML = "";
     }
-
     function renderMentionMenu() {
       const box = $("mentionMenu");
-      if (!state.mention.open || state.mention.items.length === 0) {
-        closeMentionMenu();
-        return;
-      }
       box.innerHTML = "";
       state.mention.items.forEach((item, i) => {
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = i === state.mention.index ? "active" : "";
-        btn.innerHTML = "<b></b><small></small>";
-        btn.querySelector("b").textContent = "@" + item.name;
-        btn.querySelector("small").textContent = item.hint || "";
-        btn.addEventListener("mousedown", (ev) => {
-          ev.preventDefault();
-          insertMention(item.name);
-        });
+        if (i === state.mention.index) btn.className = "sel";
+        btn.append(item.name);
+        const hint = document.createElement("span");
+        hint.className = "hint";
+        hint.textContent = item.hint || "";
+        btn.append(hint);
+        btn.addEventListener("mousedown", (ev) => { ev.preventDefault(); insertMention(item.name); });
         box.appendChild(btn);
       });
       box.classList.add("show");
     }
-
     function updateMentionMenu() {
       const input = $("input");
       const found = mentionQueryAtCaret(input.value, input.selectionStart ?? input.value.length);
       const candidates = mentionCandidates();
-      if (!found || candidates.length === 0) {
-        closeMentionMenu();
-        return;
-      }
+      if (!found || candidates.length === 0) { closeMentionMenu(); return; }
       const items = candidates.filter((item) => !found.query || item.name.toLowerCase().includes(found.query));
-      if (items.length === 0) {
-        closeMentionMenu();
-        return;
-      }
+      if (items.length === 0) { closeMentionMenu(); return; }
       state.mention = { open: true, items, index: 0, start: found.start };
       renderMentionMenu();
     }
-
     function insertMention(name) {
       const input = $("input");
       const start = state.mention.start >= 0 ? state.mention.start : input.selectionStart;
@@ -433,32 +637,25 @@
       const pos = before.length + inserted.length;
       input.setSelectionRange(pos, pos);
       closeMentionMenu();
+      autoGrow(input);
       input.focus();
     }
-
     function insertAtCaret(name) {
       const input = $("input");
       const caret = input.selectionStart ?? input.value.length;
       const found = mentionQueryAtCaret(input.value, caret);
-      if (found) {
-        state.mention.start = found.start;
-        insertMention(name);
-        return;
-      }
+      if (found) { state.mention.start = found.start; insertMention(name); return; }
       const pad = caret > 0 && !/\s$/.test(input.value.slice(0, caret)) ? " @" : "@";
       input.setRangeText(pad + name + " ", caret, caret, "end");
       closeMentionMenu();
+      autoGrow(input);
       input.focus();
     }
-
     function renderPills() {
       const box = $("pills");
       const members = currentMembers();
       box.innerHTML = "";
-      if (members.length === 0) {
-        box.classList.remove("show");
-        return;
-      }
+      if (members.length === 0) { box.classList.remove("show"); return; }
       box.classList.add("show");
       for (const member of [...members, { name: "所有人" }]) {
         const btn = document.createElement("button");
@@ -470,71 +667,70 @@
       }
     }
 
-    function headers(extra = {}) {
-      return {
-        "content-type": "application/json",
-        ...(TOKEN ? { authorization: "Bearer " + TOKEN } : {}),
-        ...extra,
-      };
-    }
-
-    async function api(method, args = {}) {
-      const res = await fetch("/api/" + method, {
-        method: "POST",
-        headers: headers(),
-        body: JSON.stringify(args),
-      });
-      const text = await res.text();
-      let json = null;
-      try { json = text ? JSON.parse(text) : null; } catch { throw new Error(text.slice(0, 200)); }
-      if (!res.ok || (json && json.error)) throw new Error(typeof json?.error === "string" ? json.error : JSON.stringify(json?.error || text).slice(0, 200));
-      return json;
-    }
-
-    function showError(e) { $("err").textContent = e ? String(e.message || e) : ""; }
-
+    /* ---------- roster / chat ---------- */
     function entryText(entry) {
       if (!entry) return "";
       if (entry.kind === "send-message") return entry.message?.content || "";
       if (entry.kind === "message") return entry.content || "";
       return "";
     }
-
     function entryRole(entry) {
       if (entry?.kind === "send-message") return "bot";
       if (entry?.role === "user") return "user";
       return "bot";
     }
-
+    function fmtTime(ts) {
+      if (!ts) return "";
+      const d = new Date(ts);
+      return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+    }
     function renderRoster() {
       const box = $("roster");
       box.innerHTML = "";
-      for (const agent of state.agents) {
-        const btn = document.createElement("button");
-        btn.className = "item" + (state.current === agent.id ? " active" : "");
-        btn.innerHTML = `<span class="tag">${agent.isGroup ? "群" : "BOT"}</span><div><b></b><span></span></div>`;
-        btn.querySelector("b").textContent = agent.name || "未命名";
-        btn.querySelector("div span").textContent = agent.description || agent.id.slice(0, 8);
-        btn.addEventListener("click", () => select(agent.id));
-        box.appendChild(btn);
-      }
+      const groups = state.agents.filter((a) => a.isGroup);
+      const bots = state.agents.filter((a) => !a.isGroup);
+      const section = (label, list, glyph) => {
+        if (list.length === 0) return;
+        const head = document.createElement("div");
+        head.className = "section-label";
+        head.textContent = label;
+        box.appendChild(head);
+        for (const agent of list) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "item" + (state.current === agent.id ? " active" : "");
+          const g = document.createElement("div");
+          g.className = "glyph";
+          g.textContent = glyph;
+          const meta = document.createElement("div");
+          meta.className = "meta";
+          const b = document.createElement("b");
+          b.textContent = agent.name || "未命名";
+          const s = document.createElement("span");
+          s.textContent = agent.description || agent.id.slice(0, 8);
+          meta.append(b, s);
+          btn.append(g, meta);
+          btn.addEventListener("click", () => select(agent.id));
+          box.appendChild(btn);
+        }
+      };
+      section("群聊", groups, "群");
+      section("Bots", bots, "B");
     }
-
     function addBubble(entry, agentId) {
       if (!entry?.id || state.seen.has(entry.id)) return;
       const text = entryText(entry).trim();
       if (!text) return;
       const role = entryRole(entry);
       if (role === "user" && !String(entry.id).startsWith("local-")) {
-        const pending = [...$("log").querySelectorAll(".bubble.user[data-pending='1']")]
+        const pending = [...$("log").querySelectorAll(".bubble.user.pending")]
           .find((node) => node.dataset.text === text);
         if (pending) {
           const localId = pending.dataset.entryId;
           if (localId) state.seen.delete(localId);
           state.seen.add(entry.id);
           pending.dataset.entryId = entry.id;
-          pending.dataset.pending = "0";
-          pending.removeAttribute("data-pending");
+          pending.classList.remove("pending");
           return;
         }
       }
@@ -545,28 +741,31 @@
       div.className = "bubble " + role;
       div.dataset.entryId = entry.id;
       div.dataset.text = text;
-      if (String(entry.id).startsWith("local-")) div.dataset.pending = "1";
+      if (String(entry.id).startsWith("local-")) div.classList.add("pending");
       const who = document.createElement("div");
       who.className = "who";
-      who.textContent = role === "user" ? "你" : (entry.author?.name || (agentId && state.agents.find(a => a.id === agentId)?.name) || "bot");
+      who.textContent = role === "user" ? "你" : (entry.author?.name || (agentId && state.agents.find((a) => a.id === agentId)?.name) || "bot");
       const body = document.createElement("div");
+      body.className = "body";
       fillMentionedText(body, text, mentionNames());
-      div.append(who, body);
+      const time = document.createElement("div");
+      time.className = "time";
+      time.textContent = fmtTime(entry.timestamp ?? entry.ts ?? Date.now());
+      div.append(who, body, time);
       $("log").appendChild(div);
       $("log").scrollTop = $("log").scrollHeight;
+      setTyping(false);
     }
-
+    function setTyping(on) {
+      $("typing").classList.toggle("show", !!on && !!state.current);
+    }
     async function select(id) {
       state.current = id;
       state.seen = new Set();
       const agent = state.agents.find((a) => a.id === id);
       $("title").textContent = agent?.name || "会话";
-      $("subtitle").textContent = agent?.isGroup
-        ? ("群聊 · 输入 @ 点名成员，或点下面的名字")
-        : "单 bot";
-      $("input").placeholder = agent?.isGroup
-        ? "@研究员 问一件事，或不加 @ 让全员回"
-        : "说点什么… 输入 @ 可切到另一个 bot";
+      $("subtitle").textContent = agent?.isGroup ? "群聊 · 输入 @ 点名成员" : "单 bot 对话";
+      $("input").placeholder = agent?.isGroup ? "@研究员 问一件事，或不加 @ 让全员回复" : "说点什么…";
       $("nudge").checked = false;
       $("nudge").closest("label").style.display = agent?.isGroup ? "none" : "";
       $("input").disabled = false;
@@ -575,28 +774,35 @@
       renderRoster();
       renderPills();
       closeMentionMenu();
+      setTyping(false);
       $("log").innerHTML = "";
       try {
         const tail = await api("getAgentTranscriptTail", { id });
         const entries = tail?.entries || [];
         if (entries.length === 0) {
-          $("log").innerHTML = '<div class="empty">还没有消息。下面输入框发一条。</div>';
+          $("log").innerHTML = '<div class="empty">还没有消息。在下面输入框发一条。</div>';
         } else {
           for (const entry of entries) addBubble(entry, id);
         }
       } catch (e) { showError(e); }
     }
-
     async function refresh() {
       const raw = await api("listAgents");
       state.agents = Array.isArray(raw) ? raw : (raw?.agents || []);
       renderRoster();
+      renderPills();
       if (state.current && !state.agents.some((a) => a.id === state.current)) {
         state.current = null;
-        $("title").textContent = "选一个 bot 或群";
+        $("title").textContent = "选择会话";
+        $("subtitle").textContent = "从左侧选择一个 bot 或群";
         $("input").disabled = true;
         $("send").disabled = true;
+        setTyping(false);
       }
+    }
+    function autoGrow(el) {
+      el.style.height = "auto";
+      el.style.height = Math.min(el.scrollHeight, 160) + "px";
     }
 
     $("form").addEventListener("submit", async (ev) => {
@@ -619,12 +825,15 @@
       showError("");
       try {
         $("input").value = "";
+        autoGrow($("input"));
         closeMentionMenu();
         if (targetId !== state.current) await select(targetId);
         addBubble({ id: "local-" + Date.now(), kind: "message", role: "user", content: text }, targetId);
         await api("sendPrompt", { agentId: targetId, prompt });
+        setTyping(true);
       } catch (e) {
         showError(e);
+        setTyping(false);
       } finally {
         state.sending = false;
         $("send").disabled = false;
@@ -632,33 +841,14 @@
       }
     });
 
-    $("input").addEventListener("input", () => updateMentionMenu());
+    $("input").addEventListener("input", () => { autoGrow($("input")); updateMentionMenu(); });
     $("input").addEventListener("click", () => updateMentionMenu());
     $("input").addEventListener("keydown", (ev) => {
       if (state.mention.open) {
-        if (ev.key === "ArrowDown") {
-          ev.preventDefault();
-          state.mention.index = (state.mention.index + 1) % state.mention.items.length;
-          renderMentionMenu();
-          return;
-        }
-        if (ev.key === "ArrowUp") {
-          ev.preventDefault();
-          state.mention.index = (state.mention.index - 1 + state.mention.items.length) % state.mention.items.length;
-          renderMentionMenu();
-          return;
-        }
-        if (ev.key === "Enter" || ev.key === "Tab") {
-          ev.preventDefault();
-          const item = state.mention.items[state.mention.index];
-          if (item) insertMention(item.name);
-          return;
-        }
-        if (ev.key === "Escape") {
-          ev.preventDefault();
-          closeMentionMenu();
-          return;
-        }
+        if (ev.key === "ArrowDown") { ev.preventDefault(); state.mention.index = (state.mention.index + 1) % state.mention.items.length; renderMentionMenu(); return; }
+        if (ev.key === "ArrowUp") { ev.preventDefault(); state.mention.index = (state.mention.index - 1 + state.mention.items.length) % state.mention.items.length; renderMentionMenu(); return; }
+        if (ev.key === "Enter" || ev.key === "Tab") { ev.preventDefault(); const item = state.mention.items[state.mention.index]; if (item) insertMention(item.name); return; }
+        if (ev.key === "Escape") { ev.preventDefault(); closeMentionMenu(); return; }
       }
       if (ev.key === "Enter" && !ev.shiftKey) {
         if (ev.isComposing || ev.keyCode === 229) return;
@@ -681,13 +871,24 @@
         if (id) await select(id);
       } catch (e) { showError(e); }
     });
-
     $("newGroup").addEventListener("click", () => {
       $("groupName").value = "";
       const members = state.agents.filter((a) => !a.isGroup);
-      $("memberList").innerHTML = members.map((a) =>
-        `<label><input type="checkbox" value="${a.id}" /> ${a.name}</label>`
-      ).join("") || "<div class='empty'>先建两个 bot</div>";
+      $("memberList").innerHTML = "";
+      if (members.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "先建两个 bot";
+        $("memberList").append(empty);
+      }
+      for (const a of members) {
+        const label = document.createElement("label");
+        const box = document.createElement("input");
+        box.type = "checkbox";
+        box.value = a.id;
+        label.append(box, document.createTextNode(" " + a.name));
+        $("memberList").append(label);
+      }
       $("groupDlg").showModal();
     });
     $("groupCancel").addEventListener("click", () => $("groupDlg").close());
@@ -705,8 +906,128 @@
       } catch (e) { showError(e); }
     });
 
+    /* ---------- logs view ---------- */
+    let logsStarted = false;
+    function logRow(entry) {
+      const row = document.createElement("div");
+      row.className = "lrow " + entry.level;
+      const ts = document.createElement("span");
+      ts.className = "ts";
+      ts.textContent = new Date(entry.ts).toLocaleTimeString("en-GB", { hour12: false });
+      const lv = document.createElement("span");
+      lv.className = "lv " + entry.level;
+      lv.textContent = entry.level.toUpperCase();
+      const tx = document.createElement("span");
+      tx.className = "tx";
+      tx.textContent = entry.text;
+      row.append(ts, lv, tx);
+      return row;
+    }
+    function logMatches(entry) {
+      if (state.logs.level !== "all" && entry.level !== state.logs.level) return false;
+      if (state.logs.search && !entry.text.toLowerCase().includes(state.logs.search)) return false;
+      return true;
+    }
+    function renderLogs() {
+      const body = $("logsBody");
+      const entries = state.logs.entries.filter(logMatches);
+      body.innerHTML = "";
+      if (entries.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "logs-empty";
+        empty.textContent = state.logs.entries.length === 0 ? "暂无日志。" : "当前过滤条件下没有日志。";
+        body.append(empty);
+      } else {
+        const frag = document.createDocumentFragment();
+        for (const entry of entries.slice(-500)) frag.append(logRow(entry));
+        body.append(frag);
+      }
+      $("logCount").textContent = entries.length + " 条";
+      if (state.logs.follow) body.scrollTop = body.scrollHeight;
+    }
+    function pushLog(entry) {
+      state.logs.entries.push(entry);
+      if (state.logs.entries.length > 2000) state.logs.entries.splice(0, state.logs.entries.length - 2000);
+      if (state.logs.paused) return;
+      if (!logMatches(entry)) return;
+      const body = $("logsBody");
+      if (body.querySelector(".logs-empty")) body.innerHTML = "";
+      body.append(logRow(entry));
+      while (body.children.length > 500) body.firstElementChild.remove();
+      $("logCount").textContent = body.querySelectorAll(".lrow").length + " 条";
+      if (state.logs.follow) body.scrollTop = body.scrollHeight;
+    }
+    function updatePauseBtn() {
+      $("pauseBtn").textContent = state.logs.paused ? "▶ 继续滚动" : "⏸ 暂停滚动";
+      $("pauseBtn").classList.toggle("on", state.logs.paused);
+    }
+    async function startLogs() {
+      if (logsStarted) return;
+      logsStarted = true;
+      try {
+        const url = "/logs?limit=300" + (TOKEN ? "&token=" + encodeURIComponent(TOKEN) : "");
+        const data = await fetch(url).then((r) => r.json());
+        for (const entry of data?.entries || []) state.logs.entries.push(entry);
+        renderLogs();
+      } catch (e) { showError(e); }
+      const streamUrl = "/logs/stream" + (TOKEN ? "?token=" + encodeURIComponent(TOKEN) : "");
+      const es = new EventSource(streamUrl);
+      es.onmessage = (msg) => {
+        try {
+          const ev = JSON.parse(msg.data);
+          if (ev?.channel === "logs" && ev.payload) pushLog(ev.payload);
+        } catch {}
+      };
+    }
+    $("lvSeg").addEventListener("click", (ev) => {
+      const btn = ev.target.closest("button[data-lv]");
+      if (!btn) return;
+      for (const b of $("lvSeg").querySelectorAll("button")) b.classList.toggle("on", b === btn);
+      state.logs.level = btn.dataset.lv;
+      renderLogs();
+    });
+    $("logSearch").addEventListener("input", (ev) => {
+      state.logs.search = ev.target.value.trim().toLowerCase();
+      renderLogs();
+    });
+    $("pauseBtn").addEventListener("click", () => {
+      state.logs.paused = !state.logs.paused;
+      if (!state.logs.paused) { state.logs.follow = true; renderLogs(); }
+      updatePauseBtn();
+    });
+    $("clearBtn").addEventListener("click", () => {
+      state.logs.entries = [];
+      renderLogs();
+    });
+    $("logsBody").addEventListener("scroll", () => {
+      const body = $("logsBody");
+      const atBottom = body.scrollHeight - body.scrollTop - body.clientHeight < 30;
+      state.logs.follow = atBottom && !state.logs.paused;
+      const badge = body.querySelector(".autoscroll-off");
+      if (badge) badge.remove();
+      if (!state.logs.follow && !state.logs.paused) {
+        const btn = document.createElement("button");
+        btn.className = "autoscroll-off";
+        btn.textContent = "↓ 回到最新";
+        btn.addEventListener("click", () => { state.logs.follow = true; body.scrollTop = body.scrollHeight; btn.remove(); });
+        body.append(btn);
+      }
+    });
+
+    /* ---------- events / boot ---------- */
     function connectEvents() {
-      const es = new EventSource("/events");
+      const url = "/events" + (TOKEN ? "?token=" + encodeURIComponent(TOKEN) : "");
+      const es = new EventSource(url);
+      es.onopen = () => {
+        state.sseConnected = true;
+        updateConn("ok");
+        // resync after (re)connect: the SSE gap may have dropped entries
+        if (state.current) api("getAgentTranscriptTail", { id: state.current })
+          .then((tail) => { for (const entry of tail?.entries || []) addBubble(entry, state.current); })
+          .catch(() => {});
+        refresh().catch(() => {});
+      };
+      es.onerror = () => { state.sseConnected = false; updateConn("off"); };
       es.onmessage = (msg) => {
         let ev;
         try { ev = JSON.parse(msg.data); } catch { return; }
@@ -716,21 +1037,35 @@
         const entry = ev.payload?.entry || ev.payload;
         if (agentId && agentId === state.current) addBubble(entry, agentId);
       };
-      es.onerror = () => { /* browser retries */ };
+    }
+    function updateConn(kind) {
+      const dot = $("connDot");
+      dot.classList.toggle("off", kind === "off");
+      dot.classList.toggle("busy", kind === "busy");
+      $("status").textContent = kind === "off" ? "连接断开，重连中…" : kind === "busy" ? "运行中…" : "已连接 · 本机网关";
+    }
+    async function pollHealth() {
+      try {
+        const health = await fetch("/health").then((r) => r.json());
+        if (health?.ok && state.sseConnected) {
+          const busy = health.isBusy === true && health.activeAgentId === state.current;
+          updateConn(busy ? "busy" : "ok");
+          setTyping(busy);
+        }
+      } catch {}
     }
 
     (async () => {
       try {
-        const health = await fetch("/health").then((r) => r.json());
-        $("status").textContent = health?.ok
-          ? ("本机网关 · " + (window.SDK_BOTS_MODEL || "openrouter"))
-          : "网关异常";
+        await fetch("/health").then((r) => r.json());
+        $("status").textContent = "已连接 · 本机网关";
         await refresh();
         connectEvents();
+        setInterval(pollHealth, 3000);
         const prefer = state.agents.find((a) => a.isGroup) || state.agents[0];
         if (prefer) await select(prefer.id);
       } catch (e) {
-        $("status").textContent = "连不上网关";
+        updateConn("off");
         showError(e);
       }
     })();
