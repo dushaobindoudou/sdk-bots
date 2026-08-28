@@ -618,14 +618,26 @@ export class GroupChatGlue {
       if (update.type === "text-delta") {
         if (!update.text) return;
         live.currentText += update.text;
+        // Root fix for the "English narration shows then vanishes on
+        // refresh" report: once ANY SendMessage has happened this turn,
+        // further bare text is receipt-style narration the inference guard
+        // will drop anyway — it must never open a room preview. Verified
+        // against the member session journal: the narration came AFTER the
+        // SendMessage call (receipt of the answer, not the answer).
+        if (live.sealed.length > 0) return;
         if (live.currentId == null) {
           if (isPotentialPassPrefix(live.currentText)) return;
           this.openGroupStreamEntry(member, live);
         } else this.updateGroupStreamEntry(live.currentId, live.currentText);
       } else if (update.type === "send-message" && live.currentId != null) {
-        live.sealed.push(live.currentId);
+        // The real SendMessage entry supersedes this preview: drop it
+        // immediately instead of at turn end, so the room never shows the
+        // same text twice while the turn keeps running.
+        const previewId = live.currentId;
         live.currentId = undefined;
         live.currentText = "";
+        live.sealed.push(previewId);
+        if (removeEntry(previewId)) this.tm.roster.emit({ type: "removed", id: previewId });
       }
     } catch {
       // Streaming preview failures must not fail the member turn.
