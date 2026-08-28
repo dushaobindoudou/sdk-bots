@@ -211,6 +211,9 @@
     }
     .bubble.user { align-self: flex-end; background: var(--user-bubble); border-color: transparent; color: var(--user-ink); }
     .bubble.bot { align-self: flex-start; }
+    .bubble.preview { opacity: 0.62; }
+    .bubble.preview .body { font-style: italic; }
+    .bubble.preview .who::after { content: " · 组织输出中"; font-weight: 400; color: var(--muted); }
     .bubble .who { font-size: 11px; color: var(--muted); margin-bottom: 3px; }
     .bubble.user .who { color: var(--user-ink); opacity: 0.75; }
     .bubble .body { white-space: pre-wrap; overflow-wrap: anywhere; }
@@ -843,7 +846,12 @@ HTTP 示例：
       return /(正在|暂时不可用|尝试用|尝试其他|换个方式|trying to|attempting to|searching for)/i.test(t) && !/[。！？!?]{1}.+[。！？!?]/.test(t.slice(0, -1));
     }
     function addBubble(entry, agentId) {
-      if (!entry?.id || state.seen.has(entry.id)) return;
+      if (!entry?.id || state.seen.has(entry.id)) {
+        // Streaming previews keep growing: refresh the existing bubble's
+        // text instead of dropping the update.
+        if (entry?.id && state.seen.has(entry.id)) updateBubbleText(entry);
+        return;
+      }
       const text = entryText(entry).trim();
       if (!text) return;
       const role = entryRole(entry);
@@ -880,7 +888,7 @@ HTTP 示例：
         return;
       }
       const div = document.createElement("div");
-      div.className = "bubble " + role;
+      div.className = "bubble " + role + (entry.streaming === true ? " preview" : "");
       div.dataset.entryId = entry.id;
       div.dataset.text = text;
       if (String(entry.id).startsWith("local-")) div.classList.add("pending");
@@ -900,6 +908,15 @@ HTTP 示例：
     }
     function setTyping(on) {
       $("typing").classList.toggle("show", !!on && !!state.current);
+    }
+    function updateBubbleText(entry) {
+      const text = entryText(entry).trim();
+      if (!text) return;
+      const node = $("log").querySelector(`[data-entry-id="${CSS.escape(entry.id)}"]`);
+      if (!node) return;
+      const body = node.querySelector(".body") || node.querySelector(".full");
+      if (body) fillMentionedText(body, text, mentionNames());
+      node.classList.toggle("preview", entry.streaming === true);
     }
     async function select(id) {
       state.current = id;
@@ -1233,6 +1250,16 @@ HTTP 示例：
         if (ev?.channel !== "transcript") return;
         const agentId = ev.payload?.agentId;
         const entry = ev.payload?.entry || ev.payload;
+        // Streaming previews that never became a real send are removed
+        // server-side; drop the stale bubble so the live view matches the
+        // persisted transcript (otherwise the text "vanishes on refresh").
+        if (ev.payload?.type === "removed" && ev.payload?.id) {
+          const id = ev.payload.id;
+          const node = $("log").querySelector(`[data-entry-id="${CSS.escape(id)}"]`);
+          if (node) node.remove();
+          state.seen.delete(id);
+          return;
+        }
         if (agentId && agentId === state.current) addBubble(entry, agentId);
       };
     }
