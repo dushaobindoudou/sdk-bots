@@ -833,6 +833,17 @@ export function createHostRunnerComposition<Runner extends ProductionSessionBoun
 ): RecoveredHostRunnerComposition<Runner> {
   const { extensions, ctx } = deps;
   const auth = extensions.api("auth");
+  // Agent tools whose only backend is Cursor's cloud (image generation,
+  // cloud agents) cannot work without Cursor credentials, and freeroute has
+  // no image endpoint either. Registering them would just bait models into
+  // retry loops — leave them out of the toolset instead.
+  const hasCursorBackendCredentials = () => auth?.peekAccessToken() != null;
+  const notedDisabledTools = new Set<string>();
+  const noteToolDisabled = (tool: string, why: string) => {
+    if (notedDisabledTools.has(tool)) return;
+    notedDisabledTools.add(tool);
+    console.info(`[sdk-bots] tool "${tool}" not registered: ${why}`);
+  };
   const localToolPermission = extensions.api("local-tool-permission");
   const localToolPermissionSurfaces = new Map<string, () => void>();
   const ownedRunners = new Set<Runner>();
@@ -1654,13 +1665,15 @@ export function createHostRunnerComposition<Runner extends ProductionSessionBoun
         mcp: mcp.mcp,
         mcpManagement: mcp.management,
         agentState: agentStateOwner,
-        generateImageService: method(
-          attachments,
-          "createGenerateImageService"
-        )?.({
-          persistImage: hooks.persistImage,
-          onRequestId: requestIdForwarder(hooks, "generate-image")
-        }),
+        generateImageService: hasCursorBackendCredentials()
+          ? method(
+              attachments,
+              "createGenerateImageService"
+            )?.({
+              persistImage: hooks.persistImage,
+              onRequestId: requestIdForwarder(hooks, "generate-image")
+            })
+          : (noteToolDisabled("GenerateImage", "Cursor image backend requires credentials; no local image backend is available"), undefined),
         generateImageResourceAccessor: method(
           attachments,
           "createGenerateImageResourceAccessor"
@@ -1706,6 +1719,10 @@ export function createHostRunnerComposition<Runner extends ProductionSessionBoun
           || !(launchedIds instanceof Set)
           || uploadFile === undefined
         ) return undefined;
+        if (!hasCursorBackendCredentials()) {
+          noteToolDisabled("CloudAgent", "cloud agents run on Cursor's remote substrate and need its credentials");
+          return undefined;
+        }
         const reviewAction: NonNullable<CloudAgentToolDeps["reviewAction"]> | undefined =
           productionContext === undefined || autoReviewGate === undefined
             ? undefined
