@@ -1,6 +1,6 @@
 {
   "name": "multibot-sdk",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Headless multi-bot host: local HTTP gateway, group chat, third-party LLMs, directory-scoped tools.",
   "license": "UNLICENSED",
   "author": "dushaobindoudou",
