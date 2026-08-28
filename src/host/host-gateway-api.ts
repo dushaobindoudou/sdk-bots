@@ -306,7 +306,7 @@ export function createHostGatewayApi(
       await method(sharing, "noteAgentDeleted")(args.id);
       const result = await method(manager, "deleteAgent")(args.id);
       method(deps.extensions.api("session"), "forgetHandoff")(args.id);
-      await method(automations, "deleteAgentSchedules")(args.id).catch(
+      await Promise.resolve(method(automations, "deleteAgentSchedules")(args.id)).catch(
         () => undefined
       );
       await deps.releaseAgentBox(args.id);
@@ -324,7 +324,7 @@ export function createHostGatewayApi(
       const result = await method(manager, "deleteAgents")(args.ids);
       for (const id of args.ids) {
         method(deps.extensions.api("session"), "forgetHandoff")(id);
-        await method(automations, "deleteAgentSchedules")(id).catch(
+        await Promise.resolve(method(automations, "deleteAgentSchedules")(id)).catch(
           () => undefined
         );
         await deps.releaseAgentBox(id);
@@ -656,6 +656,41 @@ export function createHostGatewayApi(
       };
     },
     completeMcpOAuth: async () => undefined,
+    // Local MCP server management — the marketplace-free path: any stdio or
+    // HTTP MCP server registered here becomes tools for every bot.
+    listMcpServers: async () => {
+      const servers = await method(
+        deps.extensions.api("mcp").management,
+        "listInstalled"
+      )();
+      return { servers };
+    },
+    addMcpServer: async ({ name, configJson }: any) => {
+      if (typeof name !== "string" || name.trim().length === 0) {
+        throw new Error("addMcpServer requires a non-empty 'name'");
+      }
+      if (typeof configJson !== "string" || configJson.trim().length === 0) {
+        throw new Error("addMcpServer requires 'configJson' (stdio command or URL config)");
+      }
+      const parsed: unknown = JSON.parse(configJson);
+      if (parsed == null || typeof parsed !== "object" || Array.isArray(parsed)) {
+        throw new Error("'configJson' must decode to a JSON object");
+      }
+      const servers = await method(
+        deps.extensions.api("mcp").management,
+        "add"
+      )({ name: name.trim(), configJson });
+      return { servers };
+    },
+    removeMcpServer: async ({ serverId }: any) => {
+      if (typeof serverId !== "string" || serverId.length === 0) {
+        throw new Error("removeMcpServer requires 'serverId'");
+      }
+      return await method(
+        deps.extensions.api("mcp").management,
+        "removeServer"
+      )(serverId);
+    },
     requestWebAuthnCeremony: (args: any) =>
       method(deps.extensions.api("webauthn-proxy"), "requestCeremony")(args),
     setBoxSecrets: ({ secrets }: any) =>

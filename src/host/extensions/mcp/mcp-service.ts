@@ -23,6 +23,10 @@ import {
   isEffectivePluginInstalled,
   uninstallClearedInstallRecord,
 } from "../../../shared/mcp.js";
+import { join } from "node:path";
+import { getSandRootDir } from "../../../shared/sand-paths.js";
+import { createLocalMcpRegistry, parseLocalMcpServerConfig } from "./local-mcp-registry.js";
+import { createInProcessMcpRuntime, createInProcessBoxMcpExec } from "./local-mcp-client.js";
 import type { CapableBox } from "../../box/box-capabilities.js";
 import { createSandMcpStateExecutor } from "../../ports/mcp-state-executor.js";
 import { createBoxSandMcpExec } from "./box-mcp-exec.js";
@@ -92,6 +96,9 @@ export function createHostMcp(deps: CreateHostMcpOptions): McpHostPort {
   const log = deps.log ?? ((message: string) => console.log(`[sand:mcp] ${message}`));
   const manager = new SandMcpManager({
     includeBuiltins: false,
+    // The desktop bundle injected a schema parser here; locally a shape
+    // check (command for stdio / url for http) is the whole contract.
+    parseServerConfig: parseLocalMcpServerConfig,
     accountConfigProvider: deps.accountConfigProvider,
     accountDisplayConfigProvider: deps.accountDisplayConfigProvider,
     accountServersProvider: deps.accountServersProvider,
@@ -163,6 +170,7 @@ export interface McpHostServiceDeps {
   auth: {
     getAccessToken(args: { backendUrl: string }): Promise<string>;
     getMachineId(): Promise<string>;
+    peekAccessToken?(): string | null;
   };
   foreverBox: { readonly box: CapableBox };
   settings: unknown;
@@ -179,6 +187,13 @@ export class McpHostService {
   readonly hostMcp: McpHostPort;
   readonly api;
   constructor(readonly deps: McpHostServiceDeps) {
+    // Local mode (no Cursor credentials): user-added MCP servers live in a
+    // local JSON registry instead of the Cursor account, and the config
+    // parser is local too (the desktop bundle used to inject one).
+    const localRegistry = deps.auth.peekAccessToken?.() == null
+      ? createLocalMcpRegistry({ registryPath: join(getSandRootDir(), "mcp-servers.json"), log: deps.log })
+      : null;
+    if (localRegistry != null) deps.log("[mcp] local mode (no Cursor credentials): servers live in ~/.sdk-bots/mcp-servers.json; plugin marketplace unavailable");
     const accountMcpDeps: AccountMcpDependencies = {
       getAccessToken: (options) => deps.auth.getAccessToken({ backendUrl: options?.backendUrl ?? getSandInferenceBackendUrl() }),
       getMachineId: deps.auth.getMachineId,
@@ -188,14 +203,19 @@ export class McpHostService {
         getMachineId: credentials.getMachineId,
       }) as unknown as AccountMcpClient,
     };
-    const backendMcpExec = createDashboardSandBackendMcpExec({
-      getAccessToken: accountMcpDeps.getAccessToken,
-      getMachineId: accountMcpDeps.getMachineId,
-      createClient: (credentials) => createSandCursorBackendClient(DashboardService, {
-        getAccessToken: (options) => credentials.getAccessToken({ backendUrl: options.backendUrl }),
-        getMachineId: credentials.getMachineId,
-      }) as unknown as DashboardMcpExecClient,
-    });
+    const localMcpRuntime = localRegistry != null
+      ? createInProcessMcpRuntime({ getServers: localRegistry.listServers, log: deps.log })
+      : null;
+    const backendMcpExec = localRegistry != null
+      ? localMcpRuntime
+      : createDashboardSandBackendMcpExec({
+        getAccessToken: accountMcpDeps.getAccessToken,
+        getMachineId: accountMcpDeps.getMachineId,
+        createClient: (credentials) => createSandCursorBackendClient(DashboardService, {
+          getAccessToken: (options) => credentials.getAccessToken({ backendUrl: options.backendUrl }),
+          getMachineId: credentials.getMachineId,
+        }) as unknown as DashboardMcpExecClient,
+      });
     this.hostMcp = createHostMcp({
       log: deps.log,
       onServerAuthenticated: (completion) => this.emitAuthCompletion(completion),
@@ -203,11 +223,13 @@ export class McpHostService {
       ...(deps.pluginSkills == null ? {} : { pluginSkills: deps.pluginSkills }),
       getAccessToken: async () => { try { const token = await deps.auth.getAccessToken({ backendUrl: getSandInferenceBackendUrl() }); return token.length > 0 ? token : null; } catch { return null; } },
       getMachineId: deps.auth.getMachineId,
-      accountServersProvider: () => fetchAccountMcpServers(accountMcpDeps),
-      accountMcpWriter: createAccountMcpWriter(accountMcpDeps),
+      accountServersProvider: localRegistry != null ? localRegistry.serversProvider : () => fetchAccountMcpServers(accountMcpDeps),
+      accountMcpWriter: localRegistry != null ? localRegistry.writer : createAccountMcpWriter(accountMcpDeps),
       effectivePluginsProvider: () => fetchEffectiveUserPlugins(accountMcpDeps),
       backendMcpExec,
-      boxMcpExec: createBoxSandMcpExec(deps.foreverBox.box),
+      boxMcpExec: localRegistry != null && localMcpRuntime != null
+        ? createInProcessBoxMcpExec(localMcpRuntime, () => JSON.stringify(localRegistry.listServers()), deps.log)
+        : createBoxSandMcpExec(deps.foreverBox.box),
       settingsStore: deps.settings,
       ...(deps.onDiscoveryFailed === undefined ? {} : { onDiscoveryFailed: deps.onDiscoveryFailed }),
       ...(deps.onConnectorAuth === undefined ? {} : { onConnectorAuth: deps.onConnectorAuth }),

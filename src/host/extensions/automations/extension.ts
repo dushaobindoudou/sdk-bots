@@ -1,5 +1,5 @@
 import { join } from "node:path";
-import { createRealPollingPolicy } from "../../../shared/scheduling.js";
+import { createRealPollingPolicy, realClock } from "../../../shared/scheduling.js";
 import { defineHostExtension } from "../../../shared/host-extensions.js";
 import { getConfiguredBackendUrl } from "../../../shared/node/cursor-token.js";
 import { AutomationsService } from "../../../proto/generated/aiserver/v1/automations_connect.js";
@@ -7,14 +7,17 @@ import { createSandCursorBackendClient } from "../../../shared/node/cursor-backe
 import { inspectAgentAutomationDefinitions } from "../../automations/automation-store.js";
 import { getSandAgentsRootDir } from "../../storage/agent-paths.js";
 import { HostExtensions } from "../extension-ids.generated.js";
+import { LocalCronScheduler } from "./local-cron-scheduler.js";
 import { createBackendRelaySources } from "./backend-relay-source.js";
 import { ListenerConnectWatcher } from "./listener-connect-watcher.js";
 import { createListenerIntegrationReads } from "./listener-integrations.js";
 import { SandAutomationCloudSync, type CloudSyncClient, type ScheduledCloudAutomation } from "./sand-automation-cloud-sync.js";
 import { SandAutomationFireConsumer } from "./sand-automation-fire-consumer.js";
 import { SandTriggerHub } from "./sand-trigger-hub.js";
+import { LISTENER_INTEGRATION_PLATFORMS, triggerListeners } from "../../../shared/automations.js";
+import { getSandRootDir } from "../../../shared/sand-paths.js";
 
-export const HUB_RECONCILE_INTERVAL_MS = 15_000, RELAY_POLL_INTERVAL_MS = 4_000, CONNECT_WATCH_POLL_INTERVAL_MS = 5_000;
+export const HUB_RECONCILE_INTERVAL_MS = 15_000, RELAY_POLL_INTERVAL_MS = 4_000, CONNECT_WATCH_POLL_INTERVAL_MS = 5_000, LOCAL_CRON_TICK_MS = 30_000;
 export const SAND_BOX_BOOT_STARTED_AT_MS_ENV = "SAND_BOX_BOOT_STARTED_AT_MS";
 export function getBoxUptimeMs(): number | undefined { const raw = process.env[SAND_BOX_BOOT_STARTED_AT_MS_ENV]?.trim(); if (!raw) return undefined; const started = Number(raw); return Number.isFinite(started) && started > 0 ? Math.max(0, Date.now() - started) : undefined; }
 export function reconcileWhenAuthenticated(args: { auth: { peekAccessToken(): string | null; subscribeToRenewal(listener: () => void): () => void }; reconcile(): void }): () => void { let done = false; const once = () => { if (done || args.auth.peekAccessToken() == null) return; done = true; args.reconcile(); }; const off = args.auth.subscribeToRenewal(once); once(); return off; }
@@ -47,6 +50,38 @@ export const automationsExtension = defineHostExtension({
       "turn-execution": { isRunReady(): boolean };
       "notify-bus": { isConnected(): boolean; isSafetyPollEnabled(): boolean; onNotify(topic: string, listener: () => void): () => void };
     };
+    // Headless (no Cursor credentials): the cloud scheduler relay is
+    // unreachable, so cron routines run on a local timer instead. Slack and
+    // GitHub listeners have no local connector and report disconnected.
+    if (deps.auth.peekAccessToken() == null) {
+      const scheduler = new LocalCronScheduler({
+        clock: realClock,
+        tickIntervalMs: LOCAL_CRON_TICK_MS,
+        statePath: join(getSandRootDir(), "local-cron-state.json"),
+        listAutomations: () => deps.transcript.listAllAutomationDefinitions() as unknown as Promise<import("./local-cron-scheduler.js").LocalCronSchedulerAutomation[]>,
+        fire: (args) => deps.transcript.runServerScheduledAutomation(args as Parameters<typeof deps.transcript.runServerScheduledAutomation>[0]),
+        isReady: () => deps["turn-execution"].isRunReady(),
+        getTimeZone: () => deps.settings.getUserTimeZone(),
+        log: (message) => host.log(message),
+      });
+      const offConfigChanged = host.events.on("transcript.automation-config-changed", () => scheduler.requestReconcile());
+      scheduler.start();
+      host.log(`[automations] local mode (no Cursor credentials): cron routines fire locally every ${LOCAL_CRON_TICK_MS / 1000}s; slack/github listeners unavailable`);
+      context.onStop(() => { offConfigChanged(); scheduler.stop(); });
+      const countListeners = async (platform: string) => (await deps.transcript.listAllAutomationDefinitions())
+        .filter(({ automation }) => automation.isEnabled && triggerListeners(automation.trigger).some((listener) => listener.type === platform)).length;
+      return {
+        sourceStatuses: () => new Map<string, never>(),
+        suspendWakes: async () => scheduler.stop(),
+        resumeWakes: () => scheduler.start(),
+        deleteAgentSchedules: (agentId: string) => scheduler.forgetAgent(agentId),
+        reconcileNow: () => scheduler.requestReconcile(),
+        getListenerIntegrations: async () => ({ integrations: await Promise.all((LISTENER_INTEGRATION_PLATFORMS as readonly string[]).map(async (platform) => ({ platform, isConnected: false, state: "idle", neededByCount: await countListeners(platform) }))) }),
+        getListenerConnectUrl: async (_platform: "slack" | "github"): Promise<string | null> => null,
+        isListenerPlatformConnected: async (_platform: "slack" | "github"): Promise<boolean> => false,
+        getAgentChannels: async (agentId: string) => ({ manifests: [], connections: (await deps.transcript.getAgentChannels(agentId)).filter(() => false) }),
+      };
+    }
     const routineSyncFailureTrayIds = new Map<string, string>();
     let notifySchedulingAuthorityChanged = () => {};
     const cloudSyncOptions: ConstructorParameters<typeof SandAutomationCloudSync>[0] & {

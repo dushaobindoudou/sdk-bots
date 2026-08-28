@@ -328,6 +328,17 @@
     .tool-btn:hover { color: var(--ink); border-color: var(--line-2); }
     .tool-btn.on { color: var(--accent); border-color: var(--accent); }
     .logs-body { flex: 1; overflow: auto; padding: 10px 14px 18px; font: 12px/1.65 var(--mono); background: var(--bg); }
+    .settings-body { flex: 1; overflow: auto; padding: 18px 22px 40px; max-width: 760px; width: 100%; margin: 0 auto; }
+    .settings-body h3 { margin: 4px 0 6px; }
+    .settings-body h4 { margin: 18px 0 4px; }
+    .settings-hint { color: var(--muted); font-size: 12.5px; margin: 0 0 12px; }
+    .mcp-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+    .mcp-row { display: flex; align-items: center; gap: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 9px; padding: 8px 12px; }
+    .mcp-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .mcp-meta { color: var(--muted); font-size: 12px; font-family: var(--mono); }
+    .mcp-add { display: flex; flex-direction: column; gap: 6px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 11px; padding: 14px; }
+    .mcp-add label { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .mcp-add textarea { width: 100%; box-sizing: border-box; resize: vertical; }
     .lrow { display: grid; grid-template-columns: 78px 46px 1fr; gap: 10px; padding: 1px 6px; border-radius: 5px; }
     .lrow:hover { background: var(--panel); }
     .lrow .ts { color: var(--muted); }
@@ -417,6 +428,7 @@
       <div class="tabs" id="tabs">
         <button data-view="chat" class="active" type="button">聊天</button>
         <button data-view="logs" type="button">日志</button>
+        <button data-view="settings" type="button">设置</button>
       </div>
     </header>
 
@@ -454,6 +466,31 @@
       </div>
       <div class="logs-body" id="logsBody">
         <div class="logs-empty">暂无日志。发起一次对话后，这里会实时滚动显示运行日志。</div>
+      </div>
+    </section>
+
+    <section class="view" id="view-settings">
+      <div class="settings-body">
+        <h3>MCP 服务器</h3>
+        <p class="settings-hint">在这里登记本地 MCP 服务器（stdio 命令或 HTTP URL），登记后所有 bot 都能使用它提供的工具，无需任何外部市场。</p>
+        <div id="mcpList" class="mcp-list"><div class="logs-empty">加载中…</div></div>
+        <form class="mcp-add" id="mcpForm">
+          <h4>添加服务器</h4>
+          <label>名称</label>
+          <input id="mcpName" type="text" placeholder="比如 filesystem" autocomplete="off" />
+          <label>配置 JSON</label>
+          <textarea id="mcpConfig" rows="5" spellcheck="false" placeholder='stdio 示例：
+{
+  "command": "npx",
+  "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/you/Documents"]
+}
+
+HTTP 示例：
+{ "url": "http://127.0.0.1:8080/mcp" }'></textarea>
+          <div class="dialog-actions">
+            <button type="submit" class="go" id="mcpAdd">添加</button>
+          </div>
+        </form>
       </div>
     </section>
   </main>
@@ -530,7 +567,52 @@
       for (const b of $("tabs").querySelectorAll("button")) b.classList.toggle("active", b === btn);
       $("view-chat").classList.toggle("active", btn.dataset.view === "chat");
       $("view-logs").classList.toggle("active", btn.dataset.view === "logs");
+      $("view-settings").classList.toggle("active", btn.dataset.view === "settings");
       if (btn.dataset.view === "logs") startLogs();
+      if (btn.dataset.view === "settings") loadMcpServers();
+    });
+
+    /* ---------- settings: MCP servers ---------- */
+    function esc(value) {
+      return String(value).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+    }
+    async function loadMcpServers() {
+      const box = $("mcpList");
+      try {
+        const { servers } = await api("listMcpServers");
+        if (!servers || !servers.length) {
+          box.innerHTML = '<div class="logs-empty">还没有登记任何 MCP 服务器。用下面的表单添加第一个。</div>';
+          return;
+        }
+        box.innerHTML = servers.map((s) => (
+          '<div class="mcp-row">' +
+            '<div class="mcp-info"><b>' + esc(s.name) + '</b>' +
+              '<span class="mcp-meta">' + esc(s.transport || "?") + " · " + esc(s.status || "?") +
+              (s.toolCount != null ? " · " + s.toolCount + " 个工具" : "") + "</span></div>" +
+            '<button type="button" class="ghost" data-mcp-remove="' + esc(s.id) + '">移除</button>' +
+          "</div>"
+        )).join("");
+        for (const btn of box.querySelectorAll("button[data-mcp-remove]")) {
+          btn.addEventListener("click", async () => {
+            try { await api("removeMcpServer", { serverId: btn.dataset.mcpRemove }); loadMcpServers(); }
+            catch (e) { showError(e); }
+          });
+        }
+      } catch (e) {
+        box.innerHTML = '<div class="logs-empty">读取失败：' + esc(String(e.message || e)) + "</div>";
+      }
+    }
+    $("mcpForm").addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      const name = $("mcpName").value.trim(), configJson = $("mcpConfig").value.trim();
+      if (!name || !configJson) { showError(new Error("名称和配置 JSON 都要填")); return; }
+      try {
+        JSON.parse(configJson);
+        await api("addMcpServer", { name, configJson });
+        $("mcpName").value = ""; $("mcpConfig").value = "";
+        showError(null);
+        loadMcpServers();
+      } catch (e) { showError(e); }
     });
 
     /* ---------- api ---------- */
