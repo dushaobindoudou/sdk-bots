@@ -22,6 +22,9 @@ interface JsonRpcPending { resolve(value: unknown): void; reject(error: Error): 
 interface McpSession {
   listTools(): Promise<Array<{ name: string; description: string | undefined; inputSchema: unknown | undefined }>>;
   callTool(name: string, args: Record<string, unknown>): Promise<{ content?: Array<{ type?: string; text?: string }>; isError?: boolean }>;
+  /** false once the underlying transport is gone (child exited) — reconnect. */
+  isAlive(): boolean;
+  /** Tears the transport down (kills the child). Safe to call repeatedly. */
   dispose(): void;
 }
 
@@ -35,6 +38,7 @@ function connectStdio(config: StdioServerConfig, log: (message: string) => void)
   let nextId = 1;
   const pending = new Map<number, JsonRpcPending>();
   let buffer = "";
+  let dead = false;
   let child: ChildProcessWithoutNullStreams;
   try {
     child = spawn(config.command, config.args ?? [], {
@@ -45,6 +49,7 @@ function connectStdio(config: StdioServerConfig, log: (message: string) => void)
   } catch (error) {
     throw makeError(`spawn "${config.command}" failed`, error);
   }
+  child.once("exit", () => { dead = true; });
   const failAll = (reason: string) => { for (const entry of pending.values()) { clearTimeout(entry.timer); entry.reject(new Error(reason)); } pending.clear(); };
   child.stdout.setEncoding("utf8");
   child.stdout.on("data", (chunk: string) => {
@@ -67,11 +72,12 @@ function connectStdio(config: StdioServerConfig, log: (message: string) => void)
   });
   child.stderr.setEncoding("utf8");
   child.stderr.on("data", (chunk: string) => { const text = chunk.trim(); if (text.length > 0) log(`[mcp:stdio] ${text.slice(0, 200)}`); });
-  child.on("exit", () => failAll("MCP server process exited"));
-  child.on("error", (error) => failAll(`MCP server process error: ${error.message}`));
+  child.on("exit", () => { dead = true; failAll("MCP server process exited"); });
+  child.on("error", (error) => { dead = true; failAll(`MCP server process error: ${error.message}`); });
 
   const request = <T>(method: string, params: unknown, timeoutMs = REQUEST_TIMEOUT_MS): Promise<T> =>
     new Promise<T>((resolve, reject) => {
+      if (dead) { reject(new Error("MCP server process is not running")); return; }
       const id = nextId++;
       const timer = setTimeout(() => { pending.delete(id); reject(new Error(`${method} timed out after ${timeoutMs / 1000}s`)); }, timeoutMs);
       pending.set(id, { resolve: resolve as (value: unknown) => void, reject, timer });
@@ -80,7 +86,16 @@ function connectStdio(config: StdioServerConfig, log: (message: string) => void)
     });
   const notify = (method: string) => { try { child.stdin.write(`${JSON.stringify({ jsonrpc: "2.0", method })}\n`); } catch { /* exiting */ } };
 
-  return makeProtocolSession(request, notify);
+  return makeProtocolSession(request, notify, {
+    isAlive: () => !dead,
+    dispose: () => {
+      dead = true;
+      failAll("MCP server disposed");
+      // Stdio MCP servers exit when stdin closes; SIGTERM covers stubborn ones.
+      try { child.stdin.end(); } catch { /* already closed */ }
+      child.kill("SIGTERM");
+    },
+  });
 }
 
 /** Streamable HTTP transport: one JSON-RPC message per POST. */
@@ -125,13 +140,18 @@ function connectHttp(url: string, headers: Record<string, string>, log: (message
     return message.result as T;
   };
   void log;
-  return makeProtocolSession(request, (method) => { void post({ jsonrpc: "2.0", method }); });
+  return makeProtocolSession(request, (method) => { void post({ jsonrpc: "2.0", method }); }, {
+    // HTTP requests are stateless per call — there is no live connection.
+    isAlive: () => true,
+    dispose: () => { /* nothing to tear down */ },
+  });
 }
 
 /** Shared initialize → tools handshake on top of either transport. */
 function makeProtocolSession(
   request: <T>(method: string, params: unknown, timeoutMs?: number) => Promise<T>,
   notify: (method: string) => void,
+  transport: { isAlive(): boolean; dispose(): void },
 ): McpSession {
   let ready: Promise<void> | null = null;
   const ensureReady = () => ready ??= (async () => {
@@ -153,7 +173,8 @@ function makeProtocolSession(
       await ensureReady();
       return await request<{ content?: Array<{ type?: string; text?: string }>; isError?: boolean }>("tools/call", { name, arguments: args });
     },
-    dispose: () => { ready = null; },
+    isAlive: () => transport.isAlive() && ready !== null,
+    dispose: () => { ready = null; transport.dispose(); },
   };
 }
 
@@ -169,6 +190,8 @@ interface ManagedServer {
 export interface LocalMcpRuntime {
   listTools(serverIdentifiers: readonly string[]): Promise<unknown[]>;
   executeTool(args: { serverIdentifier: string; toolName: string; args: unknown; toolCallId: string; agentId?: string }): Promise<McpResult>;
+  /** Kills every spawned stdio child (host shutdown, tests). */
+  dispose(): void;
 }
 
 export function createInProcessMcpRuntime(options: {
@@ -178,16 +201,36 @@ export function createInProcessMcpRuntime(options: {
   const { getServers, log } = options;
   const managed = new Map<string, ManagedServer>();
 
-  const connect = async (server: ManagedServer): Promise<void> => {
-    if (server.session != null) return;
+  const connectOnce = async (server: ManagedServer): Promise<void> => {
     const config = server.config as StdioServerConfig & { url?: string; headers?: Record<string, string> };
     const session = config.url != null
       ? connectHttp(config.url, config.headers ?? {}, log)
       : connectStdio(config as McpServerConfig & { command: string }, log);
-    server.session = session;
-    server.tools = await session.listTools();
-    server.status = "connected";
-    delete server.statusDetail;
+    try {
+      const tools = await session.listTools();
+      server.session = session;
+      server.tools = tools;
+      server.status = "connected";
+      delete server.statusDetail;
+    } catch (error) {
+      session.dispose();
+      throw error;
+    }
+  };
+  // Reconnect dead sessions (stdio child exited) and retry transient
+  // failures once in the same cycle — a crashed-and-restarted server must
+  // not stay "unavailable" until the next discovery round.
+  const connect = async (server: ManagedServer): Promise<void> => {
+    if (server.session != null && server.session.isAlive()) return;
+    server.session?.dispose();
+    server.session = null;
+    try {
+      await connectOnce(server);
+    } catch (error) {
+      const firstError = error;
+      await connectOnce(server);
+      log(`[mcp] "${server.name}" connected after one retry (${firstError instanceof Error ? firstError.message : String(firstError)})`);
+    }
   };
 
   const ensureServer = (name: string): ManagedServer | null => {
@@ -211,6 +254,7 @@ export function createInProcessMcpRuntime(options: {
   };
 
   return {
+    dispose: () => { for (const server of managed.values()) server.session?.dispose(); managed.clear(); },
     async listTools(serverIdentifiers) {
       const wanted = serverIdentifiers.length === 0 ? getServers().map((entry) => entry.name) : [...serverIdentifiers];
       const rows: unknown[] = [];
