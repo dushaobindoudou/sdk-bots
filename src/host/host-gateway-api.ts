@@ -3,6 +3,7 @@ import {
   parseCoordinatorAgentThreadRequest,
   parseCoordinatorTranscriptWindowRequest,
 } from "../shared/rpc/coordinator.js";
+import { compileCronMatcher } from "../shared/automation-schedule.js";
 
 export const HOST_CAPABILITIES = [
   "orderedReplicasV1",
@@ -339,6 +340,26 @@ export function createHostGatewayApi(
     duplicateAgent: (args: any) => method(manager, "cloneAgent")(args.id),
     setAgentUnread: (args: any) =>
       method(manager, "setAgentUnread")(args.id, args.isUnread, args.atMs),
+    /**
+     * Stop the turn an agent is currently running, at the user's request.
+     *
+     * Returns `hadActiveRun: false` when nothing was in flight, so a client
+     * can tell "stopped it" from "there was nothing to stop" instead of
+     * assuming the call worked.
+     */
+    interruptAgent: (args: any) => {
+      const id = typeof args?.id === "string" ? args.id : undefined;
+      if (id === undefined || id.length === 0) {
+        throw new Error("interruptAgent requires an agent id");
+      }
+      const reason =
+        typeof args?.reason === "string" && args.reason.length > 0
+          ? args.reason
+          : "Interrupted by the user.";
+      return {
+        hadActiveRun: method(manager, "interruptAgentRun")(id, reason, "user")
+      };
+    },
     setAgentNotificationsEnabled: async () => undefined,
     setAgentNotifyOnUpdates: (args: any) =>
       method(manager, "setAgentNotifyOnUpdates")(args.id, args.isEnabled),
@@ -392,6 +413,16 @@ export function createHostGatewayApi(
       ),
     createAgentAutomation: async (args: any) => {
       markActive("user_action");
+      // Reject invalid schedules at creation: a cron with an out-of-range
+      // field (e.g. hour 44) compiles to no matcher and would otherwise be
+      // accepted silently and never fire.
+      const createTrigger: any = args.spec?.trigger;
+      const members: any[] = createTrigger?.type === "group" ? createTrigger.listeners ?? [] : [createTrigger];
+      for (const member of members) {
+        if (member?.type === "cron" && compileCronMatcher(String(member.schedule ?? "")) == null) {
+          throw new Error(`无效的 cron 表达式 "${member.schedule}"（5 字段：分 时 日 月 周，如 "0 22 * * *" = 每天 22:00；也支持 @hourly/@daily 和 "@every 30m"）`);
+        }
+      }
       const countBefore = (await method(manager, "getAgentAutomations")(
         args.id
       )).length;

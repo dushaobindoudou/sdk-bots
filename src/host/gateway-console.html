@@ -336,6 +336,10 @@
     .settings-body h4 { margin: 18px 0 4px; }
     .settings-hint { color: var(--muted); font-size: 12.5px; margin: 0 0 12px; }
     .mcp-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+    .cron-presets { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 10px; }
+    .cron-presets button { font-size: 11px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; }
+    .cron-presets button:hover { color: var(--ink); border-color: var(--ink); }
+    .automation-actions { display: flex; flex-direction: column; gap: 4px; }
     .mcp-row { display: flex; align-items: center; gap: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 9px; padding: 8px 12px; }
     .mcp-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
     .mcp-meta { color: var(--muted); font-size: 12px; font-family: var(--mono); }
@@ -494,6 +498,28 @@ HTTP 示例：
             <button type="submit" class="go" id="mcpAdd">添加</button>
           </div>
         </form>
+
+        <h3 style="margin-top: 28px;">定时任务</h3>
+        <p class="settings-hint">给当前会话（bot 或群聊）建定时唤醒：到点后宿主自动把提示词发进这个会话跑一轮。群聊里写 "@速报员 …" 即可点名成员。bot 自己承诺的"22:00 我来盯"不会自动发生——用这里的定时任务把它变成真的。</p>
+        <div id="automationList" class="mcp-list"><div class="logs-empty">加载中…</div></div>
+        <form class="mcp-add" id="automationForm">
+          <h4>添加定时任务</h4>
+          <label>名称</label>
+          <input id="automationName" type="text" placeholder="比如 Warsh 讲话窗口" autocomplete="off" />
+          <label>计划（cron 表达式，宿主时区）</label>
+          <input id="automationCron" type="text" placeholder="0 22 * * *" autocomplete="off" />
+          <div class="cron-presets">
+            <button type="button" data-cron="0 22 * * *">每天 22:00</button>
+            <button type="button" data-cron="30 9 * * 1-5">工作日 9:30</button>
+            <button type="button" data-cron="*/30 * * * *">每 30 分钟</button>
+            <button type="button" data-cron="45 21 * * 1-5">工作日 21:45</button>
+          </div>
+          <label>到点发送的提示词</label>
+          <textarea id="automationPrompt" rows="4" spellcheck="false" placeholder='比如：@速报员 Warsh 讲话窗口开始，搜索他今晚的公开讲话，抓 inflation / patience / data-dependent 关键词，给出鸽/中/鹰速判并 SendMessage 发到群里。'></textarea>
+          <div class="dialog-actions">
+            <button type="submit" class="go" id="automationAdd">添加</button>
+          </div>
+        </form>
       </div>
     </section>
   </main>
@@ -572,7 +598,7 @@ HTTP 示例：
       $("view-logs").classList.toggle("active", btn.dataset.view === "logs");
       $("view-settings").classList.toggle("active", btn.dataset.view === "settings");
       if (btn.dataset.view === "logs") startLogs();
-      if (btn.dataset.view === "settings") loadMcpServers();
+      if (btn.dataset.view === "settings") { loadMcpServers(); loadAutomations(); }
     });
 
     /* ---------- settings: MCP servers ---------- */
@@ -615,6 +641,78 @@ HTTP 示例：
         $("mcpName").value = ""; $("mcpConfig").value = "";
         showError(null);
         loadMcpServers();
+      } catch (e) { showError(e); }
+    });
+
+    /* ---------- 定时任务 ---------- */
+    function automationTarget() { return state.current; }
+    async function loadAutomations() {
+      const box = $("automationList");
+      const agentId = automationTarget();
+      if (!agentId) {
+        box.innerHTML = '<div class="logs-empty">先在左侧选中一个 bot 或群聊，再回到这里配置它的定时任务。</div>';
+        return;
+      }
+      try {
+        const list = await api("getAgentAutomations", { id: agentId });
+        const rows = Array.isArray(list) ? list : (list && list.automations) || [];
+        if (!rows.length) {
+          box.innerHTML = '<div class="logs-empty">当前会话还没有定时任务。用下面的表单添加第一个。</div>';
+          return;
+        }
+        box.innerHTML = rows.map((a) => (
+          '<div class="mcp-row">' +
+            '<div class="mcp-info"><b>' + esc(a.name || a.id) + (a.isEnabled === false ? '（已暂停）' : '') + '</b>' +
+              '<span class="mcp-meta">' + esc((a.trigger && a.trigger.schedule) || a.schedule || "?") +
+              (a.nextRunAt ? " · 下次 " + new Date(a.nextRunAt).toLocaleString() : "") + "</span>" +
+              '<span class="mcp-meta">' + esc(String(a.prompt || "").slice(0, 80)) + "</span></div>" +
+            '<div class="automation-actions">' +
+              '<button type="button" class="ghost" data-automation-run="' + esc(a.id) + '">立即执行</button>' +
+              '<button type="button" class="ghost" data-automation-toggle="' + esc(a.id) + '" data-enabled="' + (a.isEnabled !== false) + '">' + (a.isEnabled === false ? "启用" : "暂停") + '</button>' +
+              '<button type="button" class="ghost" data-automation-remove="' + esc(a.id) + '">删除</button>' +
+            "</div>" +
+          "</div>"
+        )).join("");
+        for (const btn of box.querySelectorAll("button[data-automation-run]"))
+          btn.addEventListener("click", async () => {
+            try { await api("runAgentAutomationNow", { id: agentId, automationId: btn.dataset.automationRun }); showError(null); loadAutomations(); }
+            catch (e) { showError(e); }
+          });
+        for (const btn of box.querySelectorAll("button[data-automation-toggle]"))
+          btn.addEventListener("click", async () => {
+            try {
+              await api("setAgentAutomationEnabled", { id: agentId, automationId: btn.dataset.automationToggle, enabled: btn.dataset.enabled !== "true" });
+              loadAutomations();
+            } catch (e) { showError(e); }
+          });
+        for (const btn of box.querySelectorAll("button[data-automation-remove]"))
+          btn.addEventListener("click", async () => {
+            try { await api("deleteAgentAutomation", { id: agentId, automationId: btn.dataset.automationRemove }); loadAutomations(); }
+            catch (e) { showError(e); }
+          });
+      } catch (e) {
+        box.innerHTML = '<div class="logs-empty">读取失败：' + esc(String(e.message || e)) + "</div>";
+      }
+    }
+    for (const preset of document.querySelectorAll(".cron-presets button"))
+      preset.addEventListener("click", () => { $("automationCron").value = preset.dataset.cron; });
+    $("automationForm").addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      const agentId = automationTarget();
+      if (!agentId) { showError(new Error("先在左侧选中一个 bot 或群聊")); return; }
+      const name = $("automationName").value.trim();
+      const schedule = $("automationCron").value.trim();
+      const prompt = $("automationPrompt").value.trim();
+      if (!name || !schedule || !prompt) { showError(new Error("名称、计划和提示词都要填")); return; }
+      if (!/^\S+$/.test(schedule) && !/^(@\w+|CRON_TZ=\S+)\s/.test(schedule) && !/^[@*0-9]/.test(schedule)) {
+        showError(new Error("计划看起来不像 cron 表达式（如 \"0 22 * * *\"）"));
+        return;
+      }
+      try {
+        await api("createAgentAutomation", { id: agentId, spec: { name, prompt, trigger: { type: "cron", schedule }, isEnabled: true } });
+        $("automationName").value = ""; $("automationPrompt").value = "";
+        showError(null);
+        loadAutomations();
       } catch (e) { showError(e); }
     });
 

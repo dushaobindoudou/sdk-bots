@@ -110,3 +110,18 @@ describe("LocalCronScheduler", () => {
     } finally { t.cleanup(); }
   });
 });
+
+describe("cron schedule validity (creation guard)", () => {
+  it("rejects out-of-range cron fields that would never fire", async () => {
+    const { compileCronMatcher } = await import("../../src/shared/automation-schedule.js");
+    // hour 44 is invalid — the reversed-field mistake the gateway now rejects.
+    assert.equal(compileCronMatcher("14 44 * * *"), null);
+    assert.equal(compileCronMatcher("0 25 * * *"), null);
+    assert.notEqual(compileCronMatcher("44 14 * * *"), null); // minute=44 hour=14 → 14:44
+    // Valid forms compile.
+    assert.notEqual(compileCronMatcher("0 22 * * *"), null);
+    assert.notEqual(compileCronMatcher("*/30 9-17 * * 1-5"), null);
+    assert.notEqual(compileCronMatcher("@daily"), null);
+    assert.notEqual(compileCronMatcher("CRON_TZ=Asia/Shanghai 30 9 * * 1-5"), null);
+  });
+});
