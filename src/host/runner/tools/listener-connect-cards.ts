@@ -35,5 +35,5 @@ export async function surfaceListenerConnectCards(
   const names = disconnected
     .map((platform) => dependencies.displayName?.(platform) ?? platform)
     .join(" and ");
-  return `${names} ${disconnected.length === 1 ? "isn't" : "aren't"} connected to the user's Cursor account yet, so this routine won't fire until they connect. The connect card is already in the chat \u2014 say so in your own words, but don't paste a link or send them to settings, and don't ask them to report back: you're resumed automatically once it connects.`;
+  return `${names} ${disconnected.length === 1 ? "isn't" : "aren't"} connected to the user's account yet, so this routine won't fire until they connect. The connect card is already in the chat \u2014 say so in your own words, but don't paste a link or send them to settings, and don't ask them to report back: you're resumed automatically once it connects.`;
 }

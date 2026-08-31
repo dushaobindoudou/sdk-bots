@@ -66,7 +66,7 @@ export const automationsExtension = defineHostExtension({
       });
       const offConfigChanged = host.events.on("transcript.automation-config-changed", () => scheduler.requestReconcile());
       scheduler.start();
-      host.log(`[automations] local mode (no Cursor credentials): cron routines fire locally every ${LOCAL_CRON_TICK_MS / 1000}s; slack/github listeners unavailable`);
+      host.log(`[automations] local mode: cron routines fire locally every ${LOCAL_CRON_TICK_MS / 1000}s; slack/github listeners unavailable`);
       context.onStop(() => { offConfigChanged(); scheduler.stop(); });
       const countListeners = async (platform: string) => (await deps.transcript.listAllAutomationDefinitions())
         .filter(({ automation }) => automation.isEnabled && triggerListeners(automation.trigger).some((listener) => listener.type === platform)).length;

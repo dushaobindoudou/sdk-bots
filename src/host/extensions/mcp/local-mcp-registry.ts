@@ -114,9 +114,9 @@ export function createLocalMcpRegistry(options: { registryPath: string; log?: (m
         }
         write({ version: 1, servers });
       },
-      async installPlugin() { throw new SandMcpConfigError("plugin installs need the Cursor marketplace; not available in local mode"); },
-      async uninstallPlugin() { throw new SandMcpConfigError("plugin uninstalls need the Cursor marketplace; not available in local mode"); },
-      async updatePluginInstall() { throw new SandMcpConfigError("plugin updates need the Cursor marketplace; not available in local mode"); },
+      async installPlugin() { throw new SandMcpConfigError("plugin installs need the plugin marketplace; not available in local mode"); },
+      async uninstallPlugin() { throw new SandMcpConfigError("plugin uninstalls need the plugin marketplace; not available in local mode"); },
+      async updatePluginInstall() { throw new SandMcpConfigError("plugin updates need the plugin marketplace; not available in local mode"); },
     },
     serversProvider: async () => {
       const { servers } = read();

@@ -23,7 +23,7 @@ export function createInferenceProductionExtras(
   const noteLocalMode = (what: string) => {
     if (loggedLocalMode) return;
     loggedLocalMode = true;
-    console.info(`[sdk-bots] web tools in local mode (no Cursor credentials): ${what}`);
+    console.info(`[sdk-bots] web tools in local mode: ${what}`);
   };
   return {
     createPort(onModelExperimentApplied) {

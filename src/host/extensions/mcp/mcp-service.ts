@@ -187,13 +187,13 @@ export class McpHostService {
   readonly hostMcp: McpHostPort;
   readonly api;
   constructor(readonly deps: McpHostServiceDeps) {
-    // Local mode (no Cursor credentials): user-added MCP servers live in a
+    // Local mode: user-added MCP servers live in a
     // local JSON registry instead of the Cursor account, and the config
     // parser is local too (the desktop bundle used to inject one).
     const localRegistry = deps.auth.peekAccessToken?.() == null
       ? createLocalMcpRegistry({ registryPath: join(getSandRootDir(), "mcp-servers.json"), log: deps.log })
       : null;
-    if (localRegistry != null) deps.log("[mcp] local mode (no Cursor credentials): servers live in ~/.sdk-bots/mcp-servers.json; plugin marketplace unavailable");
+    if (localRegistry != null) deps.log("[mcp] local mode: servers live in ~/.sdk-bots/mcp-servers.json; plugin marketplace unavailable");
     const accountMcpDeps: AccountMcpDependencies = {
       getAccessToken: (options) => deps.auth.getAccessToken({ backendUrl: options?.backendUrl ?? getSandInferenceBackendUrl() }),
       getMachineId: deps.auth.getMachineId,

@@ -29,7 +29,7 @@ export function encodeSendMessage(message: EncodableMessage): SendMessageArgs {
     case "text": return text(encodeTextContent({ content: String(message.content ?? ""), ...(Array.isArray(message.images) ? { images: message.images as readonly { url: string; alt?: string }[] } : {}) }));
     case "attachment": return new SendMessageArgs({ message: { case: "attachment", value: new SendMessageAttachment({ url: String(message.url ?? ""), ...(typeof message.alt === "string" ? { alt: message.alt } : {}) }) } });
     case "widget": return text(summarizeWidget(message.widget as { prompt?: unknown; options?: unknown }));
-    case "cursor-agent": { const title = typeof message.title === "string" ? message.title.trim() : ""; const bcId = String(message.bcId ?? ""); return text(title.length > 0 ? `Referenced Cursor cloud agent ${bcId} (${title})` : `Referenced Cursor cloud agent ${bcId}`); }
+    case "cursor-agent": { const title = typeof message.title === "string" ? message.title.trim() : ""; const bcId = String(message.bcId ?? ""); return text(title.length > 0 ? `Referenced cloud agent ${bcId} (${title})` : `Referenced cloud agent ${bcId}`); }
     case "secret-request": return text(summarizeSecretRequest((message.secretRequest ?? message.secret) as { label: string }));
     case "permission-request": return text(summarizePermissionRequest(message.permission as { title: string; reason: string }));
     case "auto-review-approval": { const approval = message.approval as Record<string, unknown>; return text(`Auto-review requested approval for: ${String(approval.summary)}. Status: ${String(approval.status)}.`); }

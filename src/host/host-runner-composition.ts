@@ -1673,7 +1673,7 @@ export function createHostRunnerComposition<Runner extends ProductionSessionBoun
               persistImage: hooks.persistImage,
               onRequestId: requestIdForwarder(hooks, "generate-image")
             })
-          : (noteToolDisabled("GenerateImage", "Cursor image backend requires credentials; no local image backend is available"), undefined),
+          : (noteToolDisabled("GenerateImage", "image generation needs a cloud image backend; none is available in local mode"), undefined),
         generateImageResourceAccessor: method(
           attachments,
           "createGenerateImageResourceAccessor"
@@ -1720,7 +1720,7 @@ export function createHostRunnerComposition<Runner extends ProductionSessionBoun
           || uploadFile === undefined
         ) return undefined;
         if (!hasCursorBackendCredentials()) {
-          noteToolDisabled("CloudAgent", "cloud agents run on Cursor's remote substrate and need its credentials");
+          noteToolDisabled("CloudAgent", "cloud agents need the remote cloud substrate; not available in local mode");
           return undefined;
         }
         const reviewAction: NonNullable<CloudAgentToolDeps["reviewAction"]> | undefined =
