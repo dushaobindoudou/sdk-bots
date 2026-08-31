@@ -61,6 +61,7 @@
     "example:group-chat": "tsx examples/group-chat.mjs",
     "preexample:group-chat": "node scripts/build-host-workers.mjs && node scripts/build-box-exec-daemon.mjs",
     "cleanup:smoke": "tsx scripts/cleanup-smoke-agents.mjs",
+    "bench:routing": "tsx scripts/routing-benchmark.mts",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
