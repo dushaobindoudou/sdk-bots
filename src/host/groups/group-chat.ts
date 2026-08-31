@@ -42,7 +42,40 @@ export function parseGroupMentions(text: string, members: readonly Pick<GroupMem
   }
   return { isEveryone, memberIds };
 }
-export function resolveResponders<T extends Pick<GroupMember, "id" | "name">>(members: readonly T[], history: readonly GroupMessage[]): T[] { let start = 0; for (let index = history.length - 1; index >= 0; index -= 1) if (history[index]?.speaker.kind === "user") { start = index; break; } let everyone = false; const mentioned = new Set<string>(); for (const message of history.slice(start)) { const targets = parseGroupMentions(message.content, members); everyone ||= targets.isEveryone; for (const id of targets.memberIds) mentioned.add(id); } return everyone || mentioned.size === 0 ? [...members] : members.filter((member) => mentioned.has(member.id)); }
+/**
+ * 本轮该由谁应答。
+ *
+ * 委派是这个产品的核心用法之一（统筹型成员给专家派活），所以机器人点名同伴
+ * 依然授予发言权。但两条放大通道必须堵死，否则房间会自我维持：
+ *   - 只有**用户**能寻址全场。机器人说 "@全员" 不得把响应集合扩成所有人
+ *     （真实事故：用户只 @ 了一个人，被点名者回复里带了 @全员，下一轮全员被
+ *     选举进来，答的全是上一个话题，没人回应用户）。
+ *   - 委派只允许**一跳**。被用户直接点名的人可以派活；被派到的人再点名不再
+ *     生效，否则 A→B→C→… 可以无限延续。
+ *
+ * 注意：这里只处理 @ 这一种显式寻址。第三人称指称（"有事找 @X"）、自然语言
+ * 全员（"大家都说说"）、隐式追问（"这个数字对吗？"）需要语义判断，由
+ * docs/group-turn-taking.md 描述的意图+仲裁层处理，不属于本函数。
+ */
+export function resolveResponders<T extends Pick<GroupMember, "id" | "name">>(members: readonly T[], history: readonly GroupMessage[]): T[] {
+  let start = 0;
+  for (let index = history.length - 1; index >= 0; index -= 1) if (history[index]?.speaker.kind === "user") { start = index; break; }
+  let everyone = false;
+  const addressed = new Set<string>();
+  const delegated = new Set<string>();
+  for (const message of history.slice(start)) {
+    const targets = parseGroupMentions(message.content, members);
+    if (message.speaker.kind === "user") {
+      everyone ||= targets.isEveryone;
+      for (const id of targets.memberIds) addressed.add(id);
+      continue;
+    }
+    if (!addressed.has(message.speaker.id)) continue;
+    for (const id of targets.memberIds) delegated.add(id);
+  }
+  const elected = new Set([...addressed, ...delegated]);
+  return everyone || elected.size === 0 ? [...members] : members.filter((member) => elected.has(member.id));
+}
 export function isPassContent(content: string): boolean { const trimmed = content.trim(); return !trimmed || /^\(?\s*pass\s*\)?\.?$/i.test(trimmed); } export function isPotentialPassPrefix(text: string): boolean { const trimmed = text.trim(); return !trimmed || isPassContent(trimmed) || /^\(?\s*(?:p(?:a(?:s(?:s\s*\)?\.?)?)?)?)?$/i.test(trimmed); }
 /** Models sometimes glue commentary after the pass token ("(pass)The answer has already been delivered…"). Strip only a leading PARENTHESIZED token — a bare leading "Pass …" in a real English answer must survive untouched. */
 export function stripGroupPassToken(content: string): string { return content.trim().replace(/^\(\s*pass\s*\)[\s.。:：,，;；\-—–]*/i, "").trim(); }
