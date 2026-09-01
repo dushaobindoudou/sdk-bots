@@ -582,7 +582,12 @@ function toOpenAITools(definitions?: readonly Loose[]): { type: "function"; func
       type: "function" as const,
       function: {
         name: definition.name,
-        description: String(definition.description ?? "").slice(0, 800),
+        // The SendMessage contract ({"type":"text","content":...}, widget,
+        // attachment shapes) lives past 800 chars in the runner's full tool
+        // description — truncating there hid the argument contract from the
+        // model and produced content-less sends. Carry it whole; the schema
+        // ceiling above already bounds the worst case.
+        description: String(definition.description ?? "").slice(0, 8_000),
         // update_state's schema (routine create/update with cron + trigger
         // shapes) is large but legitimate; collapsing it to a bag of anything
         // makes the model guess field names. Raise the ceiling instead.

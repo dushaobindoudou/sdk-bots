@@ -44,9 +44,9 @@ import type { LiveTranscriptSession } from "./session-runtime.js";
 
 export const MAX_REPLY_NUDGES = 3;
 export const REPLY_NUDGE_PROMPT =
-  "Your previous turn left the user without the result they're waiting on — you never called SendMessage that turn, or every SendMessage you tried failed to deliver. Either way they received nothing and are still waiting. Do not assume a send from an earlier turn covered it: an opening acknowledgement back then did not deliver this result (ack ≠ delivery). Deliver the result now by actually invoking the SendMessage tool — make a real tool/function call, not text you write. Plain assistant text is NEVER shown to the user; only a real SendMessage tool invocation reaches them, so if you don't call the tool they just keep seeing silence.";
+  "Your previous turn left the user without the result they're waiting on — you never called SendMessage that turn, or every SendMessage you tried failed to deliver. Either way they received nothing and are still waiting. Do not assume a send from an earlier turn covered it: an opening acknowledgement back then did not deliver this result (ack ≠ delivery). Deliver the result now by actually invoking the SendMessage tool — make a real tool/function call, not text you write. Plain assistant text is NEVER shown to the user; only a real SendMessage tool invocation reaches them, so if you don't call the tool they just keep seeing silence. The context of what you owe is in this conversation above — review your own previous turn and deliver its result; never ask the user to re-send anything.";
 export const CLOSING_SEND_NUDGE_PROMPT =
-  "Your previous turn acknowledged the user and then ran tool calls, but ended without a follow-up SendMessage — the last thing the user saw is that opening acknowledgement, so whatever the tool calls produced after it never reached them. If that work produced the result or answer they are waiting on, deliver it now by actually invoking the SendMessage tool — make a real tool/function call, not text you write. Plain assistant text is NEVER shown to the user; only a real SendMessage tool invocation reaches them. If the work is genuinely unfinished, continue it and send the result once you have it.";
+  "Your previous turn acknowledged the user and then ran tool calls, but ended without a follow-up SendMessage — the last thing the user saw is that opening acknowledgement, so whatever the tool calls produced after it never reached them. If that work produced the result or answer they are waiting on, deliver it now by actually invoking the SendMessage tool — make a real tool/function call, not text you write. Plain assistant text is NEVER shown to the user; only a real SendMessage tool invocation reaches them. If the work is genuinely unfinished, continue it and send the result once you have it. The context is in this conversation above — never ask the user to re-send anything.";
 export const TASK_ERROR_RESULT_CLASS = "task_error_result";
 export const CONNECT_CODE_NAMES = [
   "Canceled",
@@ -393,7 +393,7 @@ export class TurnRuntime {
         if (recoverable) {
           this.tm.telemetry
             .startTurn({ conversationId: session.id, turnType: "new" })
-            .finalize("cancelled");
+            ?.finalize?.("cancelled");
           this.tm.ackObligations.retireAckRunToken(
             session.id,
             options.ackToken,
@@ -429,7 +429,7 @@ export class TurnRuntime {
           traceCtx: turnCtx,
           appendReplyReminder: true,
           requestSource: "turn",
-          onModelResolved: (modelId: string) => turn.setModel(modelId),
+          onModelResolved: (modelId: string) => turn?.setModel?.(modelId),
         });
         let settledResult = result;
         if (result.quiescedForUpgrade)
@@ -471,7 +471,7 @@ export class TurnRuntime {
             });
           }
         }
-        turn.finalize(
+        turn?.finalize?.(
           result.aborted || result.quiescedForUpgrade ? "cancelled" : "success",
         );
         setTurnTraceAttributes(turnTrace, {
@@ -484,7 +484,7 @@ export class TurnRuntime {
           `[sand][turn] agent run failed for ${session.id}`,
           error,
         );
-        turn.finalize(
+        turn?.finalize?.(
           "error",
           classifyAgentError(error),
           sandErrorDetail(error),
@@ -527,7 +527,7 @@ export class TurnRuntime {
       try {
         turnTrace?.span.end();
       } catch {}
-      this.tm.traceFlusher();
+      this.tm.traceFlusher?.();
     }
   }
 
