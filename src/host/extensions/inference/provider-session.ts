@@ -548,8 +548,12 @@ export function compactLocalMessages(messages: readonly ProviderMessage[]): Loca
   if (lastUser != null && typeof lastUser.content === "string" && isGroupTurnUserText(lastUser.content)) {
     return dropOrphanToolMessages(chat.slice(lastUserIndex));
   }
-  if (lastUserIndex < 0) return dropOrphanToolMessages(chat.slice(-8));
-  return dropOrphanToolMessages(chat.slice(Math.max(0, lastUserIndex - 6)));
+  // Full session history. The old 6/8-message windows amputated the bot's
+  // own memory: it could not recall a teammate it had created minutes ago
+  // and asked the user to re-send. The runner already assembled this context
+  // deliberately; keep only a hard tail cap against pathological growth —
+  // dropOrphanToolMessages heals the seam a cap can introduce.
+  return dropOrphanToolMessages(chat.slice(Math.max(0, chat.length - 400)));
 }
 
 function localSystemPrompt(messages: readonly ProviderMessage[]): string {
