@@ -29,6 +29,24 @@ describe("openRouterChatTools", () => {
     assert.equal(openRouterChatTools(definitions), definitions);
   });
 
+  test("keeps the autonomy surface: routines and teammate lifecycle", () => {
+    // Regression: the whitelist used to strip these, so bots could never
+    // self-schedule a routine (update_state) or spawn a teammate (CreateAgent)
+    // even though the runner toolset provides both.
+    const filtered = openRouterChatTools([
+      { name: "SendMessage", inputSchema: { type: "object" } },
+      { name: "update_state", inputSchema: { type: "object" } },
+      { name: "CreateAgent", inputSchema: { type: "object" } },
+      { name: "UpdateAgent", inputSchema: { type: "object" } },
+      { name: "ReactToMessage", inputSchema: { type: "object" } },
+      { name: "NotARealTool", inputSchema: { type: "object" } },
+    ]);
+    assert.deepEqual(
+      filtered?.map((definition) => definition.name),
+      ["SendMessage", "update_state", "CreateAgent", "UpdateAgent", "ReactToMessage"],
+    );
+  });
+
   test("passes through empty or missing lists", () => {
     assert.equal(openRouterChatTools(undefined), undefined);
     assert.deepEqual(openRouterChatTools([]), []);

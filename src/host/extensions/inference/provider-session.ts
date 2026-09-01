@@ -13,6 +13,8 @@ import { getSandRootDir } from "../../../shared/sand-paths.js";
 import { SandSettingsStore } from "../../../shared/node/settings/sand-settings-store.js";
 import { getBoxSecretsStorePath } from "../secrets/secrets-service.js";
 import { GROUP_CHAT_TAG_PREFIX, SAND_HIDDEN_PROMPT_MARKER } from "../../groups/group-chat.js";
+import { isTransientStreamError, runWithTransientRetry } from "../../runner/transient-stream-error.js";
+import { hasSendMessageSinceRealTurnStart, SAND_SEND_MESSAGE_TOOL_NAME, type MessageLike } from "../../runner/send-message-reminder-middleware.js";
 import { streamCodexDirectResponses, type CodexDirectTool } from "./codex-direct-responses.js";
 import type { LabelMessage, PromptExecutor } from "./sand-labeling.js";
 
@@ -28,6 +30,76 @@ const GROK_ROUTER_SYSTEM_PROMPT = [
   "The tools supplied with this request are Grok Bot's already-connected plugins and accounts. Use them whenever they are relevant instead of claiming that a plugin is unavailable or asking the user to reconnect it.",
   "Never ask for an API key for an already-connected plugin. Respond directly to the user in natural language after completing any necessary tool calls.",
 ].join("\n");
+
+const LOCAL_CHAT_RETRY_MAX_ATTEMPTS = 3;
+const LOCAL_CHAT_RETRY_BASE_DELAY_MS = 400;
+const LOCAL_CHAT_RETRY_MAX_DELAY_MS = 2_000;
+/**
+ * Node's fetch has no default timeout: a backend that accepts the connection
+ * and then stalls hangs the turn forever (the run queue is exclusive, so one
+ * stalled turn wedges the whole agent). Bound every local chat request.
+ */
+const LOCAL_CHAT_DEFAULT_TIMEOUT_MS = 120_000;
+function localChatTimeoutMs(env: NodeJS.ProcessEnv = process.env): number {
+  const parsed = Number.parseInt(env.SAND_LOCAL_CHAT_TIMEOUT_MS?.trim() ?? "", 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : LOCAL_CHAT_DEFAULT_TIMEOUT_MS;
+}
+
+/** An HTTP status the backend can recover from on its own (restart, cold proxy, rate limit). */
+function isRetryableHttpStatus(status: number): boolean {
+  return status === 408 || status === 429 || status >= 500;
+}
+
+function isRetryableLocalChatError(error: unknown): boolean {
+  if ((error as { retryable?: unknown } | null)?.retryable === true) return true;
+  // AbortSignal.timeout() rejects with a TimeoutError DOMException, which the
+  // errno/message heuristics do not recognise.
+  if ((error as { name?: unknown } | null)?.name === "TimeoutError") return true;
+  return isTransientStreamError(error);
+}
+
+/**
+ * True when the only thing left in this turn is the model acknowledging its
+ * own SendMessage. Deliberately narrow: the last assistant step must have
+ * called SendMessage and nothing else (a step that batched real work alongside
+ * it may still have results worth reacting to), and every one of its tool
+ * calls must already have a result, so nothing is still in flight.
+ */
+function isTerminalSendMessageFollowUp(messages: readonly ProviderMessage[]): boolean {
+  let lastAssistant: ProviderMessage | undefined;
+  let lastAssistantIndex = -1;
+  for (let index = messages.length - 1; index >= 0; index -= 1) {
+    const message = messages[index];
+    if (message == null) continue;
+    if (message.role === "user" || message.role === "system") return false;
+    if (message.role === "assistant" && Array.isArray(message.content)) { lastAssistant = message; lastAssistantIndex = index; break; }
+  }
+  if (lastAssistant == null || !Array.isArray(lastAssistant.content)) return false;
+  const toolCalls = (lastAssistant.content as Loose[]).filter((part) => part?.type === "tool-call");
+  if (toolCalls.length !== 1 || toolCalls[0]?.toolName !== SAND_SEND_MESSAGE_TOOL_NAME) return false;
+  const sendCallId = String(toolCalls[0]?.toolCallId ?? "");
+  return messages.slice(lastAssistantIndex + 1).some((message) => {
+    if (message.role !== "tool") return false;
+    const result = (Array.isArray(message.content) ? message.content as Loose[] : []).find((part) => part?.type === "tool-result");
+    return String((message as Loose).id ?? result?.toolCallId ?? "") === sendCallId;
+  });
+}
+
+/** `fetch failed` alone is undiagnosable — undici puts the real reason on `.cause`. */
+function describeError(error: unknown): string {
+  const seen = new Set<unknown>();
+  const parts: string[] = [];
+  let current: unknown = error;
+  while (current != null && !seen.has(current)) {
+    seen.add(current);
+    const message = current instanceof Error ? current.message : String(current);
+    const code = (current as { code?: unknown }).code;
+    const rendered = typeof code === "string" && !message.includes(code) ? `${message} (${code})` : message;
+    if (rendered.length > 0 && parts.at(-1) !== rendered) parts.push(rendered);
+    current = (current as { cause?: unknown }).cause;
+  }
+  return parts.join(": ") || String(error);
+}
 
 function recordRoutedUsage(provider: RoutedProvider, usage: UsageRecord): void {
   new SandSettingsStore(join(getSandRootDir(), "settings.json")).recordInferenceUsage(provider, usage);
@@ -272,9 +344,51 @@ const OPENROUTER_CHAT_PROMPT = [
   "Keep replies concise.",
 ].join("\n");
 
+/**
+ * Transport-contract lines that must hold no matter whose system prompt is in
+ * effect: the sandbox, the delivery channel, the reply discipline. Prepended
+ * to the runner's real system prompt below.
+ */
+const OPENROUTER_TRANSPORT_NOTE = [
+  "You have a local sandbox: Shell/Read/Write and related tools run in /workspace.",
+  "Use tools when they help (run commands, read or write files, search). Then tell the user via SendMessage.",
+  "The user only sees SendMessage tool calls (type \"text\", content string). Plain assistant text is invisible.",
+  "Keep replies concise.",
+].join("\n");
+
+/**
+ * The runner's own system prompt for this turn (persona, teammates, routines
+ * guidance, sandbox discipline), when the caller passed one through. The local
+ * transport used to hardcode OPENROUTER_CHAT_PROMPT and drop every system
+ * message in serializeLocalMessages — which kept bots from ever seeing the
+ * routines ("update_state") guidance, and thus from ever self-scheduling.
+ */
+function runnerSystemPrompt(messages: readonly ProviderMessage[]): string | null {
+  let found: string | null = null;
+  for (const message of messages) {
+    if (message?.role !== "system") continue;
+    const raw = message.content;
+    const text = typeof raw === "string"
+      ? raw
+      : Array.isArray(raw)
+        ? (raw as Loose[]).filter((part) => part?.type === "text").map((part) => String(part?.text ?? "")).join("\n")
+        : "";
+    if (text.trim().length > 0) found = text;
+  }
+  return found;
+}
+
 const OPENROUTER_SANDBOX_TOOLS = new Set([
   "SendMessage",
   "SendToAgent",
+  // Autonomy surface: routines (update_state carries create/update/delete for
+  // cron-scheduled work) and teammate lifecycle. The transport used to strip
+  // these, so a bot could never self-schedule a routine or spawn a teammate
+  // even though the runner toolset provides both.
+  "update_state",
+  "CreateAgent",
+  "UpdateAgent",
+  "ReactToMessage",
   "Shell",
   "Read",
   "Write",
@@ -401,6 +515,26 @@ function isGroupTurnUserText(text: string): boolean {
   return text.includes(GROUP_CHAT_TAG_PREFIX) || text.includes(SAND_HIDDEN_PROMPT_MARKER);
 }
 
+/**
+ * A `role:"tool"` message is only valid when a preceding assistant message in
+ * the SAME request carries a matching `tool_calls` entry — OpenAI-compatible
+ * backends reject the window with a 400 otherwise. Any window that is a plain
+ * suffix of the history can start mid tool-call group (a model that batches
+ * two calls in one step yields assistant + 2 tool messages, so the alternation
+ * the naive slice relied on does not hold). Drop leading/unmatched tool
+ * messages instead of shipping an unanswerable request.
+ */
+function dropOrphanToolMessages(window: readonly LocalChatMessage[]): LocalChatMessage[] {
+  const answered = new Set<string>();
+  const out: LocalChatMessage[] = [];
+  for (const message of window) {
+    if (message.tool_calls != null) for (const call of message.tool_calls) answered.add(call.id);
+    if (message.role === "tool" && !answered.has(String(message.tool_call_id ?? ""))) continue;
+    out.push(message);
+  }
+  return out;
+}
+
 export function compactLocalMessages(messages: readonly ProviderMessage[]): LocalChatMessage[] {
   const chat = serializeLocalMessages(messages);
   let lastUserIndex = -1;
@@ -412,13 +546,19 @@ export function compactLocalMessages(messages: readonly ProviderMessage[]): Loca
   }
   const lastUser = lastUserIndex >= 0 ? chat[lastUserIndex] : undefined;
   if (lastUser != null && typeof lastUser.content === "string" && isGroupTurnUserText(lastUser.content)) {
-    return chat.slice(lastUserIndex);
+    return dropOrphanToolMessages(chat.slice(lastUserIndex));
   }
-  if (lastUserIndex < 0) return chat.slice(-8);
-  return chat.slice(Math.max(0, lastUserIndex - 6));
+  if (lastUserIndex < 0) return dropOrphanToolMessages(chat.slice(-8));
+  return dropOrphanToolMessages(chat.slice(Math.max(0, lastUserIndex - 6)));
 }
 
 function localSystemPrompt(messages: readonly ProviderMessage[]): string {
+  const runner = runnerSystemPrompt(messages);
+  if (runner !== null) {
+    // The runner assembled the real prompt (persona, teammates, routines
+    // guidance). Keep the transport contract on top and carry the rest whole.
+    return [OPENROUTER_TRANSPORT_NOTE, runner].join("\n\n");
+  }
   const lastUser = [...serializeLocalMessages(messages)].reverse().find((message) => message.role === "user");
   if (lastUser != null && typeof lastUser.content === "string" && isGroupTurnUserText(lastUser.content)) {
     return [
@@ -443,10 +583,13 @@ function toOpenAITools(definitions?: readonly Loose[]): { type: "function"; func
       function: {
         name: definition.name,
         description: String(definition.description ?? "").slice(0, 800),
-        parameters: encoded.length > 8_000 ? { type: "object", additionalProperties: true } : parameters,
+        // update_state's schema (routine create/update with cron + trigger
+        // shapes) is large but legitimate; collapsing it to a bag of anything
+        // makes the model guess field names. Raise the ceiling instead.
+        parameters: encoded.length > 24_000 ? { type: "object", additionalProperties: true } : parameters,
       },
     });
-    if (tools.length >= 16) break;
+    if (tools.length >= 24) break;
   }
   return tools.length > 0 ? tools : undefined;
 }
@@ -456,21 +599,48 @@ async function localChatCompletion(endpoint: { baseURL: string; apiKey: string; 
   finishReason: string;
   toolCalls: { toolCallId: string; toolName: string; args: unknown }[];
   usage: { promptTokens: number; completionTokens: number };
+  /** Set when the answer was derived locally and no HTTP request was made. */
+  skippedRequest?: boolean;
 }> {
+  // SendMessage is terminal by design in this host (one final SendMessage per
+  // turn; plain assistant text is invisible to the user). Once it has run, the
+  // agent loop still re-invokes the model, which can only answer "nothing left
+  // to do" — a full round-trip of prompt tokens and seconds of latency per
+  // turn, every turn. Answer that round-trip locally instead of paying for it.
+  if (isTerminalSendMessageFollowUp(messages)) {
+    return { text: "", finishReason: "stop", toolCalls: [], usage: { promptTokens: 0, completionTokens: 0 }, skippedRequest: true };
+  }
   const headers: Record<string, string> = { "content-type": "application/json" };
   if (endpoint.apiKey !== OPENROUTER_LOCAL_PLACEHOLDER_KEY) headers.authorization = `Bearer ${endpoint.apiKey}`;
   const tools = toOpenAITools(definitions);
-  const res = await fetch(`${endpoint.baseURL}/chat/completions`, {
-    method: "POST",
-    headers,
-    body: JSON.stringify({
-      model: endpoint.modelId,
-      messages: [{ role: "system", content: localSystemPrompt(messages) }, ...compactLocalMessages(messages)],
-      ...(tools == null ? {} : { tools, tool_choice: "auto" }),
-    }),
+  const body = JSON.stringify({
+    model: endpoint.modelId,
+    messages: [{ role: "system", content: localSystemPrompt(messages) }, ...compactLocalMessages(messages)],
+    ...(tools == null ? {} : { tools, tool_choice: "auto" }),
   });
-  const raw = await res.text();
-  if (!res.ok) throw new Error(`local chat ${res.status}: ${raw.slice(0, 400)}`);
+  const timeoutMs = localChatTimeoutMs();
+  // The local freeroute backend can drop the first connection or answer 502
+  // while it restarts (cold proxy). Both are transient: retry the request
+  // rather than failing the turn. A 4xx is our own bad request — fail fast.
+  const raw = await runWithTransientRetry(async () => {
+    const res = await fetch(`${endpoint.baseURL}/chat/completions`, {
+      method: "POST",
+      headers,
+      body,
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+    const text = await res.text();
+    if (res.ok) return text;
+    const error = new Error(`local chat ${res.status}: ${text.slice(0, 400)}`);
+    if (isRetryableHttpStatus(res.status)) (error as { retryable?: boolean }).retryable = true;
+    throw error;
+  }, {
+    maxAttempts: LOCAL_CHAT_RETRY_MAX_ATTEMPTS,
+    baseDelayMs: LOCAL_CHAT_RETRY_BASE_DELAY_MS,
+    maxDelayMs: LOCAL_CHAT_RETRY_MAX_DELAY_MS,
+    isRetryable: isRetryableLocalChatError,
+    onRetry: ({ attempt, delayMs, error }) => console.info(`[sdk-bots] local chat transient failure (${describeError(error)}), retry ${attempt} in ${delayMs}ms`),
+  });
   const data = JSON.parse(raw) as Loose;
   const choice = (data.choices as Loose[] | undefined)?.[0] ?? {};
   const message = (choice.message ?? {}) as Loose;
@@ -491,11 +661,14 @@ async function localChatCompletion(endpoint: { baseURL: string; apiKey: string; 
   // anything has been sent (explicit or synthesized), bare text is narration
   // the user was never meant to see (the system prompt says plain text is
   // invisible), so drop it and let the turn end.
-  const alreadySentThisTurn = messages.some((prior) => {
-    if (prior.role !== "assistant" || !Array.isArray(prior.content)) return false;
-    return prior.content.some((part) => (part as Loose | null)?.type === "tool-call" && (part as Loose).toolName === "SendMessage");
-  });
-  if (toolCalls.length === 0 && text.trim().length > 0 && !alreadySentThisTurn) {
+  //
+  // Scope matters: `messages` is the whole conversation, not this turn. A
+  // conversation-wide scan makes the very first reply the last one a
+  // text-only model ever delivers — every later turn's text is discarded as
+  // "narration" and the bot goes silent for the rest of the session.
+  // hasSendMessageSinceRealTurnStart walks back only to the real turn start
+  // (skipping injected reminders), which is the boundary this guard meant.
+  if (toolCalls.length === 0 && text.trim().length > 0 && !hasSendMessageSinceRealTurnStart(messages as readonly MessageLike[])) {
     toolCalls.push({
       toolCallId: crypto.randomUUID(),
       toolName: "SendMessage",
@@ -526,7 +699,9 @@ function openRouterFromLocalChat(
   const fullStream = (async function* () {
     try {
       const result = await pending;
-      console.info(`[sdk-bots] local chat finish=${result.finishReason} tools=${result.toolCalls.map((call) => call.toolName).join(",") || "-"}`);
+      console.info(result.skippedRequest === true
+        ? "[sdk-bots] local chat skipped: SendMessage already delivered, turn is done"
+        : `[sdk-bots] local chat finish=${result.finishReason} tools=${result.toolCalls.map((call) => call.toolName).join(",") || "-"}`);
       const basic = { promptTokens: result.usage.promptTokens, completionTokens: result.usage.completionTokens, totalTokens: result.usage.promptTokens + result.usage.completionTokens };
       const extended = { inputTokens: result.usage.promptTokens, outputTokens: result.usage.completionTokens, cacheReadTokens: 0, cacheWriteTokens: 0, maxTokens: 0 };
       onUsage?.(extended);
@@ -553,7 +728,7 @@ function openRouterFromLocalChat(
       });
       yield { type: "finish" as const, finishReason: result.finishReason, usage: basic };
     } catch (error) {
-      console.error(`[sdk-bots] local chat failed: ${error instanceof Error ? error.message : String(error)}`);
+      console.error(`[sdk-bots] local chat failed: ${describeError(error)}`);
       usage.reject(error);
       extendedUsage.reject(error);
       metadata.reject(error);
@@ -567,7 +742,7 @@ function openRouterFromLocalChat(
 function openRouterExecutor(messages: readonly ProviderMessage[], invocationId: string, definitions?: readonly Loose[], executeTool?: RoutedToolExecutor, onUsage?: (usage: UsageRecord) => void) {
   const { endpoint, input } = openRouterRequest(messages, definitions, executeTool);
   if (endpoint.baseURL !== OPENROUTER_CLOUD_BASE_URL) {
-    console.info(`[sdk-bots] inference ${endpoint.baseURL} model=${endpoint.modelId}`);
+    if (!isTerminalSendMessageFollowUp(messages)) console.info(`[sdk-bots] inference ${endpoint.baseURL} model=${endpoint.modelId}`);
     return openRouterFromLocalChat(localChatCompletion(endpoint, messages, definitions), invocationId, endpoint.modelId, onUsage);
   }
   const result = streamText({ ...input, toolCallStreaming: true });
@@ -613,3 +788,6 @@ export async function runRoutedProviderText(provider: RoutedProvider, messages: 
   await result.response;
   return text;
 }
+
+/** Internals exercised by test/unit/provider-session-local-chat.test.ts. */
+export const __localChatTestHooks = { isTerminalSendMessageFollowUp, isRetryableLocalChatError, describeError };
