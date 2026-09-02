@@ -3,7 +3,7 @@ import {
   parseCoordinatorAgentThreadRequest,
   parseCoordinatorTranscriptWindowRequest,
 } from "../shared/rpc/coordinator.js";
-import { compileCronMatcher } from "../shared/automation-schedule.js";
+import { compileCronMatcher, parseEveryIntervalMs } from "../shared/automation-schedule.js";
 
 export const HOST_CAPABILITIES = [
   "orderedReplicasV1",
@@ -419,7 +419,11 @@ export function createHostGatewayApi(
       const createTrigger: any = args.spec?.trigger;
       const members: any[] = createTrigger?.type === "group" ? createTrigger.listeners ?? [] : [createTrigger];
       for (const member of members) {
-        if (member?.type === "cron" && compileCronMatcher(String(member.schedule ?? "")) == null) {
+        // "@every <n><unit>" schedules are valid at runtime (the local cron
+        // scheduler computes next-run from the interval), so accept them here
+        // too — compileCronMatcher alone only understands 5-field cron.
+        const schedule = String(member?.schedule ?? "");
+        if (member?.type === "cron" && parseEveryIntervalMs(schedule) == null && compileCronMatcher(schedule) == null) {
           throw new Error(`无效的 cron 表达式 "${member.schedule}"（5 字段：分 时 日 月 周，如 "0 22 * * *" = 每天 22:00；也支持 @hourly/@daily 和 "@every 30m"）`);
         }
       }
