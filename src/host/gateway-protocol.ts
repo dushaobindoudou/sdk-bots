@@ -33,6 +33,7 @@ export const SAND_GATEWAY_COMMANDS = {
   deleteAgents: (api: GatewayApi, body: string) => api.deleteAgents(parseCommandArgs(body)),
   duplicateAgent: (api: GatewayApi, body: string) => api.duplicateAgent(parseCommandArgs(body)),
   setAgentUnread: (api: GatewayApi, body: string) => api.setAgentUnread(parseCommandArgs(body)),
+  interruptAgent: (api: GatewayApi, body: string) => api.interruptAgent(parseCommandArgs(body)),
   setAgentNotificationsEnabled: (api: GatewayApi, body: string) => api.setAgentNotificationsEnabled(parseCommandArgs(body)),
   setAgentNotifyOnUpdates: (api: GatewayApi, body: string) => api.setAgentNotifyOnUpdates(parseCommandArgs(body)),
   setAgentHiddenFromSidebar: (api: GatewayApi, body: string) => api.setAgentHiddenFromSidebar(parseCommandArgs(body)),
