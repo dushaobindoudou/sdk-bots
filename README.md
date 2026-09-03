@@ -106,6 +106,7 @@ Generated (gitignored): `dist/box-exec-daemon/main.cjs`, `dist/host-workers/*.cj
 | `SAND_OPENROUTER_BASE_URL` | default `http://127.0.0.1:3080/freeroute/v1` |
 | `SAND_OPENROUTER_MODEL` | default `auto` locally |
 | `OPENROUTER_API_KEY` | required only for official OpenRouter cloud |
+| `SAND_LOCAL_CHAT_TIMEOUT_MS` | per-request timeout for local OpenAI-compatible inference (default `120000`) |
 | `SAND_AGENT_MOCK_RESPONSE` | mock inference script |
 | `SAND_BOX_EXEC_DAEMON_ENTRY` | daemon bundle path |
 | `SAND_USE_EXISTING_BOX_EXEC_DAEMON` | `1` = do not spawn the daemon |
@@ -137,3 +138,7 @@ CLI (host process): `npx multibot-host` after installing this package, or `npm s
 Headless boot, 37 host extensions, gateway `/health` + `POST /api/*` + SSE, mock turns, and live OpenRouter/freeroute turns are exercised in-tree. See [`CHANGELOG.md`](CHANGELOG.md).
 
 This is **not** MIT/Apache. Evaluate locally; do not assume you may ship it as a dependency in a commercial product until provenance is reviewed.
+
+## Roadmap: web Grok-bots on dsh
+
+Inference rides on the local dsh freeroute gateway (`http://127.0.0.1:3080/freeroute/v1`, model `auto`) by default — verified end-to-end including tool round-trips. The web UI ships as a dsh Cordis plugin (collapsible Bots panel). Full architecture, gateway/SSE API reference, plugin spec, and roadmap: [`../dsh-bots/DEVELOPMENT.md`](../dsh-bots/DEVELOPMENT.md).
