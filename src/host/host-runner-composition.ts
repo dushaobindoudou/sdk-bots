@@ -168,7 +168,7 @@ import type {
 } from "./runner/agent-adapters.js";
 import type { CursorRule } from "../proto/generated/agent/v1/cursor_rules_pb.js";
 
-export const DEFAULT_SAND_MODEL = "gpt-5.5-high-fast";
+export const DEFAULT_SAND_MODEL = "deepseek-v4-flash";
 export const SAND_SUMMARIZATION_MAX_PROMPT_CHARS = 2_800_000;
 
 type DynamicApi = Record<string, any>;

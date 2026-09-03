@@ -26,10 +26,12 @@ import { runLocalExecDaemon } from "../host/local-exec/local-exec-daemon.js";
 // (host-paths would otherwise fall back to ~/.cursor/<variant>).
 process.env.SAND_DATA_ROOT ??= join(homedir(), ".sdk-bots");
 
-// Local OpenAI-compatible freeroute: model `auto`, no API key. Override with
-// SAND_OPENROUTER_BASE_URL / SAND_OPENROUTER_MODEL / OPENROUTER_API_KEY.
+// Local OpenAI-compatible freeroute: default model that is currently proven
+// working on the local proxy (the `auto` route returns empty content as of
+// 2026-09-03). Override with SAND_OPENROUTER_BASE_URL / SAND_OPENROUTER_MODEL /
+// OPENROUTER_API_KEY.
 process.env.SAND_OPENROUTER_BASE_URL ??= "http://127.0.0.1:3080/freeroute/v1";
-process.env.SAND_OPENROUTER_MODEL ??= "auto";
+process.env.SAND_OPENROUTER_MODEL ??= "deepseek-v4-flash";
 
 // Point the host at the bundled loopback box exec-daemon (dist/box-exec-daemon,
 // built by `npm run build:daemon`); without it turns block on box readiness
