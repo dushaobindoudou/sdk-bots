@@ -52,6 +52,28 @@ describe("createGatewayLogTap", () => {
     } finally { tap.dispose(); }
   });
 
+  test("a dead output pipe never escapes into a crash-guard log loop", () => {
+    const tap = createGatewayLogTap({ capacity: 10 });
+    const origOut = process.stdout.write.bind(process.stdout);
+    const origErr = process.stderr.write.bind(process.stderr);
+    const epipe = () => { throw new Error("write EPIPE"); };
+    process.stdout.write = epipe as typeof process.stdout.write;
+    process.stderr.write = epipe as typeof process.stderr.write;
+    try {
+      // Both levels must be swallowed (not thrown into the caller / crash guard),
+      // while the entry still lands in the ring for the logs panel.
+      assert.doesNotThrow(() => console.log("pipe-check"));
+      assert.doesNotThrow(() => console.error("pipe-check-error"));
+      const entries = tap.recent(10);
+      assert.ok(entries.some((e) => e.text === "pipe-check"));
+      assert.ok(entries.some((e) => e.text === "pipe-check-error"));
+    } finally {
+      process.stdout.write = origOut;
+      process.stderr.write = origErr;
+      tap.dispose();
+    }
+  });
+
   test("ring buffer respects capacity and recent() limit", () => {
     const tap = createGatewayLogTap({ capacity: 3 });
     try {

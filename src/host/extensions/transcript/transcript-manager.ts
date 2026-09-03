@@ -534,6 +534,7 @@ const delegations: ReadonlyArray<[string, keyof TranscriptManager]> = [
   ["deleteAgents", "agentLifecycle"],
   ["updateAgent", "agentLifecycle"],
   ["setAgentUnread", "agentLifecycle"],
+  ["interruptAgentRun", "runnerRegistry"],
   ["setAgentNotifyOnUpdates", "agentLifecycle"],
   ["setAgentHiddenFromSidebar", "agentLifecycle"],
   ["setAgentAvatarBytes", "agentLifecycle"],

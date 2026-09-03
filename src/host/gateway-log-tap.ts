@@ -79,6 +79,7 @@ export function createGatewayLogTap(options: { readonly capacity?: number } = {}
   const ring: GatewayLogEntry[] = [];
   const listeners = new Set<(entry: GatewayLogEntry) => void>();
   let seq = 0;
+  let outputBroken = false;
   if (pristine == null) {
     pristine = {
       log: console.log.bind(console),
@@ -90,7 +91,18 @@ export function createGatewayLogTap(options: { readonly capacity?: number } = {}
   const original = pristine;
 
   const capture = (level: GatewayLogEntry["level"]) => (...args: unknown[]) => {
-    original[level](...args);
+    if (!outputBroken) {
+      try {
+        original[level](...args);
+      } catch {
+        // A closed/broken stdout/stderr pipe raises EPIPE on every write. Letting
+        // that escape here re-enters through the process crash guard (which logs
+        // via console.*), producing an uncaughtException log loop that pegs the
+        // event loop and stalls every turn. Swallow write failures and stop
+        // retrying the dead stream: the ring + SSE tap keep working.
+        outputBroken = true;
+      }
+    }
     try {
       const entry: GatewayLogEntry = { seq: (seq += 1), ts: Date.now(), level, text: formatArgs(args) };
       if (isRingNoise(level, entry.text)) return;

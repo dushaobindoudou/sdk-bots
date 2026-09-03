@@ -32,8 +32,23 @@ export class RunnerRegistry {
 
   constructor(readonly tm: TranscriptManagerLike) {}
 
-  interruptWedgedRunForWatchdog(agentId: string): boolean {
-    const reason = "run-queue watchdog: releasing a wedged predecessor";
+  /**
+   * Interrupt whatever is running for one agent.
+   *
+   * Both the solo runner and any active group-member runner are signalled —
+   * a group turn can be in flight on either, and interrupting only one leaves
+   * the conversation still generating.
+   *
+   * @param agentId - conversation whose run should stop.
+   * @param reason - text handed to the runner, surfaced in the transcript.
+   * @param telemetryReason - short tag for the turn-interrupt event.
+   * @returns whether a run was actually in flight to interrupt.
+   */
+  interruptAgentRun(
+    agentId: string,
+    reason: string,
+    telemetryReason = "user",
+  ): boolean {
     const wasInFlight = this.tm.runLifecycle.runningAgentIds().has(agentId);
     const hadActiveGroupMemberRun =
       this.activeGroupMemberRunners.get(agentId)?.interrupt(reason) ?? false;
@@ -42,11 +57,19 @@ export class RunnerRegistry {
       hadActiveGroupMemberRun;
     this.tm.telemetry.reportTurnInterrupt({
       conversationId: agentId,
-      reason: "watchdog",
+      reason: telemetryReason,
       hadActiveRun,
       wasInFlight,
     });
     return hadActiveRun;
+  }
+
+  interruptWedgedRunForWatchdog(agentId: string): boolean {
+    return this.interruptAgentRun(
+      agentId,
+      "run-queue watchdog: releasing a wedged predecessor",
+      "watchdog",
+    );
   }
 
   attachRunner(runner: any): void {

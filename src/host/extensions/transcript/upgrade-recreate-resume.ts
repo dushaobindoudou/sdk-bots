@@ -38,7 +38,7 @@ export class UpgradeRecreateResume {
     runningTurns: number;
   }> {
     this.quiescingForUpgrade = true;
-    this.tm.traceFlusher();
+    this.tm.traceFlusher?.();
     for (const session of this.tm.runLifecycle.inFlightRunCounts.keys()) {
       this.tm.runnerRegistry.runners
         .get(session.id)
