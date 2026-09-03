@@ -28,6 +28,7 @@ import {
   createCallMcpTool,
   type CreateCallMcpToolOptions,
 } from "../../../lib/agent/tools/mcp/mcp.js";
+import type { TurnMcpProjectionInput } from "../turn-agent-composition.js";
 import { createGetMcpToolsTool } from "../../../lib/agent/tools/mcp/get-mcp-tools.js";
 import type { ProductionTurnToolInputs } from "../../runner-production-bridge.js";
 import { SAND_BOX_WORKSPACE_ROOT } from "../../cloud-agents/cloud-agent-images.js";
@@ -226,6 +227,10 @@ export type TurnToolsetBuildProps = ProductionTurnToolInputs;
 export interface TurnToolsetTurnInput {
   /** The exact owner-scoped update relay installed for this prepared turn. */
   readonly emitUpdate?: (update: ForwardedUpdate) => void;
+  /** Per-run MCP projection (executor + discovery/call meta options). When
+   *  present, the MCP discovery/call tool pair is offered to the model and
+   *  the per-turn executor resources are registered. */
+  readonly mcp?: TurnMcpProjectionInput;
   readonly remoteBoxResourceAccessor?: ProductionTurnToolInputs["resourceAccessor"];
   readonly subagentConfigs?: TaskToolParameters[4];
   readonly autoReviewModes: ToolFactoryContext["autoReviewModes"];
@@ -1471,11 +1476,12 @@ export function buildTurnTools(
   }
 
   // The immutable builder only offers the MCP discovery/call pair when the
-  // live per-turn MCP projection exists, or dynamic mode owns the registry.
+  // live per-turn MCP projection exists (either threaded through the per-turn
+  // tool inputs or the run's turn input), or dynamic mode owns the registry.
   // A supplied factory alone is not an MCP service and must remain dormant.
   if (
     !host.isBoxScopedSubagent
-    && (props?.mcp !== undefined || dynamicToolRegistry !== undefined)
+    && (props?.mcp !== undefined || turn.mcp !== undefined || dynamicToolRegistry !== undefined)
   ) {
     const mcpMeta = factories.mcpMeta?.(dynamicToolRegistry);
     if (mcpMeta !== undefined) tools.push(...mcpMeta);

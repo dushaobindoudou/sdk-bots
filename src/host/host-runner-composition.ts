@@ -96,6 +96,7 @@ import {
   createTurnAgentRunStreamInput,
   createTurnAgentStreamStart,
   type TurnLocalResourceProjectionInput,
+  type TurnMcpProjectionInput,
 } from "./runner/turn-agent-composition.js";
 import {
   createProductionTurnAgentOwner,
@@ -2322,9 +2323,55 @@ export function createHostRunnerComposition<Runner extends ProductionSessionBoun
         cloudAgent: "off",
         subagentLaunch: "off",
       };
+      const mcpApi = mcp;
+      const turnMcpProjection: TurnMcpProjectionInput | undefined =
+        mcpApi.mcp != null
+          && typeof mcpApi.mcp.createExecutor === "function"
+          ? {
+              mcpForTurn: mcpApi.mcp,
+              persistImage: persistImageForTurn,
+              textSpiller: async (
+                _context: unknown,
+                result: unknown,
+              ) => result,
+              isSubagentRunner: false,
+              beginObservation: () => () => undefined,
+              boundedConnectorTag: (providerIdentifier: string) =>
+                providerIdentifier.slice(0, 120),
+              mcpErrorClassOf: (error: unknown) =>
+                error instanceof Error
+                  ? error.name
+                  : "Error",
+              takeMcpExecErrorClass: () => undefined,
+              emitConnectorCard: (emission: unknown) => {
+                hooks.transport.onUpdate({
+                  type: "send-message",
+                  message: connectorCardEmissionToMessage(
+                    emission as never,
+                  ),
+                  timestampMs: Date.now(),
+                });
+              },
+              reportDiagnostic: () => undefined,
+              errorLogTag: (error: unknown) =>
+                error instanceof Error ? error.message : String(error),
+              cancelThisRun: () => {
+                // Connector-card cancel is not bound at base-turn build time;
+                // the per-run turn overrides this via the run's own cancel.
+              },
+              mcpMeta: {
+                getMcpTools: () =>
+                  mcpApi.mcp.getTools(undefined),
+                callOptions: {},
+              },
+            }
+          : undefined;
       const baseTurn: TurnToolsetTurnInput = {
         autoReviewModes,
         subagentConfigs: [],
+        ...(turnMcpProjection === undefined
+          ? {}
+          : { mcp: turnMcpProjection }),
       };
       const staticModelId = process.env.SAND_AGENT_MODEL ?? DEFAULT_SAND_MODEL;
       const lazyToolHost = () => createProductionTurnToolsetHost({
@@ -2527,6 +2574,9 @@ export function createHostRunnerComposition<Runner extends ProductionSessionBoun
                 },
                 actionAuditor: projectedActionAuditor,
                 agentId: session.id,
+                ...(turnMcpProjection === undefined
+                  ? {}
+                  : { mcp: turnMcpProjection }),
               };
             },
             blobStore: getAgentBlobStore(

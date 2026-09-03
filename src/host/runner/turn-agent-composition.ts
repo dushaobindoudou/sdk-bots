@@ -431,20 +431,23 @@ export function createTurnAgentToolsHandoff(input: {
               return { dependencies: createDependencies(currentProps) };
             },
           }),
-      ...(provider?.createMcpMetaToolInputs !== undefined || !hasDirectMcpMetaInputs
+      ...(provider?.createMcpMetaToolInputs !== undefined
         ? {}
         : {
             createMcpMetaToolInputs: (
               _turn: TurnToolsetTurnInput,
               currentProps: TurnToolsetBuildProps,
             ): TurnMcpMetaToolFactoryInput => {
-              const mcpMeta = currentProps.mcp?.mcpMeta;
-              if (mcpMeta === undefined) {
-                throw new TypeError("MCP meta-tool options are not bound");
-              }
+              // Meta options come from the run's MCP projection (turn.mcp).
+              // When the projection is absent, serve the per-turn discovered
+              // descriptors directly so the discovery/call pair still exists
+              // for any runner flavor.
+              const mcpMeta = _turn.mcp?.mcpMeta;
               return {
                 resourceAccessor: currentProps.resourceAccessor as TurnMcpMetaToolFactoryInput["resourceAccessor"],
-                ...mcpMeta,
+                ...(mcpMeta === undefined
+                  ? { getMcpTools: () => _turn.mcpTools ?? [], callOptions: {} }
+                  : { ...mcpMeta }),
               };
             },
           }),
