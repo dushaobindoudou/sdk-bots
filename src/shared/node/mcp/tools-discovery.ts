@@ -79,7 +79,7 @@ export function createMcpToolsDiscovery(
   let boxPushChain = Promise.resolve();
   let toolsCacheEntry: CacheEntry | null = null;
   let toolsCacheEpoch = 0;
-  let toolsColdWarmScheduled = false;
+  let toolsColdWarmPromise: Promise<void> | null = null;
   const firstCallReported = new Map<string, { ok: boolean; failed: boolean }>();
   const resultFactory = deps.resultFactory ?? generatedMcpResultFactory;
   const discoveryDeadline =
@@ -354,13 +354,13 @@ export function createMcpToolsDiscovery(
     if (!toolsEntryUsable(key)) startToolsResolution(key, false);
   }
 
-  function scheduleColdStartWarm(): void {
-    if (toolsColdWarmScheduled) return;
-    toolsColdWarmScheduled = true;
-    const epoch = toolsCacheEpoch;
-    void warmToolsCache(epoch).finally(() => {
-      toolsColdWarmScheduled = false;
+  function scheduleColdStartWarm(): Promise<void> {
+    // Deduped, and returns the in-flight promise so callers (turn start) can
+    // await the warm with their own bounded race.
+    toolsColdWarmPromise ??= warmToolsCache(toolsCacheEpoch).finally(() => {
+      toolsColdWarmPromise = null;
     });
+    return toolsColdWarmPromise;
   }
 
   async function isHttpProvider(providerIdentifier: string): Promise<boolean> {
@@ -435,10 +435,20 @@ export function createMcpToolsDiscovery(
       filterDisabledTools(await getToolsRaw()),
     getToolsRaw,
     getToolsForTurnStart: async (_ctx?: unknown) => {
-      const serverNames = peekDiscoveryServerNames();
+      let serverNames = peekDiscoveryServerNames();
       if (serverNames === undefined) {
-        scheduleColdStartWarm();
-        return [];
+        // Early-boot window: the definition source has not made the server
+        // set peekable yet (this branch used to return [] immediately).
+        // Wait once, bounded, for the cold warm to load the config, then
+        // re-peek; if still undefined there is genuinely nothing configured.
+        await Promise.race([
+          scheduleColdStartWarm().catch(() => undefined),
+          new Promise<void>((resolve) => {
+            setTimeout(resolve, TOOLS_TURN_START_AWAIT_MS);
+          }),
+        ]);
+        serverNames = peekDiscoveryServerNames();
+        if (serverNames === undefined) return [];
       }
       const key = toolServerSetKey(serverNames);
       if (key === "") {
