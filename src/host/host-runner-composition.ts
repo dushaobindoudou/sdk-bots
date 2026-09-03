@@ -90,6 +90,7 @@ import {
   createRemoteBoxResourceAccessor,
   type RemoteBoxResourceHost,
 } from "./runner/remote-box-resources.js";
+import { resolveAgentWorkspaceJail } from "./runner/agent-workspace-jail.js";
 import { createStreamAttempt } from "./runner/stream-attempt.js";
 import {
   createTurnAgentRunStreamInput,
@@ -1567,6 +1568,9 @@ export function createHostRunnerComposition<Runner extends ProductionSessionBoun
         assertNoPendingApproval: () => autoReviewGate.assertNoPendingApproval(),
         currentModes: () => ({ ...autoReviewGate.currentModes() }),
       };
+      // Per-turn resolution: edits to an agent's settings.json workspaceRoot
+      // take effect on the agent's next turn without a host restart.
+      const workspaceJail = resolveAgentWorkspaceJail(session.id);
       const accessor = createRemoteBoxResourceAccessor({
         remoteBox: owner,
         remoteBoxHasDesktop: true,
@@ -1582,6 +1586,7 @@ export function createHostRunnerComposition<Runner extends ProductionSessionBoun
         ...(autoReview.autoReviewClassifierExecutor === undefined
           ? {}
           : { autoReviewClassifierExecutor: autoReview.autoReviewClassifierExecutor }),
+        ...(workspaceJail === undefined ? {} : { workspaceJail }),
       });
       return asProductionResourceAccessor(accessor);
     };

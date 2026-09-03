@@ -37,6 +37,11 @@ import {
 } from "../box/box-capabilities.js";
 import { touchSandMonitorBusyLease, type ShellAccessor } from "../box/box-windows.js";
 import {
+  applyWorkspaceJailToShellArgs,
+  type JailableShellArgs,
+  type WorkspaceJailConfig,
+} from "./agent-workspace-jail.js";
+import {
   boxNotReadyMessageForError,
   isNoMonitorComputerUseExecutor,
   SandBoxNoMonitorAvailableError,
@@ -89,6 +94,12 @@ export interface RemoteBoxResourceHost {
     context: Context,
     connection: RemoteConnection,
   ): void;
+  /**
+   * When set, every shell this conversation spawns is confined to the agent's
+   * own workspace directory (see agent-workspace-jail). Undefined keeps the
+   * historical unrestricted behavior.
+   */
+  readonly workspaceJail?: WorkspaceJailConfig;
   readonly autoReviewClassifierExecutor?: Executor<
     SmartModeClassifierArgs,
     SmartModeClassifierResult
@@ -132,6 +143,8 @@ export function createRemoteBoxResourceAccessor(host: RemoteBoxResourceHost) {
     });
   };
   const guardAutoReviewBarrier = (): void => host.autoReviewGate.assertNoPendingApproval();
+  const jailShellArgs = <T extends JailableShellArgs>(args: T): T =>
+    host.workspaceJail === undefined ? args : applyWorkspaceJailToShellArgs(args, host.workspaceJail);
 
   const ownsMonitorForShellNavigationAudit = (connection: RemoteConnection): boolean => {
     if (!host.remoteBoxHasDesktop) return false;
@@ -177,7 +190,7 @@ export function createRemoteBoxResourceAccessor(host: RemoteBoxResourceHost) {
       try {
         yield* connection.remoteAccessor.get(shellStreamExecutorResource).execute(
           context,
-          args,
+          jailShellArgs(args),
           options,
         );
       } finally {
@@ -200,7 +213,7 @@ export function createRemoteBoxResourceAccessor(host: RemoteBoxResourceHost) {
       try {
         return await connection.remoteAccessor.get(backgroundShellExecutorResource).execute(
           context,
-          args,
+          jailShellArgs(args),
           options,
         );
       } finally {
@@ -233,7 +246,7 @@ export function createRemoteBoxResourceAccessor(host: RemoteBoxResourceHost) {
       guardAutoReviewBarrier();
       return await connection.remoteAccessor.get(shellExecutorResource).execute(
         context,
-        args,
+        jailShellArgs(args),
         options,
       );
     },

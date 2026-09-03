@@ -5,7 +5,19 @@ export const SAND_SETTINGS_FILENAME = "settings.json";
 export const DEFAULT_NOTIFY_ON_AGENT_UPDATES = true;
 export const DEFAULT_HIDDEN_FROM_SIDEBAR = false;
 
-export interface SandAgentSettings { notifyOnAgentUpdates: boolean; hiddenFromSidebar: boolean }
+export interface SandAgentSettings {
+  notifyOnAgentUpdates: boolean;
+  hiddenFromSidebar: boolean;
+  /**
+   * Optional per-agent workspace jail root (agent-workspace-jail). Accepts the
+   * bot-facing virtual form "/workspace/<slug>" or an absolute host path inside
+   * the box workspace root. When set, every shell the agent spawns is confined
+   * to this directory via a generated Seatbelt profile (macOS).
+   */
+  workspaceRoot?: string;
+  /** Extra host paths the jailed agent may write (e.g. a shared blackboard). */
+  workspaceAllowPaths?: string[];
+}
 
 export function getSandSettingsPath(agentDir: string): string { return join(agentDir, SAND_SETTINGS_FILENAME); }
 
@@ -18,9 +30,14 @@ function readRawSettings(path: string): Record<string, unknown> {
 
 export function readSandSettingsFile(path: string): SandAgentSettings {
   const raw = readRawSettings(path);
+  const workspaceAllowPaths = Array.isArray(raw.workspaceAllowPaths)
+    ? raw.workspaceAllowPaths.filter((value): value is string => typeof value === "string" && value.trim() !== "")
+    : undefined;
   return {
     notifyOnAgentUpdates: typeof raw.notifyOnAgentUpdates === "boolean" ? raw.notifyOnAgentUpdates : DEFAULT_NOTIFY_ON_AGENT_UPDATES,
-    hiddenFromSidebar: typeof raw.hiddenFromSidebar === "boolean" ? raw.hiddenFromSidebar : DEFAULT_HIDDEN_FROM_SIDEBAR
+    hiddenFromSidebar: typeof raw.hiddenFromSidebar === "boolean" ? raw.hiddenFromSidebar : DEFAULT_HIDDEN_FROM_SIDEBAR,
+    ...(typeof raw.workspaceRoot === "string" && raw.workspaceRoot.trim() !== "" ? { workspaceRoot: raw.workspaceRoot.trim() } : {}),
+    ...(workspaceAllowPaths !== undefined && workspaceAllowPaths.length > 0 ? { workspaceAllowPaths } : {})
   };
 }
 
