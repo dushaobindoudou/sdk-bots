@@ -406,6 +406,12 @@ const OPENROUTER_SANDBOX_TOOLS = new Set([
   "DeleteFile",
   "ApplyPatch",
   "EditNotebook",
+  // MCP surface: the per-turn discovery/call pair built by the MCP meta
+  // factory. Without these in the allowlist the transport strips them and a
+  // bot can never see or invoke MCP tools even though the runner toolset
+  // provides them.
+  "GetMcpTools",
+  "CallMcpTool",
 ]);
 
 export function openRouterChatTools(definitions?: readonly Loose[]): readonly Loose[] | undefined {
