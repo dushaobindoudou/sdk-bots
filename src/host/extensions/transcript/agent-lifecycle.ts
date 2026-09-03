@@ -396,7 +396,7 @@ export class AgentLifecycle {
       if (groupConfig?.memberIds == null) continue;
       const kept = groupConfig.memberIds.filter((memberId) => !ids.has(memberId));
       if (kept.length === groupConfig.memberIds.length) continue;
-      writeSandGroupConfig(groupDir, { version: GROUP_CONFIG_VERSION, memberIds: kept });
+      writeSandGroupConfig(groupDir, { version: GROUP_CONFIG_VERSION, memberIds: kept, ...(groupConfig.maxMembers === undefined ? {} : { maxMembers: groupConfig.maxMembers }) });
     }
     if (!deletingActive || active == null) {
       await this.tm.roster.emitAgents();

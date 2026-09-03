@@ -297,10 +297,11 @@ export function createHostGatewayApi(
     createGroup: (args: any) => method(manager, "createGroup")({
       name: args.name,
       description: args.description,
-      memberIds: args.memberAgentIds
+      memberIds: args.memberAgentIds,
+      ...(args.maxMembers === undefined ? {} : { maxMembers: args.maxMembers })
     }),
     setGroupMembers: (args: any) =>
-      method(manager, "setGroupMembers")(args.id, args.memberAgentIds),
+      method(manager, "setGroupMembers")(args.id, args.memberAgentIds, args.maxMembers),
     updateAgent: (args: any) =>
       method(manager, "updateAgent")(args.id, args.profile),
     deleteAgent: async (args: any) => {

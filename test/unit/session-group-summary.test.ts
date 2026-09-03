@@ -11,7 +11,7 @@ describe("groupFieldsFromDir", () => {
     const dir = mkdtempSync(join(tmpdir(), "sand-group-"));
     try {
       writeFileSync(join(dir, "group.json"), JSON.stringify({ version: 1, memberIds: ["a", "b"] }));
-      assert.deepEqual(groupFieldsFromDir(dir), { isGroup: true, memberIds: ["a", "b"] });
+      assert.deepEqual(groupFieldsFromDir(dir), { isGroup: true, memberIds: ["a", "b"], maxMembers: 8 });
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

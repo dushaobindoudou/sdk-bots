@@ -13,7 +13,9 @@ import {
 } from "../../agents/agent-profile.js";
 import {
   GROUP_CONFIG_VERSION,
-  GROUP_MAX_MEMBERS,
+  GROUP_DEFAULT_MAX_MEMBERS,
+  GROUP_HARD_MAX_MEMBERS,
+  normalizeGroupMaxMembers,
   readSandGroupConfig,
   writeSandGroupConfig,
   isSandGroupDir,
@@ -91,7 +93,9 @@ export class GroupChatGlue {
     name: string;
     description?: string;
     memberIds: string[];
+    maxMembers?: number;
   }): Promise<any> {
+    const maxMembers = normalizeGroupMaxMembers(args.maxMembers);
     const allAgents = await this.tm.sessionStore.listAgents();
     const existing = new Set<string>(allAgents.map((agent: any) => agent.id));
     const groupIds = new Set<string>(
@@ -103,7 +107,7 @@ export class GroupChatGlue {
     assertMembersAreNotGroups(requested, (id) => groupIds.has(id));
     const memberIds = requested
       .filter((id) => existing.has(id))
-      .slice(0, GROUP_MAX_MEMBERS);
+      .slice(0, maxMembers);
     if (memberIds.length === 0) {
       throw new SandGroupCreateError(
         "A group needs at least one existing member agent.",
@@ -134,6 +138,7 @@ export class GroupChatGlue {
     writeSandGroupConfig(this.tm.sessionStore.getAgentDir(created.agent.id), {
       version: GROUP_CONFIG_VERSION,
       memberIds,
+      maxMembers,
     });
     this.tm.productAnalytics.trackEvent("sand.group.created", {
       group_id: created.agent.id,
@@ -156,10 +161,12 @@ export class GroupChatGlue {
   async setGroupMembers(
     groupId: string,
     memberIds: readonly string[],
+    maxMembers?: number,
   ): Promise<any | null> {
     const dir = this.tm.sessionStore.getAgentDir(groupId);
     const current = readSandGroupConfig(dir);
     if (current == null) return null;
+    const effectiveMax = normalizeGroupMaxMembers(maxMembers === undefined ? current.maxMembers : maxMembers);
     if (current.sharedRoomId != null)
       return this.currentStampedSummary(groupId);
 
@@ -174,11 +181,12 @@ export class GroupChatGlue {
     assertMembersAreNotGroups(requested, (id) => groupIds.has(id));
     const cleaned = requested
       .filter((id) => id !== groupId && existing.has(id))
-      .slice(0, GROUP_MAX_MEMBERS);
+      .slice(0, effectiveMax);
     if (cleaned.length > 0) {
       writeSandGroupConfig(dir, {
         version: GROUP_CONFIG_VERSION,
         memberIds: cleaned,
+        maxMembers: effectiveMax,
       });
       await this.tm.roster.emitAgents();
     }

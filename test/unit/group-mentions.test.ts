@@ -14,6 +14,41 @@ const alex = { id: "a", name: "Alex", description: "" };
 const alexander = { id: "al", name: "Alexander", description: "" };
 
 describe("parseGroupMentions", () => {
+  test("nickname prefixes resolve when unambiguous (玄骨-续实证：@摄影/@灯光)", () => {
+    const crew = [
+      { id: "m1", name: "导演", description: "" },
+      { id: "m2", name: "制片人", description: "" },
+      { id: "m3", name: "编剧", description: "" },
+      { id: "m4", name: "演员", description: "" },
+      { id: "m5", name: "摄影指导", description: "" },
+      { id: "m6", name: "灯光师", description: "" },
+    ];
+    assert.deepEqual(parseGroupMentions("@摄影 直接逐点打点", crew), { isEveryone: false, memberIds: ["m5"] });
+    assert.deepEqual(parseGroupMentions("@灯光 锁光位", crew), { isEveryone: false, memberIds: ["m6"] });
+    assert.deepEqual(parseGroupMentions("@导演 @摄影 看锚点图", crew), { isEveryone: false, memberIds: ["m1", "m5"] });
+    assert.deepEqual(parseGroupMentions("工具到位后 @摄影 @灯光 打点验收。", crew), { isEveryone: false, memberIds: ["m5", "m6"] });
+    assert.deepEqual(parseGroupMentions("@摄影指导 全名照常", crew), { isEveryone: false, memberIds: ["m5"] });
+  });
+
+  test("ambiguous prefixes stay unresolved rather than guessing", () => {
+    const photographers = [
+      { id: "p1", name: "摄影指导", description: "" },
+      { id: "p2", name: "摄影助理", description: "" },
+    ];
+    assert.deepEqual(parseGroupMentions("@摄影 谁来", photographers), { isEveryone: false, memberIds: [] });
+    assert.deepEqual(parseGroupMentions("@摄影指导 全名无歧义", photographers), { isEveryone: false, memberIds: ["p1"] });
+  });
+
+  test("single-char prefixes and latin names keep conservative matching", () => {
+    const crew = [
+      { id: "m6", name: "灯光师", description: "" },
+      { id: "a1", name: "Alexander", description: "" },
+    ];
+    assert.deepEqual(parseGroupMentions("@灯 开灯", crew), { isEveryone: false, memberIds: [] });
+    assert.deepEqual(parseGroupMentions("@alex 来一下", crew), { isEveryone: false, memberIds: [] });
+    assert.deepEqual(parseGroupMentions("@Alexander 来一下", crew), { isEveryone: false, memberIds: ["a1"] });
+  });
+
   test("picks a Chinese member and ignores the rest", () => {
     assert.deepEqual(
       parseGroupMentions("@研究员 今晚去哪", [researcher, writer]),

@@ -50,7 +50,7 @@ export function isSandDefaultAgentName(name: string): boolean {
   );
 }
 
-export const GROUP_MAX_MEMBERS = 6;
+export const GROUP_MAX_MEMBERS = 8;
 export const MAX_AGENTS_PER_USER = 50;
 export const SAND_AGENT_LIMIT_MESSAGE = `${MAX_AGENTS_PER_USER} is the maximum`;
 
