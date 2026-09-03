@@ -472,6 +472,22 @@ export function createMcpToolsDiscovery(
       }
       return filterDisabledTools(currentToolsForKey(key) ?? []);
     },
+    /**
+     * Synchronous cached-tool read for turn-start meta tool construction. The
+     * meta-tool factory contract requires getMcpTools() to return the resolved
+     * array (never a Promise); callers that need a fresh resolution must use
+     * getToolsForTurnStart (async, bounded) or the GetMcpTools tool's own
+     * execution. Returns the current cache contents, or [] before the config
+     * has become peekable / the cache has settled.
+     */
+    getCachedToolsForTurnStart: (): Tool[] => {
+      const serverNames = peekDiscoveryServerNames();
+      if (serverNames === undefined) return [];
+      const key = toolServerSetKey(serverNames);
+      if (key === "") return [];
+      if (!toolsEntryUsable(key)) return [];
+      return filterDisabledTools(currentToolsForKey(key) ?? []);
+    },
     async listBoxServers(
       serverIdentifiers: string[],
       options?: unknown,

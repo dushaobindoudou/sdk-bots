@@ -2360,8 +2360,12 @@ export function createHostRunnerComposition<Runner extends ProductionSessionBoun
                 // the per-run turn overrides this via the run's own cancel.
               },
               mcpMeta: {
+                // Synchronous cache read: the meta-tool factory calls
+                // getMcpTools() eagerly at turn-start and requires a resolved
+                // array, never a Promise. Fresh resolution stays in the
+                // GetMcpTools tool's own execution.
                 getMcpTools: () =>
-                  mcpApi.mcp.getTools(undefined),
+                  mcpApi.mcp.getCachedTools(undefined),
                 callOptions: {},
               },
             }
