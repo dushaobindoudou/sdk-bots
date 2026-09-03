@@ -120,6 +120,11 @@ export function createHostMcp(deps: CreateHostMcpOptions): McpHostPort {
     ...(deps.onConnectorAuth === undefined ? {} : { onConnectorAuth: deps.onConnectorAuth }),
   });
   manager.setBoxRuntime(discovery);
+  // Boot warm: resolve the MCP tools cache eagerly so the first turn after a
+  // host start sees the real toolset (the cache used to stay cold until the
+  // first getToolsForTurnStart call raced ahead of the first turn and
+  // returned the empty cold-start list).
+  void discovery.invalidateToolsCache();
   const token = deps.getAccessToken ?? (async () => null);
   if (deps.onServerAuthenticated != null) manager.setAuthCompletionObserver(deps.onServerAuthenticated);
   const readEffective = async (): Promise<EffectivePlugin[] | null> => { try { return await manager.listEffectivePlugins(); } catch (error) { log(`effective-plugins read degraded to attributed rows: ${error instanceof Error ? error.message : String(error)}`); return null; } };

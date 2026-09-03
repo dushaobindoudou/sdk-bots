@@ -26,6 +26,8 @@ import { toJsonArgs } from "./mcp-validation.js";
 
 export const MCP_TOOLS_CACHE_TTL_MS = 24 * 60 * 60 * 1_000;
 export const TOOLS_DISCOVERY_DEADLINE_MS = 120_000;
+/** Max time a turn waits on a fresh cold-cache resolution before proceeding with cached (possibly empty) tools. */
+const TOOLS_TURN_START_AWAIT_MS = 10_000;
 
 export interface McpDiscoveryResultFactory extends McpResultFactory {
   error(message: string): McpResultLike;
@@ -443,7 +445,21 @@ export function createMcpToolsDiscovery(
         dropSettledCacheForEmptyServerSet();
         return [];
       }
-      if (!toolsEntryUsable(key)) startToolsResolution(key, true);
+      if (!toolsEntryUsable(key)) {
+        // Cold or invalidated cache: the first turn after a host start used to
+        // run with an empty MCP toolset because resolution only started in the
+        // background here. Await one bounded fresh resolution instead; on
+        // timeout the background promise keeps running and later turns pick
+        // the result up from the cache. carryStale=true keeps last-known
+        // tools available when the fresh resolution fails.
+        const entry = startToolsResolution(key, true);
+        await Promise.race([
+          entry.promise.catch(() => undefined),
+          new Promise<void>((resolve) => {
+            setTimeout(resolve, TOOLS_TURN_START_AWAIT_MS);
+          }),
+        ]);
+      }
       return filterDisabledTools(currentToolsForKey(key) ?? []);
     },
     async listBoxServers(
